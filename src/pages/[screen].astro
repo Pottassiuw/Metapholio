@@ -1,0 +1,55 @@
+---
+import Portfolio from '../layouts/Portfolio.astro';
+import {sections,projects,route,asset} from '../data/portfolio';
+export function getStaticPaths(){return [...sections.map(s=>({params:{screen:s.id}})),...projects.map(p=>({params:{screen:p.id}}))]}
+const id=Astro.params.screen;
+const project=projects.find(p=>p.id===id);
+const section=sections.find(s=>s.id===(project?.category??id))!;
+const title=project?.name??section.title;
+const selectedProjects=projects.filter(p=>p.category===id);
+---
+<Portfolio title={`${title} — Thiago Nascimento`} active={section.id} description={project?.lead??section.copy}>
+{project ? <>
+<a class="category-link" href={route(section.id)}>Ver {section.title.toLowerCase()}</a>
+<h1 class="page-title project-title">{project.name}<span>{project.subtitle}</span></h1>
+<p class="context">{project.context}</p>
+<p class="lead">{project.lead}</p>
+<div class="project-map" aria-label="Conceitos presentes no projeto"><p>{project.id==='edp-helios'?'Seções da plataforma · esquema editorial, não uma tela real':'Conceitos do projeto · esquema editorial'}</p><ol>{project.visual.map(item=><li>{item}</li>)}</ol></div>
+<section><h2>O problema</h2><p>{project.problem}</p></section>
+<section><h2>A solução</h2><p>{project.solution}</p></section>
+<section class="contribution"><h2>Minha contribuição</h2><p>{project.role}</p></section>
+<section><h2>Tecnologias</h2><ul class="tech-list">{project.tech.map(t=><li>{t}</li>)}</ul></section>
+<section><h2>Competências em prática</h2><ul class="skill-list">{project.skills.map(s=><li>{s}</li>)}</ul><p class="small-note">As competências descrevem atividades documentadas; não são notas de proficiência.</p></section>
+<section><h2>Fontes e disponibilidade</h2><p>{project.note}</p>{project.links.length>0&&<div class="action-links">{project.links.map(l=><a href={l.url} target="_blank" rel="noopener noreferrer">{l.label}<svg class="link-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a>)}</div>}<details class="pending"><summary>Informações ainda não documentadas</summary><p>{project.pending}</p></details></section>
+<nav class="next-project" aria-label="Outros projetos"><h2>Continue explorando</h2>{projects.filter(p=>p.id!==project.id&&p.category===project.category).map(p=><a href={route(p.id)}>{p.name}<svg class="link-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a>)}<a href={route(section.id)}>Todos em {section.label.toLowerCase()}<svg class="link-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a></nav>
+</> : <>
+<h1 class="page-title">{section.title}</h1>
+{id==='sobre'&&<>
+<div class="profile-intro"><img src={asset('images/thiago-nascimento-perfil.webp')} width="1254" height="1254" alt="Thiago Nascimento"/><div><p class="lead">Entre aprender<br/>e construir.</p><p>Sou Thiago Nascimento, estudante de Desenvolvimento de Software Multiplataforma na FATEC São José dos Campos e técnico em Desenvolvimento de Sistemas.</p></div></div>
+<p>Atuo como estagiário na EDP, no planejamento de manutenção de redes. Minha trajetória reúne aplicações web, automação de processos e projetos acadêmicos em equipe.</p>
+<section><h2>Onde concentro meu interesse</h2><p>Arquitetura de sistemas e segurança da informação. Gosto de entender como as partes de uma aplicação se conectam, do modelo de dados à experiência de quem a utiliza.</p></section>
+<section><h2>Uma trajetória em projetos</h2><ol class="journey"><li><strong>Weeat</strong><span>TCC da ETEC · desenvolvimento integral</span><a href={route('weeat')}>Conhecer o TCC</a></li><li><strong>ReObserve</strong><span>Projeto de iniciação no estágio PIT</span><a href={route('reobserve')}>Conhecer o projeto</a></li><li><strong>Helios</strong><span>Desenvolvimento integral no contexto EDP</span><a href={route('edp-helios')}>Conhecer minha atuação</a></li><li><strong>API Altave</strong><span>Projeto acadêmico em equipe · DSM</span><a href={route('api-altave')}>Conhecer a API</a></li></ol></section>
+<details class="pending"><summary>Sobre esta apresentação</summary><p>O objetivo profissional atual e as datas completas da trajetória ainda serão atualizados. A formação vigente é DSM; a referência a ADS no currículo anterior está desatualizada.</p></details>
+</>}
+{['projetos','experiencia','laboratorio'].includes(id!)&&<>
+<p class="lead">{section.copy}</p>
+{id==='experiencia'&&<div class="work-context"><section><h2>Estágio na EDP</h2><p>Planejamento de manutenção de redes, com Python, Power BI, Excel, Databricks e ferramentas internas.</p></section><section><h2>Estágio no PIT</h2><p>Em São José dos Campos, o ReObserve nasceu como um projeto de iniciação durante esse estágio.</p></section><p class="small-note">Cargos formais e períodos completos ainda serão adicionados.</p></div>}
+<div class="project-index">{selectedProjects.map(p=><a class="project-entry" href={route(p.id)}><div><h2>{p.name}</h2><p class="context">{p.context}</p><p>{p.lead}</p><ul class="inline-tech">{p.tech.slice(0,4).map(t=><li>{t}</li>)}</ul></div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg><span class="entry-action">Abrir projeto</span></a>)}</div>
+{id==='projetos'&&<p class="small-note">A API é apresentada sem logo da empresa parceira. Weeat é um TCC da ETEC, distinto das APIs da FATEC.</p>}
+{id==='laboratorio'&&<section><h2>Explorar também é aprender</h2><p>Este espaço reúne projetos pessoais. ReObserve e Weeat aparecem, respectivamente, em experiência profissional e projetos acadêmicos, de acordo com seu contexto real.</p><a class="text-link" href="https://github.com/Pottassiuw" target="_blank" rel="noopener noreferrer">Outros repositórios no GitHub</a></section>}
+</>}
+{id==='formacao'&&<>
+<p class="lead">Aprender. Aplicar.<br/>Continuar construindo.</p>
+<section class="education"><h2>Formação</h2><div><h3>Desenvolvimento de Software Multiplataforma</h3><p>FATEC São José dos Campos — Prof. Jessen Vidal</p><span class="status-label">Formação atual</span></div><div><h3>Técnico em Desenvolvimento de Sistemas</h3><p>2023–2024 · TCC da ETEC: Weeat</p><p class="small-note">O currículo registra E.E. Ilza Nascimento Pintus; o nome formal da unidade será confirmado.</p></div></section>
+<section><h2>Certificações e cursos</h2><dl class="credential-list"><div><dt>IT Essentials · ITE 7.01</dt><dd>Cisco Networking Academy · dezembro de 2025</dd></div><div><dt>Linux Unhatched</dt><dd>Cisco Networking Academy · outubro de 2025</dd></div></dl><p class="small-note">Informações declaradas no currículo. Links dos comprovantes ainda não disponíveis.</p></section>
+<section><h2>Idiomas</h2><dl class="language-list"><div><dt>Português</dt><dd>Nativo</dd></div><div><dt>Inglês</dt><dd>C1</dd></div><div><dt>Espanhol</dt><dd>B2</dd></div><div><dt>Italiano</dt><dd>B1</dd></div></dl><p class="small-note">Níveis autodeclarados.</p></section>
+<section><h2>Competências técnicas</h2><p>Experiência documentada nos projetos, sem porcentagens ou notas arbitrárias.</p><dl class="credential-list"><div><dt>Interfaces web</dt><dd>React, Next.js e TypeScript</dd></div><div><dt>APIs e dados</dt><dd>Node.js, FastAPI, Prisma, PostgreSQL e MySQL</dd></div><div><dt>Automação e análise</dt><dd>Python, pandas, Power BI e Excel</dd></div></dl><a class="text-link" href={route('projetos')}>Ver competências aplicadas nos projetos</a></section>
+<details class="pending"><summary>Formação e eventos: o que falta atualizar</summary><p>Datas de ingresso e conclusão de DSM, comprovantes dos cursos e participações em eventos ainda não foram informados. Nenhum evento é atribuído sem confirmação.</p></details>
+</>}
+{id==='contato'&&<>
+<p class="lead">O próximo capítulo<br/>pode começar aqui.</p><p>Para conversar sobre desenvolvimento de software, projetos ou oportunidades, escolha o canal que preferir.</p>
+<div class="contact-list"><a href="mailto:pottassiuw@proton.me"><span>E-mail<strong>pottassiuw@proton.me</strong></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z M4 6l8 7 8-7"/></svg></a><a href="https://github.com/Pottassiuw" target="_blank" rel="noopener noreferrer"><span>GitHub<strong>Pottassiuw</strong></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a><a href="https://www.linkedin.com/in/thiago-nascimento-729077292" target="_blank" rel="noopener noreferrer"><span>LinkedIn<strong>Thiago Nascimento</strong></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a></div>
+<p class="small-note">Sem formulário, sem intermediários: os links abrem diretamente cada canal.</p>
+</>}
+</>}
+</Portfolio>

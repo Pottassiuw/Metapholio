@@ -1,0 +1,11 @@
+---
+import Portfolio from '../layouts/Portfolio.astro';
+import {route} from '../data/portfolio';
+---
+<Portfolio home>
+<section class="preview" id="conteudo" aria-label="Seção selecionada">
+<h2 class="preview-title" id="preview-title">Projetos acadêmicos</h2>
+<p class="preview-copy" id="preview-copy">Da API em equipe ao TCC: problemas, soluções e a minha parte em cada entrega.</p>
+<a class="preview-action" id="explore" href={route('projetos')}><span>Explorar projetos</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a>
+</section>
+</Portfolio>

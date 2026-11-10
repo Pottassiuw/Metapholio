@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.*
+!.env.example
+.DS_Store
+*.log
+# Local research, session state and generated visual evidence stay off the public repo.
+.impeccable/*
+!.impeccable/design.json
+CONTINUITY.md
+PRODUCT.md
+docs/content-audit.md
+docs/project-sources.json
+scripts/migrate-prototype.py

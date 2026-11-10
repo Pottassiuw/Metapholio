@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-10T14:02:05.480Z",
+  "title": "Design System: Metapholio",
+  "extensions": {
+    "shadows": [
+      {
+        "name": "reading-sheet",
+        "value": "0 18px 48px rgba(16,28,32,.18)",
+        "purpose": "Folha editorial no desktop."
+      }
+    ],
+    "motion": [
+      {
+        "name": "sheet-reveal",
+        "value": ".4s cubic-bezier(.16,1,.3,1)",
+        "purpose": "Revelação recortada; reduzida a nenhuma animação com prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "mobile",
+        "value": "700px"
+      },
+      {
+        "name": "compact-desktop",
+        "value": "1100px"
+      },
+      {
+        "name": "wide",
+        "value": "1600px"
+      }
+    ],
+    "typographyMeta": {
+      "display": {
+        "displayName": "Bodoni Moda 900",
+        "purpose": "Navegação e títulos."
+      },
+      "body": {
+        "displayName": "Barlow Condensed 500",
+        "purpose": "Texto e comandos."
+      }
+    }
+  },
+  "components": [
+    {
+      "name": "Primary action",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Comando principal de fundo tinta.",
+      "html": "<a class=\"ds-action\" href=\"#project\">Explorar projeto</a>",
+      "css": ".ds-action{display:inline-flex;align-items:center;background:var(--ink,#101c20);color:var(--paper,#f4f3e9);padding:12px 15px;text-transform:uppercase;text-decoration:none;font-family:Barlow,sans-serif}.ds-action:hover{background:var(--rose,#ff3461);color:var(--ink,#101c20)}.ds-action:focus-visible{outline:3px solid var(--ink,#101c20);outline-offset:5px}"
+    },
+    {
+      "name": "Selected navigation",
+      "kind": "nav",
+      "description": "Entrada tipográfica selecionada.",
+      "html": "<a class=\"ds-nav\" href=\"#project\">Projetos</a>",
+      "css": ".ds-nav{display:inline-block;background:var(--rose,#ff3461);color:var(--ink,#101c20);font:900 42px/1.1 Bodoni,Georgia,serif;transform:rotate(-8deg);text-decoration:none;padding:5px 14px}.ds-nav:hover{transform:rotate(-8deg) translateX(8px)}.ds-nav:focus-visible{outline:3px solid var(--ink,#101c20);outline-offset:5px}"
+    },
+    {
+      "name": "Technology tag",
+      "kind": "chip",
+      "description": "Tecnologia factual, não um filtro.",
+      "html": "<span class=\"ds-tech\">TypeScript</span>",
+      "css": ".ds-tech{display:inline-block;background:var(--ink,#101c20);color:var(--paper,#f4f3e9);padding:5px 12px;font:500 17px/1.5 Barlow,sans-serif}"
+    },
+    {
+      "name": "Contribution",
+      "kind": "custom",
+      "description": "Campo de contribuição pessoal.",
+      "html": "<section class=\"ds-contribution\"><h2>Minha contribuição</h2><p>Responsabilidade documentada no projeto.</p></section>",
+      "css": ".ds-contribution{background:var(--aqua,#73c9c5);color:var(--ink,#101c20);padding:25px}.ds-contribution h2{font:900 30px/1.1 Bodoni,Georgia,serif;margin:0 0 14px}.ds-contribution p{font:500 20px/1.55 Barlow,sans-serif;margin:0}"
+    },
+    {
+      "name": "Pending disclosure",
+      "kind": "custom",
+      "description": "Pendências explícitas, sem omissão de informações.",
+      "html": "<details class=\"ds-pending\"><summary>Informações ainda não documentadas</summary><p>Conteúdo aguardando confirmação.</p></details>",
+      "css": ".ds-pending{border-block:1px solid #b4c6be;padding:14px 0;color:var(--ink,#101c20);font:500 17px/1.5 Barlow,sans-serif}.ds-pending summary{cursor:pointer;min-height:32px}.ds-pending summary:focus-visible{outline:3px solid var(--ink,#101c20);outline-offset:4px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Uma trajetória que se explora.",
+    "overview": "O visitante escolhe sua próxima seção como em um menu de RPG. A direção foi fixada pelo usuário em Metaphor: ReFantazio; não reinterpretar o portfólio como uma landing page genérica.",
+    "keyCharacteristics": [
+      "Tipografia serifada monumental e navegação inclinada.",
+      "Retrato real com recorte orgânico e tratamento de impressão.",
+      "Turquesa contínuo, seleção rosa e folhas de leitura em papel.",
+      "Conteúdo factual com autoria e pendências distinguíveis."
+    ],
+    "rules": [
+      {
+        "name": "The Legible Ground Rule",
+        "body": "O retrato e a gravura cedem contraste ao menu. Não colocar texto escuro diretamente sobre regiões escuras da foto.",
+        "section": "colors"
+      }
+    ],
+    "dos": [
+      "Do preservar a hero aprovada e a navegação dramática.",
+      "Do manter retratos reais reconhecíveis e registrar a procedência dos assets.",
+      "Do adaptar a densidade para leitura e respeitar movimento reduzido.",
+      "Do distinguir conteúdo confirmado de informações pendentes."
+    ],
+    "donts": [
+      "Don't reabrir Vintage Ads ou trocar a direção por um template de cards.",
+      "Don't usar máscaras geométricas como substituto do contorno do retrato.",
+      "Don't publicar telas reais, dados internos ou links privados do Helios.",
+      "Don't iniciar som no carregamento ou trocar trilha no hover."
+    ]
+  }
+}

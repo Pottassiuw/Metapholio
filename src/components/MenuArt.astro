@@ -1,0 +1,16 @@
+---
+import {sections,asset,route} from '../data/portfolio';
+const {active='projetos'}=Astro.props;
+---
+
+<img class="art" src={asset("images/melencolia.webp")} alt="">
+<img class="portrait" src={asset("images/thiago-hero-art.webp")} width="1318" height="1318" alt="Retrato de Thiago Nascimento em perfil, com tratamento gráfico em turquesa." fetchpriority="high">
+<div class="wash" aria-hidden="true"></div><div class="cut" aria-hidden="true"></div><div class="red-cut" aria-hidden="true"></div><div class="orbit" aria-hidden="true"></div><div class="monogram" aria-hidden="true">TN</div>
+<header>
+<a class="identity" href={route()} aria-label="Thiago Nascimento — início"><span class="identity-mark" aria-hidden="true">T.</span><div><h1>Thiago Nascimento</h1><p>Desenvolvedor · DSM / FATEC São José dos Campos</p></div></a>
+<div class="edition"><span>Portfólio</span><b>2026</b></div>
+</header>
+<nav class="menu" aria-label="Seções do portfólio">
+{sections.map((s) => <a class:list={["menu-item",{ "is-selected": active === s.id }]} href={route(s.id)} data-section={s.id} aria-current={active === s.id ? 'page' : undefined}><span class="arrow" aria-hidden="true"></span>{s.label}</a>)}
+</nav>
+<div class="vertical-note">Uma trajetória em construção</div>
