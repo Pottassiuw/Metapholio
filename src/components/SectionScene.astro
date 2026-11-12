@@ -2,16 +2,17 @@
 // Salas do museu: cada seção junta um mestre de domínio público a um recorte de Thiago pintado como
 // personagem (o "um personagem, em pedaços" dos submenus de Metaphor). O conteúdo vive dentro da metáfora da obra.
 import {projects,sections,route,asset} from '../data/portfolio';
+import TechMark from './TechMark.astro';
 interface Props{section:(typeof sections)[number]}
 const {section}=Astro.props;
 const list=projects.filter(p=>p.category===section.id);
 type Room={artist:string;work:string;from:string;year:string;source:string;figure:string;figureAlt:string;story:string};
 const rooms:Record<string,Room>={
- projetos:{artist:'Giovanni Battista Piranesi',work:'A ponte levadiça',from:'Carceri d’invenzione',year:'c. 1749–50',source:'The Met, Open Access',figure:'cidade',figureAlt:'Pintura de Thiago Nascimento: uma cidade suspensa nas nuvens dentro da silhueta do seu perfil.',story:'Nas prisões inventadas de Piranesi, cada ponte leva a outra ponte. Assim são os projetos.'},
+ projetos:{artist:'Giovanni Battista Piranesi',work:'A ponte levadiça',from:'Carceri d’invenzione',year:'c. 1749–50',source:'The Met, Open Access',figure:'cidade',figureAlt:'Pintura de Thiago Nascimento: uma cidade suspensa nas nuvens dentro da silhueta do seu perfil.',story:'Nas prisões que Piranesi inventou, uma ponte sempre leva a outra.'},
  experiencia:{artist:'Katsushika Hokusai',work:'A grande onda de Kanagawa',from:'Trinta e seis vistas do monte Fuji',year:'c. 1830–32',source:'The Met, Open Access',figure:'viajante',figureAlt:'Pintura de Thiago Nascimento como um viajante de casaco branco, de costas, sobre ruínas.',story:'Os barcos atravessam a onda; o Fuji espera ao fundo.'},
- laboratorio:{artist:'Ernst Haeckel',work:'Discomedusae',from:'Kunstformen der Natur, prancha 8',year:'1904',source:'Wikimedia Commons, domínio público',figure:'mao',figureAlt:'Pintura de Thiago Nascimento com a mão no queixo, observando.',story:'Haeckel desenhava o que encontrava para entender como funcionava. Experimentos também.'},
+ laboratorio:{artist:'Ernst Haeckel',work:'Discomedusae',from:'Kunstformen der Natur, prancha 8',year:'1904',source:'Wikimedia Commons, domínio público',figure:'mao',figureAlt:'Pintura de Thiago Nascimento com a mão no queixo, observando.',story:'Haeckel desenhava para entender como as coisas funcionavam. Eu faço isso com código.'},
  formacao:{artist:'Andreas Cellarius',work:'Planisphaerium Copernicanum',from:'Harmonia Macrocosmica',year:'1660',source:'Wikimedia Commons, domínio público',figure:'esfera',figureAlt:'Pintura da biblioteca de Thiago Nascimento: uma esfera armilar sobre livros e um gato.',story:'Um mapa do céu com o Sol no centro. No meu, o centro é o curso atual.'},
- contato:{artist:'Gustave Doré',work:'O albatroz',from:'A balada do velho marinheiro',year:'1876',source:'Wikimedia Commons, domínio público',figure:'olhar',figureAlt:'Pintura de Thiago Nascimento olhando para o alto.',story:'O albatroz chega com o vento. A mensagem, por um destes canais.'},
+ contato:{artist:'Gustave Doré',work:'O albatroz',from:'A balada do velho marinheiro',year:'1876',source:'Wikimedia Commons, domínio público',figure:'olhar',figureAlt:'Pintura de Thiago Nascimento olhando para o alto.',story:'O albatroz trazia notícias. Hoje, um e-mail resolve.'},
 };
 const room=rooms[section.id];
 const word=section.label.toUpperCase();
@@ -42,8 +43,8 @@ const orbit=(a:number,r:number)=>`--a:${a}deg;--r:${r}`;
 <span class="plaque-name">{p.name}</span>
 <span class="plaque-sub">{p.subtitle}</span>
 <span class="plaque-lead">{p.lead}</span>
+<span class="plaque-tech">{p.tech.slice(0,5).map(n=><TechMark name={n} size={20}/>)}</span>
 <svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow}/></svg></a></li>)}</ol>
-<p class="room-note">A API é apresentada sem logo da empresa parceira. Weeat é um TCC da ETEC, distinto das APIs da FATEC.</p>
 </div>}
 
 {section.id==='experiencia'&&<div class="sea">
@@ -56,10 +57,9 @@ const orbit=(a:number,r:number)=>`--a:${a}deg;--r:${r}`;
 </div>
 <p class="room-label"><strong>{room.artist}</strong><em>{room.work}</em><span>{room.from} · {room.year}</span><span>{room.source}</span></p>
 <ol class="crests">
-<li class="crest"><span class="crest-mark">PIT</span><h2>Estágio no PIT</h2><p>Em São José dos Campos, o ReObserve nasceu como um projeto de iniciação durante esse estágio.</p><a class="crest-link" href={route('reobserve')}>ReObserve<svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow}/></svg></a></li>
+<li class="crest"><span class="crest-mark">PIT</span><h2>Estágio no PIT</h2><p>Em São José dos Campos. O ReObserve começou aqui, como projeto de iniciação.</p><a class="crest-link" href={route('reobserve')}>ReObserve<svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow}/></svg></a></li>
 <li class="crest is-now"><span class="crest-mark">EDP · atual</span><h2>Estágio na EDP</h2><p>Planejamento de manutenção de redes, com Python, Power BI, Excel, Databricks e ferramentas internas.</p><a class="crest-link" href={route('edp-helios')}>Helios<svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow}/></svg></a></li>
 </ol>
-<p class="room-pending">Próxima onda: cargos formais e períodos completos em atualização</p>
 </div>}
 
 {section.id==='laboratorio'&&<div class="plate">
@@ -67,17 +67,12 @@ const orbit=(a:number,r:number)=>`--a:${a}deg;--r:${r}`;
 <p class="room-label"><strong>{room.artist}</strong><em>{room.work}</em><span>{room.from} · {room.year}</span><span>{room.source}</span></p>
 <ol class="specimens">
 {list.map((p,i)=><li><a class="specimen" href={route(p.id)}><span class="specimen-fig">Fig. {i+1}</span><span class="specimen-name">{p.name}</span><span class="specimen-lead">{p.lead}</span><span class="specimen-tech">{p.tech.join(' · ')}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow}/></svg></a></li>)}
-<li><a class="specimen" href="https://github.com/Pottassiuw" target="_blank" rel="noopener noreferrer"><span class="specimen-fig">Fig. {list.length+1}</span><span class="specimen-name">Outros repositórios</span><span class="specimen-lead">Atividades, configurações e estudos em andamento.</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d={external}/></svg></a></li>
+<li><a class="specimen" href="https://github.com/Pottassiuw" target="_blank" rel="noopener noreferrer"><span class="specimen-fig">Fig. {list.length+1}</span><span class="specimen-name">Outros repositórios</span><span class="specimen-lead">Exercícios, configurações e estudos.</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d={external}/></svg></a></li>
 </ol>
-<p class="room-note">ReObserve e Weeat aparecem em Experiência e em Projetos, de acordo com seu contexto real.</p>
 </div>}
 
 {section.id==='formacao'&&<div class="orrery-room">
-<section class="constellation"><h2>Constelação de competências</h2><dl>
-<div><dt>Interfaces web</dt><dd>React, Next.js e TypeScript</dd></div>
-<div><dt>APIs e dados</dt><dd>Node.js, FastAPI, Prisma, PostgreSQL e MySQL</dd></div>
-<div><dt>Automação e análise</dt><dd>Python, pandas, Power BI e Excel</dd></div></dl>
-<p class="room-note">Idiomas autodeclarados. Competências documentadas nos projetos, sem notas ou porcentagens.</p></section>
+
 <div class="orrery">
 <div class="orrery-disc" aria-hidden="true"><picture><source type="image/avif" srcset={pic('museu/formacao-disco').avif}/><img src={pic('museu/formacao-disco').webp} alt="" width="1100" height="1100"/></picture></div>
 <span class="orbit-ring" style="--r:1" aria-hidden="true"></span><span class="orbit-ring" style="--r:2" aria-hidden="true"></span><span class="orbit-ring" style="--r:3" aria-hidden="true"></span>
@@ -93,7 +88,6 @@ const orbit=(a:number,r:number)=>`--a:${a}deg;--r:${r}`;
 </ul>
 </div>
 <p class="room-label"><strong>{room.artist}</strong><em>{room.work}</em><span>{room.from} · {room.year}</span><span>{room.source}</span></p>
-<p class="room-pending">Datas de DSM, comprovantes e eventos: em atualização</p>
 </div>}
 
 {section.id==='contato'&&<div class="letters">
@@ -109,7 +103,6 @@ const orbit=(a:number,r:number)=>`--a:${a}deg;--r:${r}`;
 <li><a class="message" href="https://www.linkedin.com/in/thiago-nascimento-729077292" target="_blank" rel="noopener noreferrer"><span class="message-name">LinkedIn</span><span class="message-sub">Thiago Nascimento</span></a></li>
 <li><a class="message" href={route()}><span class="message-name">Voltar ao menu</span><span class="message-sub">Recomeçar a visita</span></a></li>
 </ul>
-<p class="room-note">Sem formulário, sem intermediários: os links abrem cada canal diretamente.</p>
 </div>}
 </div>
 </section>

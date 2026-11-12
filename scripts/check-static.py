@@ -27,6 +27,6 @@ class Page(HTMLParser):
         if not target.is_file(): errors.append(f'{self.path}: missing {value}')
 pages = list(root.rglob('*.html'))
 for path in pages: Page(path).feed(path.read_text())
-assert len(pages) == 12, f'Expected 12 routes, got {len(pages)}'
+assert len(pages) == 17, f'Expected 17 routes, got {len(pages)}'
 if errors: raise SystemExit('\n'.join(errors))
 print(f'PASS: {len(pages)} static pages; local href/src targets exist; base {base or "/"}.')

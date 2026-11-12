@@ -1,0 +1,110 @@
+---
+// Página de projeto contada em capítulos, como uma história de Metaphor: um capítulo por vez, a câmera
+// atravessa a obra da sala (Piranesi, Hokusai, Haeckel) e cada troca é uma cena. Sem JavaScript, todos
+// os capítulos aparecem em sequência e a lista vira um sumário com âncoras.
+import {projects,sections,route,asset} from '../data/portfolio';
+import '../styles/story.css';
+import TechMark from './TechMark.astro';
+interface Props{project:(typeof projects)[number];section:(typeof sections)[number]}
+const {project,section}=Astro.props;
+const helios=project.id==='edp-helios';
+const chapters=[
+ {id:'partida',numeral:'I',label:'O ponto de partida',kind:'text',text:project.problem},
+ {id:'resposta',numeral:'II',label:'A resposta',kind:'cast',text:project.solution},
+ {id:'minha-parte',numeral:'III',label:'Minha parte',kind:'text',text:project.role},
+ {id:'arsenal',numeral:'IV',label:'O arsenal',kind:'arsenal'},
+ {id:'onde',numeral:'V',label:'Onde encontrar',kind:'sources'},
+] as const;
+const siblings=projects.filter(p=>p.category===project.category);
+const next=siblings[(siblings.indexOf(project)+1)%siblings.length];
+const word=project.name.toUpperCase();
+const art={avif:asset(`images/museu/${section.id}.avif`),webp:asset(`images/museu/${section.id}.webp`)};
+---
+<section class="scene room story" id="conteudo" data-scene={section.id} data-chapter="0" aria-labelledby="story-title">
+<div class="room-flood" aria-hidden="true"></div>
+<div class="story-art" aria-hidden="true"><picture><source type="image/avif" srcset={art.avif}/><img src={art.webp} alt="" width="1100" height="1400"/></picture></div>
+<span class="story-numeral" aria-hidden="true">I</span>
+
+<h1 class="scene-title" id="story-title"><span class="sr-only">{project.name}</span><span class="scene-word" aria-hidden="true">{[...word].map((l,i)=><span class="scene-letter" style={`--i:${i}`}>{l===' '?'\u00a0':l}</span>)}</span></h1>
+
+<header class="story-head">
+<a class="story-back" href={route(section.id)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg>{section.title}</a>
+<p class="story-sub"><strong>{project.subtitle}</strong><span>{project.context}</span></p>
+</header>
+
+<nav class="story-index" aria-label="Capítulos do projeto">
+<ol>{chapters.map((c,i)=><li><a class:list={['story-tab',{'is-current':i===0}]} href={`#${c.id}`} data-index={i} aria-current={i===0?'step':undefined}><b>{c.numeral}</b><span>{c.label}</span></a></li>)}</ol>
+</nav>
+
+<div class="story-chapters">
+{chapters.map((c,i)=><section class:list={['chapter',{'is-current':i===0}]} id={c.id} data-index={i} aria-labelledby={`${c.id}-t`}>
+<h2 class="chapter-title" id={`${c.id}-t`}>{c.label}</h2>
+{c.kind==='text'&&<p class="chapter-text">{c.text}</p>}
+{c.kind==='cast'&&<>
+<p class="chapter-text">{c.text}</p>
+<div class="chapter-cast">
+{helios&&<p class="cast-label">Esquema ilustrativo, não é a tela real</p>}
+<ol>{project.visual.map((v,k)=><li style={`--k:${k}`}>{v}</li>)}</ol>
+</div>
+</>}
+{c.kind==='arsenal'&&<>
+<ul class="arsenal-tech">{project.tech.map((t,k)=><li style={`--k:${k}`}><TechMark name={t} size={40}/></li>)}</ul>
+<h3 class="arsenal-h">Competências em prática</h3>
+<ul class="arsenal-skills">{project.skills.map(s=><li>{s}</li>)}</ul>
+</>}
+{c.kind==='sources'&&<>
+<p class="chapter-text">{project.note}</p>
+{project.links.length>0&&<ul class="story-links">{project.links.map(l=><li><a href={l.url} target="_blank" rel="noopener noreferrer">{l.label}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a></li>)}</ul>}
+{next.id!==project.id&&<a class="story-next-project" href={route(next.id)}><span>Próxima história</span><b>{next.name}</b></a>}
+</>}
+</section>)}
+</div>
+
+<div class="story-controls" hidden>
+<button class="story-btn" type="button" data-step="-1" aria-label="Capítulo anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg></button>
+<p class="story-count"><b>I</b> / V</p>
+<button class="story-btn" type="button" data-step="1" aria-label="Próximo capítulo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+</div>
+</section>
+
+<script>
+const NUMERALS=['I','II','III','IV','V'];
+let controller:AbortController|null=null;
+function initStory(){
+ controller?.abort();
+ const found=document.querySelector<HTMLElement>('.story');if(!found)return;
+ const story:HTMLElement=found;
+ controller=new AbortController();const {signal}=controller;
+ const tabs=[...story.querySelectorAll<HTMLAnchorElement>('.story-tab')];
+ const chapters=[...story.querySelectorAll<HTMLElement>('.chapter')];
+ const numeral=story.querySelector<HTMLElement>('.story-numeral')!;
+ const count=story.querySelector('.story-count b')!;
+ story.classList.add('is-staged');story.querySelector<HTMLElement>('.story-controls')!.hidden=false;
+ let index=0;
+ function go(next:number,focus=false){
+  next=Math.max(0,Math.min(chapters.length-1,next));if(next===index)return;
+  story.dataset.dir=next>index?'1':'-1';
+  chapters[index].classList.replace('is-current','is-leaving');
+  const leaving=chapters[index];setTimeout(()=>leaving.classList.remove('is-leaving'),450);
+  index=next;story.dataset.chapter=String(index);
+  chapters.forEach((c,k)=>{if(k===index){c.classList.remove('is-leaving');c.classList.add('is-current');}c.inert=k!==index;});
+  tabs.forEach((t,k)=>{t.classList.toggle('is-current',k===index);if(k===index)t.setAttribute('aria-current','step');else t.removeAttribute('aria-current');});
+  numeral.textContent=NUMERALS[index];
+  const replay=(el:HTMLElement,cls:string)=>{el.classList.remove(cls);void el.offsetWidth;el.classList.add(cls);};
+  replay(numeral,'is-turning');replay(story,'is-cut');
+  count.textContent=NUMERALS[index];
+  history.replaceState(null,'',`#${chapters[index].id}`);
+  if(focus)chapters[index].querySelector<HTMLElement>('.chapter-title')?.focus({preventScroll:true});
+ }
+ chapters.forEach((c,k)=>{c.inert=k!==0;c.querySelector<HTMLElement>('.chapter-title')!.tabIndex=-1;});
+ tabs.forEach((t,k)=>t.addEventListener('click',e=>{e.preventDefault();go(k,true);},{signal}));
+ story.querySelectorAll<HTMLButtonElement>('[data-step]').forEach(b=>b.addEventListener('click',()=>go(index+Number(b.dataset.step)),{signal}));
+ document.addEventListener('keydown',e=>{
+  if(/INPUT|TEXTAREA|SELECT/.test((e.target as HTMLElement).tagName))return;
+  if(e.key==='ArrowRight')go(index+1);else if(e.key==='ArrowLeft')go(index-1);
+ },{signal});
+ const start=chapters.findIndex(c=>`#${c.id}`===location.hash);
+ if(start>0){story.classList.add('no-anim');go(start);requestAnimationFrame(()=>story.classList.remove('no-anim'));}
+}
+document.addEventListener('astro:page-load',initStory);
+</script>

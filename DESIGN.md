@@ -58,7 +58,7 @@ O visitante escolhe sua próxima seção como em um menu de RPG. A direção foi
 - O site é um museu: cada seção é uma sala com um mestre de domínio público (Piranesi, Hokusai, Haeckel, Cellarius, Doré) e um recorte de Thiago pintado como personagem.
 - Retratos reais somente na seção Sobre, numa cena em tela cheia com frases em carrossel; o rosto de Thiago não aparece na hero, a pedido dele.
 - Turquesa contínuo, seleção rosa e folhas de leitura em papel.
-- Conteúdo factual com autoria e pendências distinguíveis.
+- Conteúdo factual com autoria; o que ainda não foi documentado fica fora do site, sem etiquetas de pendência.
 
 ## Colors
 
@@ -94,27 +94,35 @@ Cantos retos. Recortes diagonais pertencem ao fundo e à faixa de seleção; nun
 
 ### Navigation
 
-Seis entradas reais: Sobre, Projetos, Experiência, Laboratório, Formação e Contato. A seleção é uma pincelada na cor da seção (máscaras SVG em `src/assets/brush/`, geradas por `scripts/create-brushes.py`), repintada da esquerda para a direita. No hover e no foco (não só no clique), como no vídeo do menu de Metaphor: uma mancha grande da cor da seção é repintada atrás da linha selecionada, as letras da palavra pulam e uma legenda preta curta aparece ao lado ("missões acadêmicas"). Nas páginas internas, passar pelo menu repinta a inundação lateral inteira na cor do item e, ao sair do menu, ela volta à cor da página. Na hero, um dial com o numeral gigante do item selecionado, cortado pela borda direita, gira a cada troca, com o anel na cor da seção. Hover e foco podem atualizar a prévia da hero, nunca abrir projetos nem iniciar áudio.
+Seis entradas reais: Sobre, Projetos, Experiência, Laboratório, Formação e Contato. Como em Metaphor, a inicial de cada comando é maior e afunda na linha (SOBRE com o S grande). A seleção é uma pincelada na cor da seção (máscaras SVG em `src/assets/brush/`, geradas por `scripts/create-brushes.py`), repintada da esquerda para a direita. No hover e no foco (não só no clique), como no vídeo do menu de Metaphor: uma mancha grande da cor da seção é repintada atrás da linha selecionada, as letras da palavra pulam e uma legenda preta curta aparece ao lado ("missões acadêmicas"). Nas páginas internas, passar pelo menu repinta a inundação lateral inteira na cor do item e, ao sair do menu, ela volta à cor da página. Na hero, um dial com o numeral gigante do item selecionado, cortado pela borda direita, gira a cada troca, com o anel na cor da seção. A cada seleção, gotas e riscos de tinta (cor da seção e tinta) saltam da ponta da pincelada, voam ao longo do traço e caem; desligado com movimento reduzido. Hover e foco podem atualizar a prévia da hero, nunca abrir projetos nem iniciar áudio.
 
 ### About scene (Sobre)
 
-A Sobre é uma cena em tela cheia com as três pinturas de Thiago como personagem (perfil olhando para o alto, biblioteca com o gato e a esfera, a cidade dentro da silhueta), uma por slide, em tela cheia; a cunha rosa da seção inunda o canto do menu por cima. Frases em Bodoni em faixas inclinadas (tinta, papel, rosa) nas áreas sem rosto: à direita da cunha no perfil, embaixo à direita na biblioteca e na cidade. Fatos vão na nota; o objetivo profissional é uma etiqueta de pendência; o último slide leva aos projetos.
+A Sobre é uma cena em tela cheia com as três pinturas de Thiago como personagem (perfil olhando para o alto, biblioteca com o gato e a esfera, a cidade dentro da silhueta), uma por slide, em tela cheia; a cunha rosa da seção inunda o canto do menu por cima. Frases em Bodoni em faixas inclinadas (tinta, papel, rosa) nas áreas sem rosto: à direita da cunha no perfil, embaixo à direita na biblioteca e na cidade. Fatos vão na nota; a biblioteca ("como as partes se conectam") leva a constelação de competências, uma linha por grupo; o último slide leva aos projetos.
 
 - **Movimento:** a pintura nova é pintada por uma pincelada que se abre, uma placa branca varre em diagonal (como no menu de Metaphor), as faixas abrem em sequência e a pintura ativa respira (zoom lento de 1,08 para 1). A frase do slide que sai some na hora. Barra rosa = cronômetro de 7 s.
 - **Controle:** anterior, pausar/retomar, próximo e setas ← →; segura com o ponteiro na frase/controles e com o foco; slides ocultos `inert`; movimento reduzido começa pausado; sem JavaScript os slides se empilham.
 - **Celular:** a pintura ocupa a parte de cima e funde em tinta; a frase fica abaixo, nunca sobre o rosto.
 
+### Tech marks (tecnologias)
+
+Logotipos de tecnologia em uma cor (Simple Icons, CC0), papel sobre tinta, com o nome em Barlow; no hover giram de leve e ganham a cor da seção. Tecnologia sem logotipo vira um selo circular com o monograma. Três usos: nas placas de Projetos, só os glifos das cinco principais; no capítulo "O arsenal" de cada história, glifos grandes com o nome; na Sobre, no slide da biblioteca, a constelação de competências põe cada grupo numa linha, com logotipo e nome (só logotipos abaixo de 1500px). Nunca níveis, barras ou porcentagens.
+
 ### Soundtrack (Trilha)
 
-Botão em paralelogramo de tinta com equalizador desenhado: "Ouvir trilha", "Recolher trilha" (rosa, aberto) e "Retomar trilha". Nada do YouTube carrega antes do clique. O painel de papel mostra o player nativo a 356×200 (mínimo do YouTube), o título em português em Bodoni, o original em japonês e um link para o YouTube Music; a borda rosa fica embaixo. Na hero fica no alto à direita, sob o selo, e a nota vertical some enquanto o player está aberto. Nas páginas internas o botão fica embaixo à esquerda, abaixo do rodapé (que sobe para abrir espaço); aberto, o rodapé decorativo some e o menu fixo sobe. No celular, aberto, vira uma doca sólida no pé da tela, com o botão em largura total. O fundo em paralelogramo do botão fica num pseudo-elemento, para o `clip-path` não cortar o anel de foco (contorno tinta com anel papel). Recolher pausa: o player nunca toca escondido. A faixa muda ao trocar de página, nunca no hover.
+Botão em paralelogramo de tinta com equalizador desenhado ("Ouvir trilha", "Pausar trilha", "Retomar trilha"). Nada é baixado antes do clique. Ao tocar, aparece ao lado um mixer de tinta: ícone de volume, controle deslizante (trilha rosa, polegar em paralelogramo de papel) e o nome da faixa em Bodoni. Volume inicial 20%, escolha salva no navegador; liga e pausa com fade. O `<audio>` fica fora do palco trocado pelo ClientRouter, então a música não para entre páginas. Na hero, no alto à direita; nas internas, embaixo à esquerda; no celular, no canto inferior direito.
+
+### Project story (capítulos)
+
+A página de projeto conta a história em cinco capítulos (I O ponto de partida, II A resposta, III Minha parte, IV O arsenal, V Onde encontrar), um por vez sobre a obra da sala. Trocar de capítulo não rola a página: a câmera atravessa a obra (zoom e deslocamento por capítulo), o numeral romano gigante gira no canto, uma placa branca corta a cena e o capítulo abre em faixas. O sumário à esquerda usa a pincelada que ferve no capítulo atual; setas ← → e os botões também avançam, e o endereço guarda o capítulo (#arsenal). O capítulo V leva à próxima história da mesma sala. Sem JavaScript, os capítulos aparecem em sequência e o sumário vira âncoras.
 
 ### Museum rooms (seções)
 
-Cada seção é uma sala de museu: um mestre de domínio público, um recorte de Thiago pintado como personagem e o conteúdo dentro da metáfora da obra. Projetos = Piranesi, *Carceri* (papel creme, gravura em multiply; os projetos são placas penduradas por correntes na ponte); Experiência = Hokusai, *A grande onda* (os estágios são nós hexagonais nas cristas, o Fuji é o "próximo"); Laboratório = Haeckel, *Discomedusae* (prancha emoldurada sobre tinta funda; experimentos como "Fig. n"); Formação = Cellarius, *Planisphaerium* (o disco gira devagar; o curso atual é o Sol; formação, certificações e idiomas em três órbitas; competências como constelação); Contato = Doré, *O albatroz* (gravura invertida, gelo sobre tinta; canais como mensagens em escada; retrato oficial com as duas fotos profissionais).
+Cada seção é uma sala de museu: um mestre de domínio público, um recorte de Thiago pintado como personagem e o conteúdo dentro da metáfora da obra. Projetos = Piranesi, *Carceri* (papel creme, gravura em multiply; os projetos são placas penduradas por correntes na ponte); Experiência = Hokusai, *A grande onda* (os estágios são nós hexagonais nas cristas, o Fuji é o "próximo"); Laboratório = Haeckel, *Discomedusae* (prancha emoldurada sobre tinta funda; experimentos como "Fig. n"); Formação = Cellarius, *Planisphaerium* (o disco gira devagar; o curso atual é o Sol; formação, certificações e idiomas em três órbitas); Contato = Doré, *O albatroz* (gravura invertida, gelo sobre tinta; canais como mensagens em escada; retrato oficial com as duas fotos profissionais).
 
-A cor da seção inunda o canto do menu (cunha com borda de pincelada), como no menu de Metaphor; o item atual do menu vira pincelada tinta com texto papel. Título gigante cortado pela borda. Etiqueta de museu em papel (artista, obra, origem, ano, acervo). Arte e personagem entram pintados (máscara de pincelada que se abre e desfoque que assenta); placas balançam nas correntes; nós da onda surgem em sequência. Texto sobre a arte sempre com fundo de tinta. No celular, a sala vira sequência sobre o seu próprio chão: o bloco do menu na cor da seção, depois título, personagem, frase, obra com a etiqueta de museu logo abaixo, e o conteúdo. A etiqueta sempre acompanha a obra-mestra, nunca a pintura de Thiago. Sem rótulo-pergunta acima da frase: a frase em Bodoni abre a sala. Acervo e recortes gerados por `scripts/create-museum-art.sh`, com procedência nos sidecars.
+A cor da seção inunda o canto do menu e se dissolve na sala num degradê, como o véu turquesa da hero sobre o Dürer (no celular, o bloco do menu funde no chão da sala); sem cauda de pincelada sólida na borda; o item atual do menu vira pincelada tinta com texto papel. Título gigante cortado pela borda. Etiqueta de museu em papel (artista, obra, origem, ano, acervo). Arte e personagem entram pintados (máscara de pincelada que se abre e desfoque que assenta); placas balançam nas correntes; nós da onda surgem em sequência. Texto sobre a arte sempre com fundo de tinta. No celular, a sala vira sequência sobre o seu próprio chão: o bloco do menu na cor da seção, depois título, personagem, frase, obra com a etiqueta de museu logo abaixo, e o conteúdo. A etiqueta sempre acompanha a obra-mestra, nunca a pintura de Thiago. Sem rótulo-pergunta acima da frase: a frase em Bodoni abre a sala. Acervo e recortes gerados por `scripts/create-museum-art.sh`, com procedência nos sidecars.
 
-### Project detail (Equipment)
+### Project detail (substituído)
 
 As páginas de projeto usam o mesmo chão de cena e o título em uma linha cortado pela borda; a lista de leituras (problema, solução, contribuição, tecnologias, competências, fontes) faz o papel da lista de equipamentos, com a leitura ativa marcada pela pincelada. Helios mostra só um esquema editorial rotulado. Sem estrelas ou porcentagens de habilidade inventadas.
 
@@ -129,7 +137,7 @@ Comandos de fundo tinta e texto papel; hover rosa com texto tinta. Foco visível
 - **Do** manter o retrato real reconhecível (pinturas em todas as salas, fotos profissionais só na Sobre e no Contato) e registrar a procedência dos assets.
 - **Do** trocar só `#menu` na navegação, para não interromper a trilha.
 - **Do** adaptar a densidade para leitura e respeitar movimento reduzido.
-- **Do** distinguir conteúdo confirmado de informações pendentes.
+- **Do** escrever como Thiago fala, em primeira pessoa e frases curtas; o que ainda não existe fica fora do site em vez de virar aviso.
 
 ### Don't:
 - **Don't** reabrir Vintage Ads ou trocar a direção por um template de cards.

@@ -9,6 +9,7 @@ import '../styles/trilha.css';
 import '../styles/about.css';
 import '../styles/scenes.css';
 import '../styles/rooms.css';
+import '../styles/tech.css';
 const {title='Thiago Nascimento — Metapholio',description='Portfólio de Thiago Nascimento: desenvolvimento de software, projetos acadêmicos e experiência profissional.',active='projetos',home=false,routeKey='menu',immersive=false,scene=false}=Astro.props;
 const current=sections.find(s=>s.id===active)??sections[1];
 ---
@@ -30,7 +31,7 @@ const current=sections.find(s=>s.id===active)??sections[1];
 <footer class="sheet-footer"><a href={route('contato')}>Vamos conversar</a><a href={route()}>Menu principal</a></footer>
 </article>}
 <footer class="footer">
-<div><p>O próximo capítulo começa com uma ideia.</p><div class="social"><a href="https://github.com/Pottassiuw" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://www.linkedin.com/in/thiago-nascimento-729077292" target="_blank" rel="noopener noreferrer">LinkedIn</a></div><p class="caption">Gravura: A. Dürer, Melencolia I (1514) · The Met, domínio público.</p></div>
+<div><div class="social"><a href="https://github.com/Pottassiuw" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://www.linkedin.com/in/thiago-nascimento-729077292" target="_blank" rel="noopener noreferrer">LinkedIn</a></div><p class="caption">Gravura: A. Dürer, Melencolia I (1514) · The Met, domínio público.</p></div>
 <div class="controls"><span class="control"><span class="key-arrows"><kbd>↑</kbd><kbd>↓</kbd></span> Navegar</span><span class="control"><kbd>Enter</kbd> Abrir</span><span class="control"><kbd>Esc</kbd> Menu</span></div>
 </footer>
 </main>
@@ -89,6 +90,22 @@ function init(){
  const floods=[...document.querySelectorAll<HTMLElement>('.room-flood')];
  const replay=(el:Element|null,cls:string)=>{if(!el)return;el.classList.remove(cls);void (el as HTMLElement).offsetWidth;el.classList.add(cls);};
  let painted:HTMLAnchorElement|null=null;
+ const still=matchMedia('(prefers-reduced-motion: reduce)');
+ // Respingos de tinta da ponta da pincelada: gotas e riscos na cor da seção e em tinta, com um arco de queda.
+ function burst(link:HTMLAnchorElement,accent:string){
+  const menu=link.parentElement;if(!menu||still.matches)return;
+  const x0=link.offsetLeft+link.offsetWidth*.92,y0=link.offsetTop+link.offsetHeight*.52,unit=link.offsetHeight/100;
+  for(let i=0;i<24;i++){
+   const streak=i%5===0,el=document.createElement('span');
+   const size=(streak?4:6+Math.random()*20)*unit,len=streak?(40+Math.random()*80)*unit:size*(.8+Math.random()*.6);
+   el.className=streak?'fleck is-streak':'fleck';el.setAttribute('aria-hidden','true');
+   el.style.cssText=`width:${len}px;height:${size}px;--c:${Math.random()<.72?accent:'#101c20'}`;
+   menu.appendChild(el);
+   const dx=(60+Math.random()*420)*unit,dy=(Math.random()-.62)*170*unit,fall=(30+Math.random()*70)*unit,spin=(Math.random()-.5)*160;
+   const from=`translate(${x0}px,${y0-size/2}px) rotate(${streak?-4:0}deg) scale(.2)`;
+   el.animate([{transform:from,opacity:1},{transform:`translate(${x0+dx*.7}px,${y0+dy}px) rotate(${spin*.6}deg) scale(1)`,opacity:1,offset:.45},{transform:`translate(${x0+dx}px,${y0+dy+fall}px) rotate(${spin}deg) scale(.35)`,opacity:0}],{duration:620+Math.random()*420,delay:Math.random()*90,easing:'cubic-bezier(.16,1,.3,1)',fill:'backwards'}).finished.then(()=>el.remove(),()=>el.remove());
+  }
+ }
  function paint(link:HTMLAnchorElement){
   if(painted===link)return;painted=link;
   const s=sections.find(s=>s.id===link.dataset.section)!;
@@ -97,6 +114,7 @@ function init(){
   floods.forEach(f=>replay(f,'is-painting'));
   links.forEach(el=>el.classList.toggle('is-painted',el===link));
   replay(link,'is-pop');
+  burst(link,s.accent);
  }
  function select(link:HTMLAnchorElement){
   paint(link);
@@ -108,7 +126,8 @@ function init(){
  }
  const current=links.find(l=>l.classList.contains('is-selected'));
  if(current){painted=null;paint(current);}
- links.forEach(link=>{link.addEventListener('focus',()=>select(link),{signal});link.addEventListener('pointerenter',()=>{if(matchMedia('(hover:hover)').matches)select(link)},{signal});});
+ links.forEach(link=>{link.addEventListener('focus',()=>select(link),{signal});// Pelo tipo do ponteiro, não por (hover:hover): o Firefox no Linux com tela de toque responde 'none' mesmo com mouse.
+  link.addEventListener('pointerenter',e=>{if(e.pointerType!=='touch')select(link)},{signal});});
  // Nas internas, ao sair do menu a pintura volta para a seção da página.
  const menu=document.querySelector<HTMLElement>('.menu');
  if(!home&&menu&&current){

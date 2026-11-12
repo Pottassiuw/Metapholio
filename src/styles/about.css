@@ -28,7 +28,6 @@
 .about-phrase span:last-child{margin-left:1.1em;background:var(--rose);color:var(--ink)}
 .about-note{margin:22px 1.2em 0 0;transform-origin:100% 0}
 .about-note{margin:22px 0 0 2.4em;max-width:40ch;padding:9px 14px;font-size:18px;line-height:1.4;background:var(--ink);color:var(--paper);transform:rotate(-6deg);transform-origin:0 0}
-.about-pending{margin:10px 0 0 2.4em;padding:5px 12px;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);background:var(--paper);border:1px dashed var(--ink);transform:rotate(-6deg);transform-origin:0 0}
 .immersive>.footer .caption{display:none}
 .about-links{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0 0 2.4em;padding:0;list-style:none;transform:rotate(-6deg);transform-origin:0 0}
 .about-links a{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:8px 14px;background:var(--paper);color:var(--ink);font-size:18px;text-decoration:none}
@@ -64,7 +63,7 @@
 .is-carousel .about-slide.is-active .about-phrase span:nth-child(1){animation-delay:.35s}
 .is-carousel .about-slide.is-active .about-phrase span:nth-child(2){animation-delay:.43s}
 .is-carousel .about-slide.is-active .about-phrase span:nth-child(3){animation-delay:.51s}
-.is-carousel .about-slide.is-active :is(.about-note,.about-links,.about-pending){animation:about-line-in .5s .6s cubic-bezier(.16,1,.3,1) both}
+.is-carousel .about-slide.is-active :is(.about-note,.about-links,.constellation){animation:about-line-in .5s .6s cubic-bezier(.16,1,.3,1) both}
 @keyframes about-paint{from{-webkit-mask-size:6% 30%;mask-size:6% 30%;filter:blur(8px) saturate(.4)}to{-webkit-mask-size:520% 300%;mask-size:520% 300%;filter:none}}
 @keyframes about-breathe{from{transform:scale(1.08)}to{transform:scale(1)}}
 @keyframes about-plate{from{translate:0 0;opacity:1}85%{opacity:1}to{translate:calc(var(--d)*900%) 0;opacity:0}}
@@ -90,18 +89,16 @@
 .about-copy{left:5vw;right:5vw;bottom:13svh;width:auto;max-width:none}
 .about-phrase span{font-size:clamp(25px,7.6vw,38px)}
 .about-note{font-size:16px;margin-left:1.2em}
-.about-pending{margin-left:1.2em;font-size:13px}
 .about-links{margin-left:1.2em}
 .about-links a{font-size:16px;padding:6px 12px}
 .about-controls{left:5vw;right:auto;bottom:72px;gap:6px}
 .about-copy{bottom:calc(72px + 9svh)}
-body.trilha-aberta .about-progress span{animation-play-state:paused}
 .about-btn{width:46px}
 .about-count{margin:0 0 0 8px;font-size:22px;white-space:nowrap}
 .about-progress{position:absolute;left:0;right:0;top:-12px;width:auto}
 }
 @media(prefers-reduced-motion:reduce){
-.is-carousel .about-slide :is(.about-art,.about-art img,.about-phrase span,.about-note,.about-links,.about-pending),.is-carousel .about-slide.is-leaving,.is-carousel .about-slide.is-active::after{animation:none}
+.is-carousel .about-slide :is(.about-art,.about-art img,.about-phrase span,.about-note,.about-links,.constellation),.is-carousel .about-slide.is-leaving,.is-carousel .about-slide.is-active::after{animation:none}
 .is-carousel .about-slide.is-active::after{display:none}
 .is-carousel .about-slide.is-leaving{visibility:hidden}
 }
@@ -114,5 +111,3 @@ body.trilha-aberta .about-progress span{animation-play-state:paused}
 
 /* A frase do slide que sai some na hora; só a pintura dele participa da troca. */
 .is-carousel .about-slide.is-leaving .about-copy{visibility:hidden}
-/* Na Sobre a inundação é só a cunha: a cauda de pincelada cobriria o começo da frase. */
-.about-scene>.room-flood::after{display:none}

@@ -1,7 +1,7 @@
 ---
 import Portfolio from '../layouts/Portfolio.astro';
 import AboutScene from '../components/AboutScene.astro';
-import ProjectEquipment from '../components/ProjectEquipment.astro';
+import ProjectStory from '../components/ProjectStory.astro';
 import SectionScene from '../components/SectionScene.astro';
 import {sections,projects} from '../data/portfolio';
 export function getStaticPaths(){return [...sections.map(s=>({params:{screen:s.id}})),...projects.map(p=>({params:{screen:p.id}}))]}
@@ -12,7 +12,7 @@ const title=project?.name??section.title;
 ---
 <Portfolio title={`${title} — Thiago Nascimento`} active={section.id} routeKey={id} immersive={id==='sobre'} scene={id!=='sobre'} description={project?.lead??section.copy}>
 {project ? <>
-<ProjectEquipment project={project} section={section}/>
+<ProjectStory project={project} section={section}/>
 </> : <>
 {id==='sobre'?<AboutScene/>:<SectionScene section={section}/>}
 </>}

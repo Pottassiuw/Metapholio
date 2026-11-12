@@ -1,88 +1,60 @@
 ---
-// Trilha sonora opt-in. Fica fora de #menu para sobreviver às trocas de página do ClientRouter
-// (o swap próprio do layout substitui só #menu), então o player do YouTube não recarrega.
+// Trilha sonora: "Call of Magic" (Metaphor: ReFantazio, ATLUS), tocada por um <audio> próprio.
+// Fica fora de #menu, então o swap do ClientRouter não a recria: a música continua entre as páginas.
+import {asset} from '../data/portfolio';
 ---
 <aside class="trilha" id="trilha" aria-label="Trilha sonora" data-state="off" hidden>
-<button class="trilha-toggle" type="button" aria-controls="trilha-painel" aria-expanded="false">
+<audio class="trilha-audio" src={asset('audio/call-of-magic.mp3')} preload="none" loop></audio>
+<button class="trilha-toggle" type="button" aria-pressed="false">
 <svg class="trilha-eq" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V12"/><path d="M10 20V6"/><path d="M15 20V10"/><path d="M20 20V4"/></svg>
 <span class="trilha-label">Ouvir trilha</span>
 </button>
-<div class="trilha-painel" id="trilha-painel" hidden>
-<div class="trilha-tela"><div id="trilha-player"></div></div>
-<p class="trilha-erro" role="status" hidden>Esta faixa não pode ser reproduzida aqui.</p>
-<div class="trilha-faixa"><p><strong class="trilha-titulo"></strong><span class="trilha-original"><span lang="ja"></span> · Metaphor: ReFantazio</span></p><a class="trilha-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir a faixa no YouTube Music"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a></div>
+<div class="trilha-mixer" hidden>
+<label class="trilha-volume"><span class="sr-only">Volume da trilha</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path class="trilha-wave" d="M16 9a4 4 0 0 1 0 6"/></svg><input type="range" min="0" max="100" step="1" value="20"/></label>
+<span class="trilha-nome">Call of Magic</span>
 </div>
 </aside>
 
 <script>
-import {tracks,sectionTracks,projectTracks} from '../data/soundtrack.json';
-
-type Track={videoId:string;originalTitle:string;displayTitle:string};
-type Player={loadVideoById(id:string):void;playVideo():void;pauseVideo():void;seekTo(s:number,allow:boolean):void;setVolume(v:number):void};
-declare global{interface Window{YT?:{Player:new(el:HTMLElement|string,opts:object)=>Player;PlayerState:{ENDED:number}};onYouTubeIframeAPIReady?:()=>void}}
-
+// Volume inicial baixo (20%); a escolha do visitante fica salva neste navegador.
+const KEY='metapholio:volume';
 const root=document.getElementById('trilha')!;
+const audio=root.querySelector<HTMLAudioElement>('.trilha-audio')!;
 const toggle=root.querySelector<HTMLButtonElement>('.trilha-toggle')!;
 const label=root.querySelector<HTMLElement>('.trilha-label')!;
-const panel=root.querySelector<HTMLElement>('.trilha-painel')!;
-const error=root.querySelector<HTMLElement>('.trilha-erro')!;
-const link=root.querySelector<HTMLAnchorElement>('.trilha-link')!;
+const mixer=root.querySelector<HTMLElement>('.trilha-mixer')!;
+const range=root.querySelector<HTMLInputElement>('.trilha-volume input')!;
 root.hidden=false;
 
-let player:Player|null=null;
-let loaded='';// vídeo carregado no player, não necessariamente o da rota atual
-let state:'off'|'open'|'paused'='off';
+let target=0.2;
+try{const saved=localStorage.getItem(KEY);if(saved!==null&&!Number.isNaN(+saved))target=Math.min(1,Math.max(0,+saved));}catch{}
+range.value=String(Math.round(target*100));
+const paint=()=>root.style.setProperty('--vol',range.value+'%');
+paint();
 
-function trackFor(route:string):Track{
- const key=(projectTracks as Record<string,string>)[route]??(sectionTracks as Record<string,string>)[route]??sectionTracks.menu;
- return (tracks as Record<string,Track>)[key];
+let fade=0;
+function fadeTo(to:number,ms:number,done?:()=>void){
+ cancelAnimationFrame(fade);
+ const from=audio.volume,start=performance.now();
+ // O carimbo do primeiro quadro pode ser anterior a performance.now(): k e o volume ficam presos em [0,1].
+ const step=(now:number)=>{const k=Math.min(1,Math.max(0,(now-start)/ms));audio.volume=Math.min(1,Math.max(0,from+(to-from)*k));if(k<1)fade=requestAnimationFrame(step);else done?.();};
+ fade=requestAnimationFrame(step);
 }
-function show(track:Track){
- root.querySelector('.trilha-titulo')!.textContent=track.displayTitle;
- root.querySelector('.trilha-original [lang]')!.textContent=track.originalTitle;
- link.href=`https://music.youtube.com/watch?v=${track.videoId}`;
+function setState(state:'off'|'on'|'paused'){
+ root.dataset.state=state;
+ toggle.setAttribute('aria-pressed',String(state==='on'));
+ label.textContent=state==='on'?'Pausar trilha':state==='paused'?'Retomar trilha':'Ouvir trilha';
+ mixer.hidden=state==='off';
 }
-function setState(next:typeof state){
- state=next;root.dataset.state=next;
- panel.hidden=next!=='open';
- toggle.setAttribute('aria-expanded',String(next==='open'));
- label.textContent=next==='open'?'Recolher trilha':next==='paused'?'Retomar trilha':'Ouvir trilha';
- // No <body>, que o swap do layout não troca; atributos do <html> vêm da página nova.
- document.body.classList.toggle('trilha-aberta',next==='open');
-}
-function loadApi():Promise<void>{
- if(window.YT?.Player)return Promise.resolve();
- return new Promise(resolve=>{
-  window.onYouTubeIframeAPIReady=()=>resolve();
-  const s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';s.async=true;document.head.append(s);
- });
-}
-async function start(){
- const track=trackFor(document.documentElement.dataset.route??'menu');
- show(track);setState('open');
- if(player){if(loaded!==track.videoId){loaded=track.videoId;error.hidden=true;player.loadVideoById(loaded)}else player.playVideo();return}
- await loadApi();
- loaded=track.videoId;
- player=new window.YT!.Player('trilha-player',{
-  host:'https://www.youtube-nocookie.com',videoId:loaded,width:'100%',height:'100%',
-  playerVars:{autoplay:1,playsinline:1,rel:0,origin:location.origin},
-  events:{
-   onReady:(e:{target:Player})=>{e.target.setVolume(60);e.target.playVideo()},
-   onStateChange:(e:{data:number;target:Player})=>{if(e.data===window.YT!.PlayerState.ENDED){e.target.seekTo(0,true);e.target.playVideo()}},
-   onError:()=>{error.hidden=false},
-  },
- });
-}
-toggle.addEventListener('click',()=>{
- if(state==='open'){player?.pauseVideo();setState('paused');return}
- start();
+toggle.addEventListener('click',async()=>{
+ if(root.dataset.state==='on'){fadeTo(0,400,()=>audio.pause());setState('paused');return;}
+ audio.volume=0;
+ try{await audio.play();}catch{setState('off');return;}
+ fadeTo(target,1200);setState('on');
 });
-// A faixa muda quando a página muda (abrir um projeto, voltar ao menu), nunca no hover.
-document.addEventListener('astro:page-load',()=>{
- if(!player||state==='off')return;
- const track=trackFor(document.documentElement.dataset.route??'menu');
- show(track);
- if(state!=='open'||track.videoId===loaded)return;
- loaded=track.videoId;error.hidden=true;player.loadVideoById(loaded);
+range.addEventListener('input',()=>{
+ target=+range.value/100;paint();
+ cancelAnimationFrame(fade);if(!audio.paused)audio.volume=target;
+ try{localStorage.setItem(KEY,String(target));}catch{}
 });
 </script>

@@ -2,6 +2,8 @@
 // Seção Sobre como cena: o fundo é a arte do painel de personagem e um carrossel alterna as fotos
 // de Thiago com frases curtas. Sem JavaScript, os slides aparecem empilhados.
 import {asset,route} from '../data/portfolio';
+import {constellation} from '../data/tech';
+import TechMark from './TechMark.astro';
 // Três pinturas de Thiago como personagem, uma por slide, em tela cheia (1672×941).
 const art={
  perfil:{alt:'Pintura de Thiago Nascimento de perfil, olhando para o alto, entre nuvens, anéis de bússola e uma pincelada vermelha.'},
@@ -9,9 +11,9 @@ const art={
  cidade:{alt:'Pintura do perfil de Thiago Nascimento contendo uma cidade suspensa nas nuvens; abaixo, ele de casaco branco sobre ruínas.'},
 } as const;
 const slides=[
- {art:'perfil',lines:['Entre aprender','e construir.'],note:'Thiago Nascimento · Desenvolvimento de Software Multiplataforma, FATEC São José dos Campos.',pending:'Objetivo profissional: em atualização'},
- {art:'biblioteca',lines:['Gosto de entender','como as partes','se conectam.'],note:'Interesses: arquitetura de sistemas e segurança da informação.'},
- {art:'cidade',lines:['Uma trajetória','em construção.'],note:'Do TCC na ETEC ao estágio na EDP.',links:[['Weeat','weeat'],['ReObserve','reobserve'],['Helios','edp-helios'],['API Altave','api-altave']]},
+ {art:'perfil',lines:['Entre aprender','e construir.'],note:'Sou Thiago Nascimento e estudo Desenvolvimento de Software Multiplataforma na FATEC São José dos Campos.'},
+ {art:'biblioteca',lines:['Gosto de entender','como as partes','se conectam.'],note:'Me interessam arquitetura de sistemas e segurança da informação.',stars:true},
+ {art:'cidade',lines:['Do TCC na ETEC','ao estágio','na EDP.'],note:'Alguns projetos do caminho:',links:[['Weeat','weeat'],['ReObserve','reobserve'],['Helios','edp-helios'],['API Altave','api-altave']]},
 ] as const;
 ---
 <section class="about-scene" id="conteudo" aria-labelledby="about-title">
@@ -23,7 +25,7 @@ const slides=[
 <div class="about-copy">
 <p class="about-phrase">{s.lines.map(l=><span>{l}</span>)}</p>
 {s.note&&<p class="about-note">{s.note}</p>}
-{'pending' in s&&<p class="about-pending">{s.pending}</p>}
+{'stars' in s&&<section class="constellation" aria-label="Tecnologias">{constellation.map(g=><div class="stars"><h3>{g.group}</h3><ul>{g.items.map((n,k)=><li style={`--k:${k}`}><TechMark name={n} size={24}/></li>)}</ul></div>)}</section>}
 {'links' in s&&<ul class="about-links">{s.links.map(([label,id])=><li><a href={route(id)}>{label}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a></li>)}</ul>}
 </div>
 </article>)}
@@ -55,7 +57,7 @@ function initAbout(){
   const prev=index;index=(next+slides.length)%slides.length;
   scene!.dataset.dir=String(dir);
   slides.forEach((s,k)=>{s.classList.toggle('is-active',k===index);s.classList.toggle('is-leaving',k===prev&&prev!==index);s.inert=k!==index;});
-  count.textContent=String(index+1);
+  count.textContent=String(index+1);scene!.dataset.index=String(index);
   // Reinicia a barra: é a animação dela que avança o carrossel.
   bar.style.animation='none';void bar.offsetWidth;bar.style.animation='';
  }

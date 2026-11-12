@@ -6,7 +6,7 @@ Portfólio acadêmico e profissional de **Thiago Nascimento**, construído com *
 
 **Repositório:** https://github.com/Pottassiuw/Metapholio
 
-> O site é totalmente estático. Não precisa de banco de dados, backend, chaves de API ou arquivo `.env`. Alguns conteúdos ainda aguardam confirmação; estão identificados nas próprias páginas. A trilha sonora é opcional: nada do YouTube carrega até o visitante clicar em "Ouvir trilha".
+> O site é totalmente estático. Não precisa de banco de dados, backend, chaves de API ou arquivo `.env`. A trilha sonora é opcional: nada do YouTube carrega até o visitante clicar em "Ouvir trilha".
 
 ## Requisitos
 
@@ -49,7 +49,7 @@ Não abra os arquivos `.astro` diretamente no navegador; use o servidor de desen
 | `bun run check` | Verifica Astro e TypeScript. |
 | `bun run build` | Gera o site estático em `dist/`. |
 | `bun run preview` | Serve o build usando o preview do Astro. |
-| `bun run check:static` | Confere as 12 rotas e os destinos locais de links/assets; requer Python 3. |
+| `bun run check:static` | Confere as 17 rotas e os destinos locais de links/assets; requer Python 3. |
 | `bun run preview:static` | Serve `dist/` em `http://127.0.0.1:4323/`, com Bun. |
 
 ### Testar a versão compilada
@@ -79,6 +79,8 @@ Use o endereço exibido pelo terminal. Para apenas compilar e visualizar, o pass
 | `/edp-helios/` | Atuação no projeto profissional privado. |
 | `/reobserve/` | Projeto de iniciação no estágio PIT. |
 | `/boys-chat/` | Aplicação pessoal de mensagens. |
+| `/we-logic/`, `/tscrum/`, `/petshop/` | Projetos acadêmicos (APIs de 2026-1 e 2025-2, avaliação de LP). |
+| `/metapholio/`, `/dotfiles/` | Experimentos pessoais: este site e o ambiente Linux. |
 
 Na publicação, as rotas recebem o prefixo `/Metapholio`. O menu aceita cliques e links nativos; as setas movem o foco, Enter abre o link focado e Escape retorna ao menu. Com JavaScript, a navegação troca só o palco da página (Astro `ClientRouter` com swap próprio), o que mantém a trilha tocando entre telas. Sem JavaScript, as rotas continuam acessíveis pelos links, sem trilha. A interface respeita `prefers-reduced-motion`.
 
@@ -89,7 +91,8 @@ Na publicação, as rotas recebem o prefixo `/Metapholio`. O menu aceita cliques
 src/
   assets/fonts/              # Fontes locais empacotadas pelo Astro
   components/MenuArt.astro   # Identidade, arte e navegação
-  components/Trilha.astro    # Trilha sonora opt-in (player do YouTube)
+  components/Trilha.astro    # Trilha sonora opt-in com volume (áudio local)
+  components/ProjectStory.astro # Página de projeto em capítulos
   components/AboutScene.astro # Cena da seção Sobre (carrossel de retratos e frases)
   data/portfolio.ts          # Textos, categorias, tecnologias e links
   data/soundtrack.json       # Faixas por seção e por projeto
@@ -120,7 +123,7 @@ Pesquisas internas, estado de sessões, capturas locais e protótipos de decisã
 - **Sobre:** slides (pintura, frase e nota) no topo de `src/components/AboutScene.astro`; estilos em `src/styles/about.css`. As pinturas são exportadas por `sh scripts/create-museum-art.sh`.
 - **Salas do museu:** `src/components/SectionScene.astro` e `src/styles/rooms.css`; acervo e recortes por `sh scripts/create-museum-art.sh` (baixa os originais do Met e da Wikimedia; as fontes de Thiago ficam com o autor).
 - **Gravura do menu:** `sh scripts/create-engraving-art.sh` baixa o original do Met e recria o recorte (requer ImageMagick 7 com AVIF).
-- **Trilha:** faixas por rota em `src/data/soundtrack.json` (`sectionTracks` e `projectTracks`); comportamento em `src/components/Trilha.astro`.
+- **Trilha:** arquivo em `public/audio/call-of-magic.mp3`; comportamento em `src/components/Trilha.astro` (começa desligada, volume inicial 20%, preferência salva no navegador).
 
 ## Publicar no GitHub Pages
 
@@ -158,4 +161,4 @@ Veja [`docs/VALIDATION.md`](docs/VALIDATION.md) para verificações realizadas e
 - Helios não expõe código privado, dados operacionais ou telas reais. O esquema editorial não é uma screenshot.
 - Datas/cargos, alguns relatos de competências e comprovantes ainda aguardam atualização.
 - Demos externas não foram executadas nem são anunciadas como funcionais.
-- A trilha depende da disponibilidade de cada vídeo no YouTube; se um vídeo não puder ser incorporado, o painel avisa e oferece o link para o YouTube Music.
+- A trilha é "Call of Magic" (ATLUS, Metaphor: ReFantazio), servida de `public/audio/`. É obra protegida por direitos autorais, publicada por decisão do autor do portfólio; pode ser removida a pedido do titular.

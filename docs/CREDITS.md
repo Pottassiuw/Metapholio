@@ -30,6 +30,10 @@ Assets em `public/images/museu/`, gerados por `scripts/create-museum-art.sh` (re
 
 As pinturas em que Thiago aparece como personagem (usadas inteiras na Sobre e em recortes nas salas) e as duas fotos profissionais foram fornecidas por ele. Os recortes usados nas salas ficam em `public/images/thiago/`, gerados pelo mesmo script, só com recorte e redimensionamento. Os arquivos-fonte ficam com o autor e não são versionados.
 
+## Logotipos das tecnologias
+
+Glifos do [Simple Icons](https://simpleicons.org) (pacote `simple-icons`, licença CC0), em uma cor. As marcas pertencem aos seus titulares. Tecnologias sem logotipo no Simple Icons, ou cujo logotipo foi retirado a pedido do titular (Power BI, Excel), aparecem como selo com o monograma, sem logotipo inventado.
+
 ## Tipografia
 
 - **Bodoni Moda 900**, distribuída pelo Google Fonts sob SIL Open Font License.
@@ -41,7 +45,7 @@ As fontes são servidas localmente. As licenças completas acompanham a distribu
 
 *Metaphor: ReFantazio* é uma referência visual do menu; marcas e direitos pertencem aos respectivos titulares. O portfólio não é produto oficial nem afiliado à Atlus/Sega. Nenhuma imagem do jogo é incluída no site.
 
-`src/data/soundtrack.json` registra links e metadados da seleção musical; o repositório não contém áudio. A trilha toca pelo player incorporado do YouTube (`youtube-nocookie.com`), carregado só depois que o visitante clica em "Ouvir trilha", com o player nativo sempre visível enquanto toca. Os vídeos e as gravações pertencem aos seus titulares; a faixa da hero foi escolhida por Thiago e as demais por associação temática.
+A trilha é **Call of Magic**, de *Metaphor: ReFantazio* (ATLUS), em `public/audio/call-of-magic.mp3`. A faixa é protegida por direitos autorais e não é licenciada para este site: foi incluída por decisão de Thiago e será removida se o titular pedir. Toca só depois que o visitante clica em "Ouvir trilha".
 
 ## Código
 
