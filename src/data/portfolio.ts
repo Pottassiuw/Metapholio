@@ -1,10 +1,12 @@
+// accent: cor da seção (pincel de seleção e campos de cor, como os submenus de Metaphor).
+// fragment: objeto recortado da gravura de Dürer que faz o papel de arte da seção (public/images/frag-*.avif).
 export const sections = [
-  {id:'sobre',label:'Sobre',title:'Sobre mim',copy:'Desenvolvimento de software, aprendizado contínuo e uma trajetória em construção.'},
-  {id:'projetos',label:'Projetos',title:'Projetos acadêmicos',copy:'Da API em equipe ao TCC: problemas, soluções e a minha parte em cada entrega.'},
-  {id:'experiencia',label:'Experiência',title:'Experiência profissional',copy:'EDP e PIT: desenvolvimento aplicado ao contexto profissional.'},
-  {id:'laboratorio',label:'Laboratório',title:'Laboratório pessoal',copy:'Experimentos em código, comunicação e aplicações em tempo real.'},
-  {id:'formacao',label:'Formação',title:'Formação e competências',copy:'DSM na FATEC, formação técnica, certificações e idiomas.'},
-  {id:'contato',label:'Contato',title:'Vamos conversar?',copy:'Um projeto, uma oportunidade ou uma boa ideia. Encontre-me por aqui.'},
+  {id:'sobre',hint:'quem eu sou',label:'Sobre',accent:'#ff3461',onAccent:'#101c20',fragment:'',title:'Sobre mim',copy:'Desenvolvimento de software, aprendizado contínuo e uma trajetória em construção.'},
+  {id:'projetos',hint:'missões acadêmicas',label:'Projetos',accent:'#f26b1d',onAccent:'#101c20',fragment:'poliedro',title:'Projetos acadêmicos',copy:'Da API em equipe ao TCC: problemas, soluções e a minha parte em cada entrega.'},
+  {id:'experiencia',hint:'estágios e trabalho',label:'Experiência',accent:'#e0b400',onAccent:'#101c20',fragment:'ampulheta',title:'Experiência profissional',copy:'EDP e PIT: desenvolvimento aplicado ao contexto profissional.'},
+  {id:'laboratorio',hint:'experimentos pessoais',label:'Laboratório',accent:'#2fb36b',onAccent:'#101c20',fragment:'balanca',title:'Laboratório pessoal',copy:'Experimentos em código, comunicação e aplicações em tempo real.'},
+  {id:'formacao',hint:'estudos e certificações',label:'Formação',accent:'#d24fdb',onAccent:'#101c20',fragment:'quadrado',title:'Formação e competências',copy:'DSM na FATEC, formação técnica, certificações e idiomas.'},
+  {id:'contato',hint:'vamos conversar',label:'Contato',accent:'#d7262f',onAccent:'#f4f3e9',fragment:'sino',title:'Vamos conversar?',copy:'Um projeto, uma oportunidade ou uma boa ideia. Encontre-me por aqui.'},
 ];
 export const projects = [
  {id:'api-altave',name:'Ordens de serviço',subtitle:'API Altave',category:'projetos',context:'API · 2º DSM · 2026-2 · Em andamento',lead:'Uma operação mais rastreável, do primeiro ticket ao encerramento.',problem:'O desafio apresentado pela Altave parte de uma gestão operacional fragmentada: ferramentas e fluxos separados dificultam o acompanhamento e a rastreabilidade das ordens de serviço.',solution:'A proposta reúne tickets vinculados a projetos, equipes, registros de atendimento e aprovação de encerramento em uma aplicação web.',role:'Desenvolvedor em equipe. Contribuí na integração dos logs de tickets, na edição de prioridade e em verificações de sessão e concorrência nas operações.',tech:['Next.js','React','TypeScript','Prisma','MySQL'],skills:['Integração de logs de tickets','Edição de prioridade','Validação de sessão','Verificações de concorrência'],links:[] as {label:string,url:string}[],note:'A cópia no GitHub pessoal ainda está pendente. O link será disponibilizado quando essa cópia existir.',pending:'Soft skills e resultados mensurados ainda não foram documentados. Projeto em desenvolvimento.',visual:['Ticket','Equipe','Histórico','Encerramento']},

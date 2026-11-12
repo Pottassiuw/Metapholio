@@ -1,12 +1,12 @@
 # Metapholio
 
-Portfólio acadêmico e profissional de **Thiago Nascimento**, construído com **Astro + Bun**. A direção visual é inspirada nos menus de *Metaphor: ReFantazio*: tipografia monumental, turquesa, tinta, seleção rosa e um retrato real tratado artisticamente.
+Portfólio acadêmico e profissional de **Thiago Nascimento**, construído com **Astro + Bun**. A direção visual é inspirada nos menus de *Metaphor: ReFantazio*: tipografia monumental, turquesa, tinta, seleção rosa e uma gravura de Dürer como arte do menu.
 
 **Site:** https://pottassiuw.github.io/Metapholio/
 
 **Repositório:** https://github.com/Pottassiuw/Metapholio
 
-> O site é totalmente estático. Não precisa de banco de dados, backend, chaves de API ou arquivo `.env`. Alguns conteúdos ainda aguardam confirmação; estão identificados nas próprias páginas. A trilha sonora foi selecionada, mas o player ainda não foi integrado.
+> O site é totalmente estático. Não precisa de banco de dados, backend, chaves de API ou arquivo `.env`. Alguns conteúdos ainda aguardam confirmação; estão identificados nas próprias páginas. A trilha sonora é opcional: nada do YouTube carrega até o visitante clicar em "Ouvir trilha".
 
 ## Requisitos
 
@@ -67,20 +67,20 @@ Use o endereço exibido pelo terminal. Para apenas compilar e visualizar, o pass
 
 | Rota local | Conteúdo |
 | --- | --- |
-| `/` | Menu principal com retrato artístico. |
-| `/sobre/` | Apresentação, foto e trajetória. |
-| `/projetos/` | Projetos acadêmicos: API Altave e Weeat. |
-| `/experiencia/` | Experiência profissional: EDP/Helios e ReObserve/PIT. |
-| `/laboratorio/` | Projeto pessoal Boys-chat. |
-| `/formacao/` | Formação, cursos, idiomas e competências. |
-| `/contato/` | E-mail, GitHub e LinkedIn. |
+| `/` | Menu principal com a gravura *Melencolia I*. |
+| `/sobre/` | Cena em tela cheia: retratos e frases em carrossel, com links para os projetos. |
+| `/projetos/` | Sala de Piranesi: projetos acadêmicos (API Altave e Weeat). |
+| `/experiencia/` | Sala de Hokusai: estágios na EDP e no PIT. |
+| `/laboratorio/` | Sala de Haeckel: experimentos pessoais. |
+| `/formacao/` | Sala de Cellarius: formação, certificações, idiomas e competências. |
+| `/contato/` | Sala de Doré: canais de contato e retrato oficial. |
 | `/api-altave/` | Detalhe da API de ordens de serviço. |
 | `/weeat/` | Detalhe do TCC da ETEC. |
 | `/edp-helios/` | Atuação no projeto profissional privado. |
 | `/reobserve/` | Projeto de iniciação no estágio PIT. |
 | `/boys-chat/` | Aplicação pessoal de mensagens. |
 
-Na publicação, as rotas recebem o prefixo `/Metapholio`. O menu aceita cliques e links nativos; as setas movem o foco, Enter abre o link focado e Escape retorna ao menu. Sem JavaScript, as rotas continuam acessíveis pelos links. A interface respeita `prefers-reduced-motion`.
+Na publicação, as rotas recebem o prefixo `/Metapholio`. O menu aceita cliques e links nativos; as setas movem o foco, Enter abre o link focado e Escape retorna ao menu. Com JavaScript, a navegação troca só o palco da página (Astro `ClientRouter` com swap próprio), o que mantém a trilha tocando entre telas. Sem JavaScript, as rotas continuam acessíveis pelos links, sem trilha. A interface respeita `prefers-reduced-motion`.
 
 ## Estrutura do projeto
 
@@ -89,8 +89,10 @@ Na publicação, as rotas recebem o prefixo `/Metapholio`. O menu aceita cliques
 src/
   assets/fonts/              # Fontes locais empacotadas pelo Astro
   components/MenuArt.astro   # Identidade, arte e navegação
+  components/Trilha.astro    # Trilha sonora opt-in (player do YouTube)
+  components/AboutScene.astro # Cena da seção Sobre (carrossel de retratos e frases)
   data/portfolio.ts          # Textos, categorias, tecnologias e links
-  data/soundtrack.json       # Curadoria musical, ainda sem player
+  data/soundtrack.json       # Faixas por seção e por projeto
   layouts/Portfolio.astro    # Estrutura compartilhada e atalhos
   pages/index.astro          # Menu principal
   pages/[screen].astro       # Seções e detalhes estáticos
@@ -98,7 +100,7 @@ src/
 public/
   images/                   # Fotos, gravura e procedência
   fonts/                    # Licenças e cópias das fontes
-assets/source/               # Fonte e receita do retrato
+assets/source/               # Fontes e receitas do retrato e da gravura
 scripts/                     # Verificação estática e ferramentas locais
 docs/                        # Operação, créditos e limites de validação
 DESIGN.md                    # Sistema visual documentado com Impeccable
@@ -115,6 +117,10 @@ Pesquisas internas, estado de sessões, capturas locais e protótipos de decisã
 - **Telas internas:** `src/styles/portfolio.css` e o layout compartilhado.
 - **Identidade visual:** consulte `DESIGN.md` antes de adicionar telas ou mudar os tokens.
 - **Retrato:** veja [`assets/source/README.md`](assets/source/README.md). Pillow e NumPy são necessários somente para recriar o asset, não para executar ou compilar o site.
+- **Sobre:** slides (pintura, frase e nota) no topo de `src/components/AboutScene.astro`; estilos em `src/styles/about.css`. As pinturas são exportadas por `sh scripts/create-museum-art.sh`.
+- **Salas do museu:** `src/components/SectionScene.astro` e `src/styles/rooms.css`; acervo e recortes por `sh scripts/create-museum-art.sh` (baixa os originais do Met e da Wikimedia; as fontes de Thiago ficam com o autor).
+- **Gravura do menu:** `sh scripts/create-engraving-art.sh` baixa o original do Met e recria o recorte (requer ImageMagick 7 com AVIF).
+- **Trilha:** faixas por rota em `src/data/soundtrack.json` (`sectionTracks` e `projectTracks`); comportamento em `src/components/Trilha.astro`.
 
 ## Publicar no GitHub Pages
 
@@ -152,4 +158,4 @@ Veja [`docs/VALIDATION.md`](docs/VALIDATION.md) para verificações realizadas e
 - Helios não expõe código privado, dados operacionais ou telas reais. O esquema editorial não é uma screenshot.
 - Datas/cargos, alguns relatos de competências e comprovantes ainda aguardam atualização.
 - Demos externas não foram executadas nem são anunciadas como funcionais.
-- A trilha não toca: o player é uma etapa futura, com consentimento explícito, controles nativos visíveis e sem download/redistribuição de áudio.
+- A trilha depende da disponibilidade de cada vídeo no YouTube; se um vídeo não puder ser incorporado, o painel avisa e oferece o link para o YouTube Music.

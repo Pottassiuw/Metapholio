@@ -1,0 +1,86 @@
+---
+// Seção Sobre como cena: o fundo é a arte do painel de personagem e um carrossel alterna as fotos
+// de Thiago com frases curtas. Sem JavaScript, os slides aparecem empilhados.
+import {asset,route} from '../data/portfolio';
+// Três pinturas de Thiago como personagem, uma por slide, em tela cheia (1672×941).
+const art={
+ perfil:{alt:'Pintura de Thiago Nascimento de perfil, olhando para o alto, entre nuvens, anéis de bússola e uma pincelada vermelha.'},
+ biblioteca:{alt:'Pintura de Thiago Nascimento sentado numa poltrona numa biblioteca gótica, com vitral, esfera armilar e um gato.'},
+ cidade:{alt:'Pintura do perfil de Thiago Nascimento contendo uma cidade suspensa nas nuvens; abaixo, ele de casaco branco sobre ruínas.'},
+} as const;
+const slides=[
+ {art:'perfil',lines:['Entre aprender','e construir.'],note:'Thiago Nascimento · Desenvolvimento de Software Multiplataforma, FATEC São José dos Campos.',pending:'Objetivo profissional: em atualização'},
+ {art:'biblioteca',lines:['Gosto de entender','como as partes','se conectam.'],note:'Interesses: arquitetura de sistemas e segurança da informação.'},
+ {art:'cidade',lines:['Uma trajetória','em construção.'],note:'Do TCC na ETEC ao estágio na EDP.',links:[['Weeat','weeat'],['ReObserve','reobserve'],['Helios','edp-helios'],['API Altave','api-altave']]},
+] as const;
+---
+<section class="about-scene" id="conteudo" aria-labelledby="about-title">
+<div class="room-flood" aria-hidden="true"></div>
+<h1 class="about-title" id="about-title">Sobre mim</h1>
+<div class="about-slides" aria-roledescription="carrossel" aria-label="Quem é Thiago Nascimento">
+{slides.map((s,i)=><article class:list={['about-slide',{'is-active':i===0}]} data-art={s.art} aria-roledescription="slide" aria-label={`${i+1} de ${slides.length}`}>
+<picture class="about-art"><source type="image/avif" srcset={asset(`images/thiago/pintura-${s.art}.avif`)}/><img src={asset(`images/thiago/pintura-${s.art}.webp`)} width="1672" height="941" alt={art[s.art].alt} loading={i===0?'eager':'lazy'}/></picture>
+<div class="about-copy">
+<p class="about-phrase">{s.lines.map(l=><span>{l}</span>)}</p>
+{s.note&&<p class="about-note">{s.note}</p>}
+{'pending' in s&&<p class="about-pending">{s.pending}</p>}
+{'links' in s&&<ul class="about-links">{s.links.map(([label,id])=><li><a href={route(id)}>{label}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a></li>)}</ul>}
+</div>
+</article>)}
+</div>
+<div class="about-controls" hidden>
+<button class="about-btn" type="button" data-step="-1" aria-label="Frase anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg></button>
+<button class="about-btn" type="button" data-toggle aria-pressed="false" aria-label="Pausar"><svg class="about-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg><svg class="about-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l12-7z"/></svg></button>
+<button class="about-btn" type="button" data-step="1" aria-label="Próxima frase"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+<p class="about-count"><b>1</b> / {slides.length}</p>
+<span class="about-progress" aria-hidden="true"><span></span></span>
+</div>
+</section>
+
+<script>
+let controller:AbortController|null=null;
+function initAbout(){
+ controller?.abort();
+ const scene=document.querySelector<HTMLElement>('.about-scene');if(!scene)return;
+ controller=new AbortController();const {signal}=controller;
+ const slides=[...scene.querySelectorAll<HTMLElement>('.about-slide')];
+ const controls=scene.querySelector<HTMLElement>('.about-controls')!;
+ const list=scene.querySelector<HTMLElement>('.about-slides')!;
+ const toggle=scene.querySelector<HTMLButtonElement>('[data-toggle]')!;
+ const count=scene.querySelector('.about-count b')!;
+ const bar=scene.querySelector<HTMLElement>('.about-progress span')!;
+ scene.classList.add('is-carousel');controls.hidden=false;
+ let index=0;
+ function show(next:number,dir:1|-1){
+  const prev=index;index=(next+slides.length)%slides.length;
+  scene!.dataset.dir=String(dir);
+  slides.forEach((s,k)=>{s.classList.toggle('is-active',k===index);s.classList.toggle('is-leaving',k===prev&&prev!==index);s.inert=k!==index;});
+  count.textContent=String(index+1);
+  // Reinicia a barra: é a animação dela que avança o carrossel.
+  bar.style.animation='none';void bar.offsetWidth;bar.style.animation='';
+ }
+ function setPaused(paused:boolean){
+  scene!.classList.toggle('is-paused',paused);
+  toggle.setAttribute('aria-pressed',String(paused));toggle.setAttribute('aria-label',paused?'Retomar':'Pausar');
+  list.setAttribute('aria-live',paused?'polite':'off');
+ }
+ slides.forEach((s,k)=>{s.inert=k!==0});
+ setPaused(matchMedia('(prefers-reduced-motion: reduce)').matches);
+ bar.addEventListener('animationend',()=>show(index+1,1),{signal});
+ scene.querySelectorAll<HTMLButtonElement>('[data-step]').forEach(b=>b.addEventListener('click',()=>show(index+Number(b.dataset.step),Number(b.dataset.step) as 1|-1),{signal}));
+ toggle.addEventListener('click',()=>setPaused(!scene.classList.contains('is-paused')),{signal});
+ // Segura o autoplay enquanto o visitante lê a frase ou usa os controles. A cena ocupa a tela
+ // inteira (fica atrás do menu), então segurar pela cena toda pararia o carrossel com qualquer mouse.
+ scene.querySelectorAll<HTMLElement>('.about-copy,.about-controls').forEach(el=>{
+  el.addEventListener('pointerenter',()=>scene.classList.add('is-held'),{signal});
+  el.addEventListener('pointerleave',()=>scene.classList.remove('is-held'),{signal});
+ });
+ scene.addEventListener('focusin',()=>scene.classList.add('is-held-focus'),{signal});
+ scene.addEventListener('focusout',e=>{if(!scene.contains(e.relatedTarget as Node))scene.classList.remove('is-held-focus')},{signal});
+ document.addEventListener('keydown',e=>{
+  if(/INPUT|TEXTAREA|SELECT/.test((e.target as HTMLElement).tagName))return;
+  if(e.key==='ArrowRight')show(index+1,1);else if(e.key==='ArrowLeft')show(index-1,-1);
+ },{signal});
+}
+document.addEventListener('astro:page-load',initAbout);
+</script>

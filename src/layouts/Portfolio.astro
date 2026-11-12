@@ -1,47 +1,122 @@
 ---
+import {ClientRouter} from 'astro:transitions';
 import MenuArt from '../components/MenuArt.astro';
-import {route,asset} from '../data/portfolio';
+import Trilha from '../components/Trilha.astro';
+import {route,asset,sections} from '../data/portfolio';
 import '../styles/menu.css';
 import '../styles/portfolio.css';
-const {title='Thiago Nascimento — Metapholio',description='Portfólio de Thiago Nascimento: desenvolvimento de software, projetos acadêmicos e experiência profissional.',active='projetos',home=false}=Astro.props;
+import '../styles/trilha.css';
+import '../styles/about.css';
+import '../styles/scenes.css';
+import '../styles/rooms.css';
+const {title='Thiago Nascimento — Metapholio',description='Portfólio de Thiago Nascimento: desenvolvimento de software, projetos acadêmicos e experiência profissional.',active='projetos',home=false,routeKey='menu',immersive=false,scene=false}=Astro.props;
+const current=sections.find(s=>s.id===active)??sections[1];
 ---
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-screen={home?'home':'inner'} data-route={routeKey} data-page-section={current.id} style={`--accent:${current.accent};--on-accent:${current.onAccent};--accent-sel:${current.accent}`} transition:animate="none">
 <head>
 <meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><meta name="theme-color" content="#73c9c5"/>
 <title>{title}</title><meta name="description" content={description}/>
 <link rel="icon" type="image/svg+xml" href={asset('favicon.svg')}/>
+<ClientRouter fallback="swap"/>
 </head>
 <body>
 <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
-<main class:list={['stage',home?'home':'inner']} id="menu">
+<main class:list={['stage',home?'home':'inner',{immersive,'section-scene':scene}]} id="menu">
 <MenuArt active={active}/>
-{home ? <slot/> : <article class="content-sheet" id="conteudo" aria-label={title}>
+{home||immersive||scene ? <slot/> : <article class="content-sheet" id="conteudo" aria-label={title}>
 <div class="sheet-tools"><a href={route()} class="back-link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg> Voltar ao menu</a><span>Metapholio / Thiago Nascimento</span></div>
 <slot/>
 <footer class="sheet-footer"><a href={route('contato')}>Vamos conversar</a><a href={route()}>Menu principal</a></footer>
 </article>}
 <footer class="footer">
-<div><p>O próximo capítulo começa com uma ideia.</p><div class="social"><a href="https://github.com/Pottassiuw" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://www.linkedin.com/in/thiago-nascimento-729077292" target="_blank" rel="noopener noreferrer">LinkedIn</a></div><p class="caption">Retrato: Thiago Nascimento · Gravura: A. Dürer / The Met, domínio público.</p></div>
+<div><p>O próximo capítulo começa com uma ideia.</p><div class="social"><a href="https://github.com/Pottassiuw" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://www.linkedin.com/in/thiago-nascimento-729077292" target="_blank" rel="noopener noreferrer">LinkedIn</a></div><p class="caption">Gravura: A. Dürer, Melencolia I (1514) · The Met, domínio público.</p></div>
 <div class="controls"><span class="control"><span class="key-arrows"><kbd>↑</kbd><kbd>↓</kbd></span> Navegar</span><span class="control"><kbd>Enter</kbd> Abrir</span><span class="control"><kbd>Esc</kbd> Menu</span></div>
 </footer>
 </main>
+<Trilha/>
 <script>
+import {navigate,swapFunctions} from 'astro:transitions/client';
 import {route,sections} from '../data/portfolio';
-const controller=new AbortController();const {signal}=controller;
-const links=[...document.querySelectorAll<HTMLAnchorElement>('[data-section]')];
-const stage=document.querySelector<HTMLElement>('.stage')!;
-const home=stage.classList.contains('home');
-function ground(){
- if(!home&&window.innerWidth>700)return;
- const el=links[5];if(!el)return;const b=el.getBoundingClientRect(),f=stage.getBoundingClientRect();
- const angle=(window.innerWidth<=700?6:8)*Math.PI/180,slope=Math.tan(angle);
- const left=b.top-f.top+Math.sin(angle)*el.offsetWidth+slope*(b.left-f.left)+2;
- stage.style.setProperty('--cut-left',left+'px');stage.style.setProperty('--cut-mid',(left-slope*f.width*.66)+'px');stage.style.setProperty('--cut-right',(left-slope*f.width)+'px');
+
+// Troca só o palco (#menu): o resto do <body>, inclusive a trilha, continua vivo entre páginas.
+document.addEventListener('astro:before-swap',event=>{
+ const next=event.newDocument.getElementById('menu'),current=document.getElementById('menu');
+ if(!next||!current)return;
+ event.swap=()=>{
+  swapFunctions.deselectScripts(event.newDocument);
+  swapFunctions.swapRootAttributes(event.newDocument);
+  swapFunctions.swapHeadElements(event.newDocument);
+  const restoreFocus=swapFunctions.saveFocus();
+  document.querySelectorAll('.astro-route-announcer').forEach(el=>el.remove());
+  current.replaceWith(next);
+  restoreFocus();
+ };
+});
+
+// Saída no idioma do menu de Metaphor: as letras se desmontam e uma faixa de papel cruza a tela
+// enquanto a próxima página carrega (em paralelo, nunca atrasando além de ~0,3 s).
+document.addEventListener('astro:before-preparation',event=>{
+ const stage=document.querySelector<HTMLElement>('.stage');
+ if(!stage||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const load=event.loader;
+ event.loader=async()=>{
+  stage.classList.add('is-leaving');
+  await Promise.all([load(),new Promise(r=>setTimeout(r,320))]);
+ };
+});
+
+let controller:AbortController|null=null;
+function init(){
+ controller?.abort();controller=new AbortController();const {signal}=controller;
+ const links=[...document.querySelectorAll<HTMLAnchorElement>('[data-section]')];
+ const stage=document.querySelector<HTMLElement>('.stage')!;
+ const home=stage.classList.contains('home');
+ function ground(){
+  if(!home&&window.innerWidth>700)return;
+  const el=links[5];if(!el)return;const b=el.getBoundingClientRect(),f=stage.getBoundingClientRect();
+  const angle=(window.innerWidth<=700?6:8)*Math.PI/180,slope=Math.tan(angle);
+  // Recover the rotated top-left corner, not the bounding box's bottom-left.
+  // Keep the dark ground below Formação even after fonts and selection settle.
+  const left=b.top-f.top+Math.sin(angle)*el.offsetWidth+slope*(b.left-f.left+Math.sin(angle)*el.offsetHeight)-2;
+  stage.style.setProperty('--cut-left',left+'px');stage.style.setProperty('--cut-mid',(left-slope*f.width*.66)+'px');stage.style.setProperty('--cut-right',(left-slope*f.width)+'px');
+ }
+ window.addEventListener('resize',ground,{passive:true,signal});document.fonts.ready.then(()=>{if(!signal.aborted)ground();});
+ // Seleção no idioma do menu de Metaphor: a cor da seção inunda o fundo e uma mancha é repintada atrás
+ // da linha; as letras pulam. Na hero também muda a prévia e o dial; nas internas é só a pintura (sai ao deixar o menu).
+ const root=document.documentElement;
+ const splash=document.querySelector<HTMLElement>('.menu-splash');
+ const floods=[...document.querySelectorAll<HTMLElement>('.room-flood')];
+ const replay=(el:Element|null,cls:string)=>{if(!el)return;el.classList.remove(cls);void (el as HTMLElement).offsetWidth;el.classList.add(cls);};
+ let painted:HTMLAnchorElement|null=null;
+ function paint(link:HTMLAnchorElement){
+  if(painted===link)return;painted=link;
+  const s=sections.find(s=>s.id===link.dataset.section)!;
+  root.style.setProperty('--accent-sel',s.accent);root.style.setProperty('--on-sel',s.onAccent);
+  if(splash){splash.style.setProperty('--y',(link.offsetTop+link.offsetHeight/2)+'px');splash.style.setProperty('--h',(link.offsetHeight*2.4)+'px');replay(splash,'is-painting');}
+  floods.forEach(f=>replay(f,'is-painting'));
+  links.forEach(el=>el.classList.toggle('is-painted',el===link));
+  replay(link,'is-pop');
+ }
+ function select(link:HTMLAnchorElement){
+  paint(link);
+  if(!home||link.classList.contains('is-selected'))return;
+  links.forEach(el=>el.classList.toggle('is-selected',el===link));
+  const s=sections.find(s=>s.id===link.dataset.section)!;
+  const num=document.querySelector<HTMLElement>('.dial-num');if(num){num.textContent=String(sections.indexOf(s)+1);replay(num,'is-turning');}
+  document.querySelector('#preview-title')!.textContent=s.title;document.querySelector('#preview-copy')!.textContent=s.copy;const explore=document.querySelector<HTMLAnchorElement>('#explore')!;explore.href=link.href;explore.querySelector('span')!.textContent='Explorar '+s.label.toLowerCase();
+ }
+ const current=links.find(l=>l.classList.contains('is-selected'));
+ if(current){painted=null;paint(current);}
+ links.forEach(link=>{link.addEventListener('focus',()=>select(link),{signal});link.addEventListener('pointerenter',()=>{if(matchMedia('(hover:hover)').matches)select(link)},{signal});});
+ // Nas internas, ao sair do menu a pintura volta para a seção da página.
+ const menu=document.querySelector<HTMLElement>('.menu');
+ if(!home&&menu&&current){
+  menu.addEventListener('pointerleave',()=>paint(current),{signal});
+  menu.addEventListener('focusout',e=>{if(!menu.contains(e.relatedTarget as Node))paint(current)},{signal});
+ }
+ document.addEventListener('keydown',e=>{if(/INPUT|TEXTAREA|SELECT/.test((e.target as HTMLElement).tagName))return;if(e.key==='Escape'&&!home){navigate(route());return;}if(!['ArrowDown','ArrowUp'].includes(e.key))return;e.preventDefault();let i=links.findIndex(l=>l===document.activeElement);if(i<0)i=links.findIndex(l=>l.classList.contains('is-selected'));links[(i+(e.key==='ArrowDown'?1:-1)+links.length)%links.length].focus();},{signal});
 }
-window.addEventListener('resize',ground,{passive:true,signal});document.fonts.ready.then(ground);
-function select(link:HTMLAnchorElement){if(!home)return;links.forEach(el=>el.classList.toggle('is-selected',el===link));const s=sections.find(s=>s.id===link.dataset.section)!;document.querySelector('#preview-title')!.textContent=s.title;document.querySelector('#preview-copy')!.textContent=s.copy;const explore=document.querySelector<HTMLAnchorElement>('#explore')!;explore.href=link.href;explore.querySelector('span')!.textContent='Explorar '+s.label.toLowerCase();}
-links.forEach(link=>{link.addEventListener('focus',()=>select(link),{signal});link.addEventListener('pointerenter',()=>{if(matchMedia('(hover:hover)').matches)select(link)},{signal});});
-document.addEventListener('keydown',e=>{if(/INPUT|TEXTAREA|SELECT/.test((e.target as HTMLElement).tagName))return;if(e.key==='Escape'&&!home){location.href=route();return;}if(!['ArrowDown','ArrowUp'].includes(e.key))return;e.preventDefault();let i=links.findIndex(l=>l===document.activeElement);if(i<0)i=links.findIndex(l=>l.classList.contains('is-selected'));links[(i+(e.key==='ArrowDown'?1:-1)+links.length)%links.length].focus();},{signal});
+document.addEventListener('astro:page-load',init);
 </script>
 </body></html>

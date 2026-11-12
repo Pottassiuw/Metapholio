@@ -1,10 +1,10 @@
 {
   "version": 1,
-  "status": "curated-not-integrated",
+  "status": "integrated",
   "playlistId": "OLAK5uy_kLYjn3ilAw2smZCvPoYCiOl33Y0V6gASI",
   "playlistUrl": "https://music.youtube.com/playlist?list=OLAK5uy_kLYjn3ilAw2smZCvPoYCiOl33Y0V6gASI",
   "titleNote": "Os nomes de exibição em português são traduções editoriais dos títulos japoneses, não títulos oficiais localizados.",
-  "verification": "IDs e títulos conferidos na playlist fornecida e no oEmbed do YouTube. Metadados disponíveis não garantem reprodução incorporada em todos os navegadores ou regiões. A curadoria foi feita pela identidade temática; não houve análise auditiva das faixas nesta sessão.",
+  "verification": "IDs e títulos conferidos na playlist fornecida e no oEmbed do YouTube. Reprodução incorporada confirmada no Firefox 158 para as faixas do menu, Sobre, Projetos/API Altave e Experiência, pelo estado informado pelo próprio player. As demais faixas não foram tocadas em teste. A curadoria foi feita pela identidade temática; não houve análise auditiva.",
   "tracks": {
     "hero": {
       "videoId": "aIZ35Unciyg",
@@ -86,14 +86,17 @@
     "weeat": "breakfast",
     "boys-chat": "supporters"
   },
-  "proposedPlayback": {
-    "provider": "youtube-embed",
+  "playback": {
+    "provider": "youtube-embed (youtube-nocookie.com, IFrame API)",
     "initiallyEnabled": false,
     "loadOnlyAfterConsent": true,
-    "changeOnProjectOpenNotHover": true,
-    "returnToHeroOnProjectClose": true,
+    "changeOnPageChangeNotHover": true,
+    "returnToHeroOnMenu": true,
+    "collapsePauses": true,
     "showNativePlayerAndControls": true,
+    "minimumPlayerSize": "356x200",
     "fallbackToSourceLink": true,
-    "notes": "Plano, não comportamento implementado. Não extrair áudios nem esconder o player do YouTube para simular um serviço de áudio. A incorporação depende da disponibilidade de cada vídeo; transições contínuas/crossfade não estão garantidas. Se a meta final for um player somente de áudio, usar arquivos devidamente licenciados."
+    "implementation": "src/components/Trilha.astro",
+    "notes": "Não extrair áudio nem esconder o player para simular um serviço de áudio. Transições contínuas/crossfade não existem: a troca de faixa carrega o próximo vídeo."
   }
 }

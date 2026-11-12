@@ -14,3 +14,8 @@ PRODUCT.md
 docs/content-audit.md
 docs/project-sources.json
 scripts/migrate-prototype.py
+# Original do Met (4,4 MB): baixado sob demanda por scripts/create-engraving-art.sh.
+assets/source/met/
+# Originais do acervo (baixados por scripts/create-museum-art.sh) e fontes das pinturas/fotos fornecidas pelo autor.
+assets/source/museum/
+assets/source/thiago/

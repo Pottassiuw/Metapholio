@@ -1,0 +1,4 @@
+{
+  "prompt": "SOURCE: Albrecht Dürer, Melencolia I (1514), The Metropolitan Museum of Art, object 336228, public domain / Open Access. https://images.metmuseum.org/CRDImages/dp/original/DP820348.jpg . Authored by scripts/create-engraving-art.sh: crop 700x500+1500+2400 (robe hatching), grayscale, stretched to 1600x1000, blur 9, levels 30%-62%, morphological open, negated. No generative model. Painted-stain ground texture for the section scenes.",
+  "createdAt": "2026-11-12T01:44:33.646Z"
+}

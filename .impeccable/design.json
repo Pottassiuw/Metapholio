@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-10T14:02:05.480Z",
+  "generatedAt": "2026-11-12T01:55:59.141Z",
   "title": "Design System: Metapholio",
   "extensions": {
     "shadows": [
@@ -78,6 +78,34 @@
       "description": "Pendências explícitas, sem omissão de informações.",
       "html": "<details class=\"ds-pending\"><summary>Informações ainda não documentadas</summary><p>Conteúdo aguardando confirmação.</p></details>",
       "css": ".ds-pending{border-block:1px solid #b4c6be;padding:14px 0;color:var(--ink,#101c20);font:500 17px/1.5 Barlow,sans-serif}.ds-pending summary{cursor:pointer;min-height:32px}.ds-pending summary:focus-visible{outline:3px solid var(--ink,#101c20);outline-offset:4px}"
+    },
+    {
+      "name": "Soundtrack toggle",
+      "kind": "button",
+      "description": "Liga, recolhe (pausa) e retoma a trilha opt-in.",
+      "html": "<button class=\"ds-trilha\" type=\"button\" aria-expanded=\"false\">Ouvir trilha</button>",
+      "css": ".ds-trilha{display:inline-flex;align-items:center;min-height:44px;padding:8px 18px;border:0;background:var(--ink,#101c20);color:var(--paper,#f4f3e9);font:500 15px/1 Barlow,sans-serif;text-transform:uppercase;letter-spacing:.06em;clip-path:polygon(6% 0,100% 0,94% 100%,0 100%)}.ds-trilha:hover,.ds-trilha[aria-expanded=true]{background:var(--rose,#ff3461);color:var(--ink,#101c20)}.ds-trilha:focus-visible{outline:3px solid var(--ink,#101c20);outline-offset:3px}"
+    },
+    {
+      "name": "Phrase strips",
+      "kind": "text",
+      "description": "Frase da cena Sobre em faixas inclinadas e escalonadas: tinta, papel e rosa.",
+      "html": "<p class=\"ds-frase\"><span>Entre aprender</span><span>e construir.</span></p>",
+      "css": ".ds-frase{margin:0;display:flex;flex-direction:column;align-items:flex-start;gap:5px;transform:rotate(-6deg);transform-origin:0 100%}.ds-frase span{padding:.04em .32em .12em;font:900 48px/1.04 Bodoni,Georgia,serif;letter-spacing:-.03em;background:var(--ink,#101c20);color:var(--paper,#f4f3e9);clip-path:polygon(1.5% 0,100% 0,98.5% 100%,0 100%)}.ds-frase span:last-child{margin-left:1.1em;background:var(--rose,#ff3461);color:var(--ink,#101c20)}"
+    },
+    {
+      "name": "Brush selection",
+      "kind": "nav",
+      "description": "Pincelada na cor da seção (máscara SVG), repintada da esquerda para a direita na seleção, no hover e no foco.",
+      "html": "<a class=\"ds-pincel\" href=\"#\" style=\"--accent:#f26b1d\">Projetos</a>",
+      "css": ".ds-pincel{position:relative;isolation:isolate;display:inline-block;padding:4px 18px;font:900 42px/1.1 Bodoni,Georgia,serif;color:var(--ink,#101c20);text-decoration:none}.ds-pincel::before{content:'';position:absolute;z-index:-1;inset:-6% -30% -10% -8%;background:var(--accent);clip-path:inset(0 100% 0 0);transition:clip-path .32s cubic-bezier(.16,1,.3,1)}.ds-pincel:is(:hover,:focus-visible)::before{clip-path:inset(0 -2% 0 0)}.ds-pincel:focus-visible{outline:3px solid var(--ink,#101c20);outline-offset:4px}"
+    },
+    {
+      "name": "Scene row",
+      "kind": "list",
+      "description": "Linha de missão/entrada sobre a tinta: etiqueta, nome em Bodoni, uma linha de contexto; fundo de tinta translúcido para ler sobre a arte.",
+      "html": "<a class=\"ds-missao\" href=\"#\"><span>API · 2º DSM</span><b>Ordens de serviço</b></a>",
+      "css": ".ds-missao{display:grid;gap:2px;padding:16px 20px;background:rgba(16,28,32,.88);color:var(--paper,#f4f3e9);text-decoration:none;transform:rotate(-4deg)}.ds-missao span{font:500 14px/1.2 Barlow,sans-serif;letter-spacing:.08em;text-transform:uppercase}.ds-missao b{font:900 48px/1.02 Bodoni,Georgia,serif;letter-spacing:-.03em}.ds-missao:focus-visible{outline:3px solid var(--paper,#f4f3e9);outline-offset:4px}"
     }
   ],
   "narrative": {
@@ -85,9 +113,10 @@
     "overview": "O visitante escolhe sua próxima seção como em um menu de RPG. A direção foi fixada pelo usuário em Metaphor: ReFantazio; não reinterpretar o portfólio como uma landing page genérica.",
     "keyCharacteristics": [
       "Tipografia serifada monumental e navegação inclinada.",
-      "Retrato real com recorte orgânico e tratamento de impressão.",
       "Turquesa contínuo, seleção rosa e folhas de leitura em papel.",
-      "Conteúdo factual com autoria e pendências distinguíveis."
+      "Conteúdo factual com autoria e pendências distinguíveis.",
+      "Gravura de Dürer como arte de personagem do menu; retratos reais somente na cena da Sobre, com frases em carrossel.",
+      "Cada seção é uma cena de submenu: cor própria em pincelada, título gigante cortado, fragmento de Dürer em órbita, estrutura própria."
     ],
     "rules": [
       {
@@ -106,7 +135,8 @@
       "Don't reabrir Vintage Ads ou trocar a direção por um template de cards.",
       "Don't usar máscaras geométricas como substituto do contorno do retrato.",
       "Don't publicar telas reais, dados internos ou links privados do Helios.",
-      "Don't iniciar som no carregamento ou trocar trilha no hover."
+      "Don't iniciar som no carregamento ou trocar trilha no hover.",
+      "Não colocar o rosto de Thiago na hero nem esconder o player da trilha enquanto toca."
     ]
   }
 }
