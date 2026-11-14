@@ -49,7 +49,7 @@ Não abra os arquivos `.astro` diretamente no navegador; use o servidor de desen
 | `bun run check` | Verifica Astro e TypeScript. |
 | `bun run build` | Gera o site estático em `dist/`. |
 | `bun run preview` | Serve o build usando o preview do Astro. |
-| `bun run check:static` | Confere as 17 rotas e os destinos locais de links/assets; requer Python 3. |
+| `bun run check:static` | Confere as 18 rotas e os destinos locais de links/assets; requer Python 3. |
 | `bun run preview:static` | Serve `dist/` em `http://127.0.0.1:4323/`, com Bun. |
 
 ### Testar a versão compilada
@@ -78,6 +78,7 @@ Use o endereço exibido pelo terminal. Para apenas compilar e visualizar, o pass
 | `/weeat/` | Detalhe do TCC da ETEC. |
 | `/edp-helios/` | Atuação no projeto profissional privado. |
 | `/reobserve/` | Projeto de iniciação no estágio PIT. |
+| `/conexzap/` | Roteamento de mensagens com LLM e arquitetura multi-tenant no estágio PIT. |
 | `/boys-chat/` | Aplicação pessoal de mensagens. |
 | `/we-logic/`, `/tscrum/`, `/petshop/` | Projetos acadêmicos (APIs de 2026-1 e 2025-2, avaliação de LP). |
 | `/metapholio/`, `/dotfiles/` | Experimentos pessoais: este site e o ambiente Linux. |
@@ -91,7 +92,10 @@ Na publicação, as rotas recebem o prefixo `/Metapholio`. O menu aceita cliques
 src/
   assets/fonts/              # Fontes locais empacotadas pelo Astro
   components/MenuArt.astro   # Identidade, arte e navegação
-  components/Trilha.astro    # Trilha sonora opt-in com volume (áudio local)
+  components/Trilha.astro    # Trilha sonora opt-in: placa de HUD com volume e equalizador (áudio local)
+  components/Atmosfera.astro # Camada 3D por cima do site (carrega o Three.js sob demanda)
+  scripts/atmosfera.ts       # Astrolábio, estilhaços e brasas em Three.js
+  scripts/sound.ts           # Nível do áudio compartilhado entre a trilha e a atmosfera
   components/ProjectStory.astro # Página de projeto em capítulos
   components/AboutScene.astro # Cena da seção Sobre (carrossel de retratos e frases)
   data/portfolio.ts          # Textos, categorias, tecnologias e links
@@ -122,8 +126,10 @@ Pesquisas internas, estado de sessões, capturas locais e protótipos de decisã
 - **Retrato:** veja [`assets/source/README.md`](assets/source/README.md). Pillow e NumPy são necessários somente para recriar o asset, não para executar ou compilar o site.
 - **Sobre:** slides (pintura, frase e nota) no topo de `src/components/AboutScene.astro`; estilos em `src/styles/about.css`. As pinturas são exportadas por `sh scripts/create-museum-art.sh`.
 - **Salas do museu:** `src/components/SectionScene.astro` e `src/styles/rooms.css`; acervo e recortes por `sh scripts/create-museum-art.sh` (baixa os originais do Met e da Wikimedia; as fontes de Thiago ficam com o autor).
+- **Página do Helios:** a gravura da cidade com a rede em verde vem de `bun scripts/create-helios-art.ts` (prancha em `assets/plates/helios-sheet.png`, saída em `public/images/helios/`). As cores do projeto e a câmera por capítulo ficam no fim de `src/styles/story.css`; as decisões do capítulo III, no campo `decisions` de `portfolio.ts`.
 - **Gravura do menu:** `sh scripts/create-engraving-art.sh` baixa o original do Met e recria o recorte (requer ImageMagick 7 com AVIF).
-- **Trilha:** arquivo em `public/audio/call-of-magic.mp3`; comportamento em `src/components/Trilha.astro` (começa desligada, volume inicial 20%, preferência salva no navegador).
+- **Trilha:** arquivo em `public/audio/call-of-magic.mp3`; comportamento em `src/components/Trilha.astro` e aparência em `src/styles/trilha.css` (começa desligada, volume inicial 20%, preferência salva no navegador).
+- **Atmosfera 3D:** astrolábio, estilhaços, brasas e shader do respingo de tinta de troca de página (`splash(x, y, cor)`) em `src/scripts/atmosfera.ts`. Não roda com movimento reduzido nem sem WebGL; sem WebGL a faixa de papel faz o fallback da transição.
 
 ## Publicar no GitHub Pages
 

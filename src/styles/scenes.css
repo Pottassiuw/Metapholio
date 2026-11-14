@@ -124,9 +124,32 @@
 .option-sub{font-size:18px;letter-spacing:.04em}
 .option:is(:hover,:focus-visible){color:var(--on-accent)}
 
-/* Saída: as letras se desmontam e uma faixa de papel cruza a tela antes da próxima cena. */
+/* Saída: as letras se desmontam e uma faixa de papel cruza a tela antes da próxima cena (desligada quando o respingo WebGL está ativo). */
 .stage.is-leaving .scene-letter,.stage.is-leaving .menu-letter{animation:letter-out .3s cubic-bezier(.7,0,.84,0) forwards;animation-delay:calc(var(--i,var(--letter,0))*10ms)}
 .stage.is-leaving::after{content:'';position:fixed;z-index:60;left:-10%;right:-10%;top:42%;height:18svh;background:var(--paper);transform-origin:0 50%;rotate:-6deg;animation:band-cross .34s cubic-bezier(.7,0,.3,1) forwards;pointer-events:none}
+html.has-splash .stage.is-leaving::after{display:none}
+
+/* Títulos fora de registro (conceito de ansiedade de Metaphor): duas cópias fantasmas (turquesa e rosa) e fatias horizontais em degraus secos. */
+.scene-word{position:relative;display:inline-block}
+.scene-word::before,.scene-word::after{content:attr(data-text);position:absolute;inset:0;pointer-events:none;opacity:0}
+.scene-word.is-misprint{animation:misprint-main .24s steps(1) both}
+.scene-word.is-misprint::before{animation:misprint-top .24s steps(1) both}
+.scene-word.is-misprint::after{animation:misprint-bot .24s steps(1) both}
+@keyframes misprint-main{
+0%,100%{text-shadow:none;transform:none}
+15%{text-shadow:-7px -2px 0 var(--aqua),7px 2px 0 var(--rose);transform:translate(-2px,0)}
+45%{text-shadow:6px -2px 0 var(--rose),-6px 2px 0 var(--aqua);transform:translate(2px,0)}
+75%{text-shadow:-4px 1px 0 var(--aqua),4px -1px 0 var(--rose);transform:translate(-1px,0)}}
+@keyframes misprint-top{
+0%,100%{opacity:0;transform:none}
+15%{opacity:1;clip-path:inset(8% -8% 58% -8%);transform:translate(-14px,-2px);text-shadow:-6px 0 0 var(--aqua),7px 2px 0 var(--rose)}
+45%{opacity:1;clip-path:inset(22% -8% 44% -8%);transform:translate(12px,1px);text-shadow:6px -1px 0 var(--aqua),-7px 1px 0 var(--rose)}
+75%{opacity:1;clip-path:inset(6% -8% 64% -8%);transform:translate(-7px,0);text-shadow:-4px 0 0 var(--aqua),4px 0 0 var(--rose)}}
+@keyframes misprint-bot{
+0%,100%{opacity:0;transform:none}
+15%{opacity:1;clip-path:inset(54% -8% 8% -8%);transform:translate(15px,2px);text-shadow:7px 0 0 var(--rose),-6px -2px 0 var(--aqua)}
+45%{opacity:1;clip-path:inset(58% -8% 6% -8%);transform:translate(-13px,-1px);text-shadow:-7px 1px 0 var(--rose),6px -1px 0 var(--aqua)}
+75%{opacity:1;clip-path:inset(44% -8% 22% -8%);transform:translate(8px,0);text-shadow:4px 0 0 var(--rose),-4px 0 0 var(--aqua)}}
 
 @keyframes letter-in{from{transform:translate(var(--fx,0),var(--fy,.6em)) rotate(var(--fr,0));opacity:0}to{transform:none;opacity:1}}
 @keyframes letter-out{to{transform:translate(calc(var(--fx,0)*-1.4),calc(var(--fy,.6em)*-1.2)) rotate(calc(var(--fr,0)*-1.5));opacity:0}}
@@ -167,7 +190,8 @@
 .system li .option{margin-left:0!important}
 }
 @media(prefers-reduced-motion:reduce){
-.scene-letter,.scene-art img,.quest,.stop,.entry,.record-block,.option{animation:none}
+.scene-letter,.scene-art img,.quest,.stop,.entry,.record-block,.option,.scene-word.is-misprint,.scene-word.is-misprint::before,.scene-word.is-misprint::after{animation:none}
+.scene-word::before,.scene-word::after{display:none}
 :is(.quest,.entry,.option,.stop-link)::before{transition:none}
 .stage.is-leaving::after{display:none}
 }

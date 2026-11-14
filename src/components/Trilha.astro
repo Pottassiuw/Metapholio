@@ -1,21 +1,27 @@
 ---
 // Trilha sonora: "Call of Magic" (Metaphor: ReFantazio, ATLUS), tocada por um <audio> próprio.
 // Fica fora de #menu, então o swap do ClientRouter não a recria: a música continua entre as páginas.
+// A forma é uma placa de HUD, como as placas do menu de Metaphor: tecla de tocar, estado, nome da faixa e um
+// equalizador que lê o áudio de verdade (Web Audio); o mesmo nível move a atmosfera 3D (src/scripts/sound.ts).
 import {asset} from '../data/portfolio';
 ---
 <aside class="trilha" id="trilha" aria-label="Trilha sonora" data-state="off" hidden>
 <audio class="trilha-audio" src={asset('audio/call-of-magic.mp3')} preload="none" loop></audio>
+<div class="trilha-plate">
 <button class="trilha-toggle" type="button" aria-pressed="false">
-<svg class="trilha-eq" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V12"/><path d="M10 20V6"/><path d="M15 20V10"/><path d="M20 20V4"/></svg>
-<span class="trilha-label">Ouvir trilha</span>
+<span class="trilha-key" aria-hidden="true"><svg class="trilha-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg class="trilha-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg></span>
+<span class="trilha-text"><span class="trilha-label">Ouvir trilha</span><span class="trilha-nome">Call of Magic</span></span>
+<span class="trilha-eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
 </button>
 <div class="trilha-mixer" hidden>
-<label class="trilha-volume"><span class="sr-only">Volume da trilha</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path class="trilha-wave" d="M16 9a4 4 0 0 1 0 6"/></svg><input type="range" min="0" max="100" step="1" value="20"/></label>
-<span class="trilha-nome">Call of Magic</span>
+<label class="trilha-volume"><span class="sr-only">Volume da trilha</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 0 1 0 6"/></svg><input type="range" min="0" max="100" step="1" value="20"/></label>
+<span class="trilha-valor" aria-hidden="true">20</span>
+</div>
 </div>
 </aside>
 
 <script>
+import {sound} from '../scripts/sound';
 // Volume inicial baixo (20%); a escolha do visitante fica salva neste navegador.
 const KEY='metapholio:volume';
 const root=document.getElementById('trilha')!;
@@ -24,13 +30,45 @@ const toggle=root.querySelector<HTMLButtonElement>('.trilha-toggle')!;
 const label=root.querySelector<HTMLElement>('.trilha-label')!;
 const mixer=root.querySelector<HTMLElement>('.trilha-mixer')!;
 const range=root.querySelector<HTMLInputElement>('.trilha-volume input')!;
+const value=root.querySelector<HTMLElement>('.trilha-valor')!;
+const bars=[...root.querySelectorAll<HTMLElement>('.trilha-eq i')];
 root.hidden=false;
 
 let target=0.2;
 try{const saved=localStorage.getItem(KEY);if(saved!==null&&!Number.isNaN(+saved))target=Math.min(1,Math.max(0,+saved));}catch{}
 range.value=String(Math.round(target*100));
-const paint=()=>root.style.setProperty('--vol',range.value+'%');
+const paint=()=>{root.style.setProperty('--vol',range.value+'%');value.textContent=range.value;};
 paint();
+
+// Analisador: criado no primeiro clique (os navegadores exigem um gesto). Sem Web Audio, a trilha toca do mesmo
+// jeito e o equalizador cai na animação em CSS.
+let context:AudioContext|null=null,analyser:AnalyserNode|null=null,bins=new Uint8Array(0);
+function wire(){
+ if(context||typeof AudioContext==='undefined')return;
+ try{
+  context=new AudioContext();analyser=context.createAnalyser();analyser.fftSize=1024;analyser.smoothingTimeConstant=.8;
+  context.createMediaElementSource(audio).connect(analyser);analyser.connect(context.destination);
+  bins=new Uint8Array(analyser.frequencyBinCount);sound.live=true;root.classList.add('is-live');
+ }catch{context=null;analyser=null;}
+}
+// Faixas do equalizador (índices do espectro, em escala aproximadamente logarítmica) e as três leituras da atmosfera.
+const BANDS=[[1,3],[4,9],[10,24],[25,60],[61,160]];
+const mean=(a:number,b:number,lift:number)=>{let s=0;for(let i=a;i<=b;i++)s+=bins[i];return Math.min(1,Math.max(0,(s/(b-a+1)+lift)/255));};
+let meter=0;
+function measure(){
+ meter=requestAnimationFrame(measure);
+ if(!analyser)return;
+ analyser.getByteFrequencyData(bins);
+ // O volume baixo também baixa o que o analisador lê; compensa para o desenho não depender do volume escolhido.
+ const lift=audio.volume>0?Math.min(110,-20*Math.log10(Math.max(.02,audio.volume))/70*255):0;
+ bars.forEach((bar,i)=>bar.style.setProperty('--v',(.1+.9*mean(BANDS[i][0],BANDS[i][1],lift)**1.6).toFixed(3)));
+ sound.bass=mean(1,5,lift)**2;sound.mid=mean(6,46,lift);sound.high=mean(47,200,lift);
+}
+function listen(on:boolean){
+ cancelAnimationFrame(meter);sound.on=on;
+ if(on)meter=requestAnimationFrame(measure);
+ else{sound.bass=sound.mid=sound.high=0;bars.forEach(bar=>bar.style.removeProperty('--v'));}
+}
 
 let fade=0;
 function fadeTo(to:number,ms:number,done?:()=>void){
@@ -45,11 +83,13 @@ function setState(state:'off'|'on'|'paused'){
  toggle.setAttribute('aria-pressed',String(state==='on'));
  label.textContent=state==='on'?'Pausar trilha':state==='paused'?'Retomar trilha':'Ouvir trilha';
  mixer.hidden=state==='off';
+ listen(state==='on');
 }
 toggle.addEventListener('click',async()=>{
  if(root.dataset.state==='on'){fadeTo(0,400,()=>audio.pause());setState('paused');return;}
+ wire();
  audio.volume=0;
- try{await audio.play();}catch{setState('off');return;}
+ try{await context?.resume();await audio.play();}catch{setState('off');return;}
  fadeTo(target,1200);setState('on');
 });
 range.addEventListener('input',()=>{

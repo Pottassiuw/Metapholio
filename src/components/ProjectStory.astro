@@ -8,24 +8,31 @@ import TechMark from './TechMark.astro';
 interface Props{project:(typeof projects)[number];section:(typeof sections)[number]}
 const {project,section}=Astro.props;
 const helios=project.id==='edp-helios';
+// Projetos com decisões registradas (hoje, o Helios) ganham um capítulo a mais, entre a resposta e a minha parte.
+const decisions:{title:string,text:string}[]=('decisions' in project&&project.decisions)||[];
+const ROMAN=['I','II','III','IV','V','VI'];
 const chapters=[
- {id:'partida',numeral:'I',label:'O ponto de partida',kind:'text',text:project.problem},
- {id:'resposta',numeral:'II',label:'A resposta',kind:'cast',text:project.solution},
- {id:'minha-parte',numeral:'III',label:'Minha parte',kind:'text',text:project.role},
- {id:'arsenal',numeral:'IV',label:'O arsenal',kind:'arsenal'},
- {id:'onde',numeral:'V',label:'Onde encontrar',kind:'sources'},
-] as const;
+ {id:'partida',label:'O ponto de partida',kind:'text',text:project.problem},
+ {id:'resposta',label:'A resposta',kind:'cast',text:project.solution},
+ ...(decisions.length?[{id:'decisoes',label:'Por trás das decisões',kind:'decisions',text:''}]:[]),
+ {id:'minha-parte',label:'Minha parte',kind:'text',text:project.role},
+ {id:'arsenal',label:'O arsenal',kind:'arsenal',text:''},
+ {id:'onde',label:'Onde encontrar',kind:'sources',text:''},
+].map((c,i)=>({...c,numeral:ROMAN[i]}));
 const siblings=projects.filter(p=>p.category===project.category);
 const next=siblings[(siblings.indexOf(project)+1)%siblings.length];
 const word=project.name.toUpperCase();
-const art={avif:asset(`images/museu/${section.id}.avif`),webp:asset(`images/museu/${section.id}.webp`)};
+// A obra é a da sala; o Helios traz a própria gravura, impressa nas cores do projeto (scripts/create-helios-art.ts).
+const art=helios
+ ?{avif:`${asset('images/helios/cidade-760.avif')} 760w, ${asset('images/helios/cidade.avif')} 1186w`,webp:asset('images/helios/cidade.webp'),webpSet:`${asset('images/helios/cidade-760.webp')} 760w, ${asset('images/helios/cidade.webp')} 1186w`,sizes:'(max-width:700px) 100vw, 60vw',width:1186,height:956}
+ :{avif:asset(`images/museu/${section.id}.avif`),webp:asset(`images/museu/${section.id}.webp`),webpSet:undefined,sizes:undefined,width:1100,height:1400};
 ---
-<section class="scene room story" id="conteudo" data-scene={section.id} data-chapter="0" aria-labelledby="story-title">
+<section class="scene room story" id="conteudo" data-scene={section.id} data-project={project.id} data-chapter="0" aria-labelledby="story-title">
 <div class="room-flood" aria-hidden="true"></div>
-<div class="story-art" aria-hidden="true"><picture><source type="image/avif" srcset={art.avif}/><img src={art.webp} alt="" width="1100" height="1400"/></picture></div>
+<div class="story-art" aria-hidden="true"><picture><source type="image/avif" srcset={art.avif} sizes={art.sizes}/><img src={art.webp} srcset={art.webpSet} sizes={art.sizes} alt="" width={art.width} height={art.height}/></picture></div>
 <span class="story-numeral" aria-hidden="true">I</span>
 
-<h1 class="scene-title" id="story-title"><span class="sr-only">{project.name}</span><span class="scene-word" aria-hidden="true">{[...word].map((l,i)=><span class="scene-letter" style={`--i:${i}`}>{l===' '?'\u00a0':l}</span>)}</span></h1>
+<h1 class="scene-title" id="story-title"><span class="sr-only">{project.name}</span><span class="scene-word" data-text={word} aria-hidden="true">{[...word].map((l,i)=><span class="scene-letter" style={`--i:${i}`}>{l===' '?'\u00a0':l}</span>)}</span></h1>
 
 <header class="story-head">
 <a class="story-back" href={route(section.id)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg>{section.title}</a>
@@ -47,6 +54,7 @@ const art={avif:asset(`images/museu/${section.id}.avif`),webp:asset(`images/muse
 <ol>{project.visual.map((v,k)=><li style={`--k:${k}`}>{v}</li>)}</ol>
 </div>
 </>}
+{c.kind==='decisions'&&<ul class="chapter-decisions">{decisions.map((d,k)=><li style={`--k:${k}`}><h3>{d.title}</h3><p>{d.text}</p></li>)}</ul>}
 {c.kind==='arsenal'&&<>
 <ul class="arsenal-tech">{project.tech.map((t,k)=><li style={`--k:${k}`}><TechMark name={t} size={40}/></li>)}</ul>
 <h3 class="arsenal-h">Competências em prática</h3>
@@ -62,13 +70,12 @@ const art={avif:asset(`images/museu/${section.id}.avif`),webp:asset(`images/muse
 
 <div class="story-controls" hidden>
 <button class="story-btn" type="button" data-step="-1" aria-label="Capítulo anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg></button>
-<p class="story-count"><b>I</b> / V</p>
+<p class="story-count"><b>I</b> / {chapters[chapters.length-1].numeral}</p>
 <button class="story-btn" type="button" data-step="1" aria-label="Próximo capítulo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
 </div>
 </section>
 
 <script>
-const NUMERALS=['I','II','III','IV','V'];
 let controller:AbortController|null=null;
 function initStory(){
  controller?.abort();
@@ -77,6 +84,7 @@ function initStory(){
  controller=new AbortController();const {signal}=controller;
  const tabs=[...story.querySelectorAll<HTMLAnchorElement>('.story-tab')];
  const chapters=[...story.querySelectorAll<HTMLElement>('.chapter')];
+ const NUMERALS=tabs.map(t=>t.querySelector('b')?.textContent??'');
  const numeral=story.querySelector<HTMLElement>('.story-numeral')!;
  const count=story.querySelector('.story-count b')!;
  story.classList.add('is-staged');story.querySelector<HTMLElement>('.story-controls')!.hidden=false;

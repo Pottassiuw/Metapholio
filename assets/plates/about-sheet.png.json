@@ -1,0 +1,7 @@
+{
+  "prompt": "Generate one beautiful production illustration asset: a flat front-facing horizontal 3:2 piece of off-white archival paper with subtle natural uneven deckled edges, isolated on real transparent background with a small clear margin. No rotation or cast shadow. An elegant historical botanical copperplate engraving grows along its right edge and lower-right corner: one expressive leafy branch, finely cross-hatched dark blue-green ink #173c3e with a few faint sage details. The left two thirds stay quiet blank paper with tactile fine grain, intended for large live website typography added later. The leaf drawing feels curious, thoughtful, human and alive, its natural contour and black ink mass readable at small sizes. Reference the uploaded portfolio mockup only for craftsmanship of botanical print and material. No text, letters, writing, numbers, logos, frames, books, people or UI. Opaque paper, true alpha only outside the entire paper sheet. Rich yet controlled print texture, sharp confident hatching, no watercolor, no photographic plants.",
+  "generator": "image_gen",
+  "purpose": "Mesa de criação — arte sem interface",
+  "status": "candidate",
+  "reference": ".impeccable/mocks/decision/mesa.png"
+}

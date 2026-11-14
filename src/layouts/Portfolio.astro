@@ -2,6 +2,7 @@
 import {ClientRouter} from 'astro:transitions';
 import MenuArt from '../components/MenuArt.astro';
 import Trilha from '../components/Trilha.astro';
+import Atmosfera from '../components/Atmosfera.astro';
 import {route,asset,sections} from '../data/portfolio';
 import '../styles/menu.css';
 import '../styles/portfolio.css';
@@ -31,20 +32,27 @@ const current=sections.find(s=>s.id===active)??sections[1];
 <footer class="sheet-footer"><a href={route('contato')}>Vamos conversar</a><a href={route()}>Menu principal</a></footer>
 </article>}
 <footer class="footer">
-<div><div class="social"><a href="https://github.com/Pottassiuw" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://www.linkedin.com/in/thiago-nascimento-729077292" target="_blank" rel="noopener noreferrer">LinkedIn</a></div><p class="caption">Gravura: A. Dürer, Melencolia I (1514) · The Met, domínio público.</p></div>
+<div><div class="social"><a href="https://github.com/Pottassiuw" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://www.linkedin.com/in/thiago-nascimento-729077292" target="_blank" rel="noopener noreferrer">LinkedIn</a></div><p class="caption">Gravura: A. Dürer, Melencolia I (1514), The Met — domínio público.</p></div>
 <div class="controls"><span class="control"><span class="key-arrows"><kbd>↑</kbd><kbd>↓</kbd></span> Navegar</span><span class="control"><kbd>Enter</kbd> Abrir</span><span class="control"><kbd>Esc</kbd> Menu</span></div>
 </footer>
 </main>
 <Trilha/>
+<Atmosfera/>
 <script>
 import {navigate,swapFunctions} from 'astro:transitions/client';
-import {route,sections} from '../data/portfolio';
+import {route,sections,projects} from '../data/portfolio';
 
-// Troca só o palco (#menu): o resto do <body>, inclusive a trilha, continua vivo entre páginas.
+let lastTap:{x:number,y:number,el:Element|null,t:number}={x:0,y:0,el:null,t:0};
+document.addEventListener('pointerdown',e=>{
+ lastTap={x:e.clientX,y:e.clientY,el:(e.target as Element|null)?.closest?.('a,button')??null,t:performance.now()};
+},{passive:true,capture:true});
+
+// Troca só o palco (#menu): o resto do <body>, inclusive a trilha e a atmosfera, continua vivo entre páginas.
 document.addEventListener('astro:before-swap',event=>{
  const next=event.newDocument.getElementById('menu'),current=document.getElementById('menu');
  if(!next||!current)return;
  event.swap=()=>{
+  if(document.documentElement.classList.contains('has-splash'))event.newDocument.documentElement.classList.add('has-splash');
   swapFunctions.deselectScripts(event.newDocument);
   swapFunctions.swapRootAttributes(event.newDocument);
   swapFunctions.swapHeadElements(event.newDocument);
@@ -55,11 +63,27 @@ document.addEventListener('astro:before-swap',event=>{
  };
 });
 
-// Saída no idioma do menu de Metaphor: as letras se desmontam e uma faixa de papel cruza a tela
-// enquanto a próxima página carrega (em paralelo, nunca atrasando além de ~0,3 s).
+// Saída no idioma de Metaphor: quando a atmosfera WebGL está ativa, dispara um respingo de tinta do ponto
+// de clique/foco na cor da seção de destino; sem WebGL, mantém a faixa de papel cruzando a tela.
 document.addEventListener('astro:before-preparation',event=>{
  const stage=document.querySelector<HTMLElement>('.stage');
  if(!stage||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ let x=innerWidth*.5,y=innerHeight*.5,link:HTMLAnchorElement|null=null;
+ if(performance.now()-lastTap.t<600){
+  x=lastTap.x;y=lastTap.y;link=lastTap.el?.closest?.('a')??null;
+ }else{
+  const act=document.activeElement as HTMLElement|null;
+  const focusEl=(act&&act!==document.body&&act!==document.documentElement?act:null)
+   ??document.querySelector<HTMLElement>('.menu-item.is-painted,.menu-item.is-selected');
+  const b=focusEl?.getBoundingClientRect();
+  if(b&&b.width>0){x=b.left+b.width*.55;y=b.top+b.height*.5;}
+  link=focusEl?.closest?.('a')??null;
+ }
+ const slug=event.to.pathname.replace(/\/+$/,'').split('/').pop()||'';
+ const secId=link?.dataset.section||sections.find(s=>s.id===slug)?.id||projects.find(p=>p.id===slug)?.category;
+ const cor=sections.find(s=>s.id===secId)?.accent
+  ||getComputedStyle(document.documentElement).getPropertyValue('--accent-sel').trim()||'#ff3461';
+ (window as unknown as {__splash?:(x:number,y:number,c?:string)=>boolean}).__splash?.(x,y,cor);
  const load=event.loader;
  event.loader=async()=>{
   stage.classList.add('is-leaving');
@@ -116,16 +140,56 @@ function init(){
   replay(link,'is-pop');
   burst(link,s.accent);
  }
+ function misprint(el:HTMLElement|null){
+  if(!el||still.matches||document.hidden)return;
+  replay(el,'is-misprint');
+  window.setTimeout(()=>el.classList.remove('is-misprint'),300);
+ }
  function select(link:HTMLAnchorElement){
   paint(link);
   if(!home||link.classList.contains('is-selected'))return;
   links.forEach(el=>el.classList.toggle('is-selected',el===link));
+  misprint(link.querySelector<HTMLElement>('.menu-word'));
   const s=sections.find(s=>s.id===link.dataset.section)!;
-  const num=document.querySelector<HTMLElement>('.dial-num');if(num){num.textContent=String(sections.indexOf(s)+1);replay(num,'is-turning');}
+  const idx=sections.indexOf(s)+1;
+  const num=document.querySelector<HTMLElement>('.dial-num');if(num){num.textContent=String(idx);replay(num,'is-turning');}
+  const rk=document.querySelector<HTMLElement>('#preview-rank');if(rk){rk.textContent=String(idx);replay(rk,'is-turning');}
+  const tag=document.querySelector<HTMLElement>('#preview-tag');if(tag)tag.textContent=s.hint;
   document.querySelector('#preview-title')!.textContent=s.title;document.querySelector('#preview-copy')!.textContent=s.copy;const explore=document.querySelector<HTMLAnchorElement>('#explore')!;explore.href=link.href;explore.querySelector('span')!.textContent='Explorar '+s.label.toLowerCase();
  }
  const current=links.find(l=>l.classList.contains('is-selected'));
  if(current){painted=null;paint(current);}
+ const titleEl=document.querySelector<HTMLElement>('.scene-title'),wordEl=titleEl?.querySelector<HTMLElement>('.scene-word')??null;
+ if(titleEl&&wordEl){
+  let mTimer=window.setTimeout(()=>{if(!signal.aborted)misprint(wordEl);},320);
+  const schedule=()=>{mTimer=window.setTimeout(()=>{if(signal.aborted)return;misprint(wordEl);schedule();},7000+Math.random()*4000);};
+  const iTimer=window.setTimeout(()=>{if(!signal.aborted)schedule();},650);
+  signal.addEventListener('abort',()=>{clearTimeout(mTimer);clearTimeout(iTimer);});
+  titleEl.addEventListener('pointerenter',()=>misprint(wordEl),{signal});
+ }
+ const follower=document.querySelector<HTMLElement>('.follower');
+ if(follower){
+  const bonds=[...follower.querySelectorAll<HTMLAnchorElement>('.message')];
+  const bRank=follower.querySelector<HTMLElement>('#bond-rank'),bArch=follower.querySelector<HTMLElement>('#bond-arch'),bCopy=follower.querySelector<HTMLElement>('#bond-copy');
+  let bIdx=0;
+  const setBond=(k:number,focus=false)=>{
+   bIdx=(k+bonds.length)%bonds.length;const el=bonds[bIdx];if(!el)return;
+   bonds.forEach((m,i)=>m.classList.toggle('is-active',i===bIdx));
+   if(bRank&&bRank.textContent!==el.dataset.rank){bRank.textContent=el.dataset.rank??'I';replay(bRank,'is-turning');}
+   if(bArch)bArch.textContent=el.dataset.arch??'';
+   if(bCopy)bCopy.textContent=el.dataset.desc??'';
+   if(focus)el.focus();
+  };
+  bonds.forEach((m,i)=>{
+   m.addEventListener('pointerenter',()=>setBond(i),{signal});
+   m.addEventListener('focus',()=>setBond(i),{signal});
+  });
+  follower.querySelectorAll<HTMLButtonElement>('[data-bond-step]').forEach(btn=>{
+   btn.addEventListener('click',()=>setBond(bIdx+Number(btn.dataset.bondStep),true),{signal});
+  });
+ }
+ const lvRows=[...document.querySelectorAll<HTMLElement>('.level-row')];
+ lvRows.forEach(r=>r.addEventListener('pointerenter',()=>lvRows.forEach(x=>x.classList.toggle('is-peak',x===r)),{signal}));
  links.forEach(link=>{link.addEventListener('focus',()=>select(link),{signal});// Pelo tipo do ponteiro, não por (hover:hover): o Firefox no Linux com tela de toque responde 'none' mesmo com mouse.
   link.addEventListener('pointerenter',e=>{if(e.pointerType!=='touch')select(link)},{signal});});
  // Nas internas, ao sair do menu a pintura volta para a seção da página.

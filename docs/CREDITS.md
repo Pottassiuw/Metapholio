@@ -8,7 +8,7 @@ O tratamento do retrato estilizado é determinístico e reproduzível com `scrip
 
 A disponibilização no repositório não autoriza reutilizar as fotografias para outros fins.
 
-## Gravura
+## Gravura da home
 
 Albrecht Dürer, *Melencolia I* (1514), The Metropolitan Museum of Art, objeto 336228. Imagem de domínio público / Open Access. Um recorte da figura alada é a arte principal do menu; não representa Thiago Nascimento.
 

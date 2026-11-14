@@ -1,0 +1,22 @@
+---
+// Atmosfera: tela 3D fixa por cima do site (astrolábio, estilhaços e brasas; ver src/scripts/atmosfera.ts).
+// Fica fora de #menu, como a trilha, então atravessa as trocas de página sem ser recriada.
+// É só enfeite: aria-hidden, não recebe cliques, não carrega com movimento reduzido e some sem WebGL.
+import '../styles/atmosfera.css';
+---
+<canvas class="atmosfera" id="atmosfera" aria-hidden="true"></canvas>
+
+<script>
+const canvas=document.getElementById('atmosfera') as HTMLCanvasElement|null;
+const still=matchMedia('(prefers-reduced-motion: reduce)');
+let stop:(()=>void)|null=null,loading=false;
+async function boot(){
+ if(!canvas||stop||loading||still.matches)return;
+ loading=true;
+ try{const {start}=await import('../scripts/atmosfera');const result=start(canvas);if(result)stop=result;}catch{}
+ loading=false;
+}
+// O Three.js só é baixado depois que a página está de pé.
+if('requestIdleCallback' in window)requestIdleCallback(()=>boot(),{timeout:1800});else setTimeout(boot,700);
+still.addEventListener('change',()=>{if(still.matches){stop?.();stop=null;}else boot();});
+</script>

@@ -5,7 +5,7 @@
 .about-scene{position:absolute;z-index:-1;inset:0;overflow:hidden;isolation:isolate;background:var(--ink);--d:1}
 .about-scene[data-dir="-1"]{--d:-1}
 .about-ground{display:none}
-.about-scene .about-title{position:absolute;z-index:3;top:-.18em;left:33vw;margin:0;font:900 min(9.4vw,170px)/1 var(--display);letter-spacing:-.04em;word-spacing:.2em;text-transform:uppercase;white-space:nowrap;color:var(--paper);pointer-events:none}
+.about-scene .about-title{position:absolute;z-index:3;top:-.18em;left:33vw;margin:0;font:900 min(9.4vw,170px)/1 var(--display);letter-spacing:-.04em;word-spacing:.2em;text-transform:uppercase;white-space:nowrap;color:var(--paper);pointer-events:auto}
 
 /* Cada slide é uma pintura de Thiago em tela cheia; a cor da seção inunda o canto do menu por cima. */
 .about-slides{position:absolute;inset:0}

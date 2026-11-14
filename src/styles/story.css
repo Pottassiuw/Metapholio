@@ -14,6 +14,7 @@
 .story[data-chapter="2"]{--px:-8%;--py:-6%;--z:1.5}
 .story[data-chapter="3"]{--px:4%;--py:6%;--z:1.26}
 .story[data-chapter="4"]{--px:0%;--py:0%;--z:1.06}
+.story[data-chapter="5"]{--px:0%;--py:0%;--z:1.06}
 
 /* Numeral do capítulo: gigante, na cor da seção, cortado pela borda de baixo (o dial do menu de Metaphor). */
 .story-numeral{position:absolute;z-index:-1;right:2vw;bottom:-.18em;font:900 min(34svh,22vw)/1 var(--display);letter-spacing:-.04em;color:var(--accent);pointer-events:none;-webkit-text-stroke:2px var(--ink)}
@@ -61,6 +62,11 @@
 .chapter-cast li:nth-child(2n){background:var(--accent);color:var(--on-accent)}
 .cast-label{display:inline-block;margin:0 0 10px;padding:3px 10px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);background:var(--paper)}
 
+/* Por trás das decisões: quatro decisões curtas, lado a lado. */
+.chapter-decisions{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 30px}
+.chapter-decisions h3{margin:0 0 6px;font:900 clamp(19px,1.5vw,23px)/1.12 var(--display);letter-spacing:-.01em;color:var(--accent);text-wrap:balance}
+.chapter-decisions p{margin:0;font-size:18px;line-height:1.45}
+
 /* IV · O arsenal: tecnologias como palavras grandes; competências como lista curta. */
 .arsenal-tech{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 18px}
 .arsenal-tech li{font:900 clamp(26px,2.4vw,40px)/1.1 var(--display);letter-spacing:-.02em}
@@ -93,10 +99,10 @@
 .story.is-cut::after{content:'';position:fixed;z-index:4;top:-20%;bottom:-20%;left:-25%;width:18%;background:var(--paper);rotate:14deg;animation:story-plate .65s cubic-bezier(.7,0,.3,1) both;pointer-events:none}
 @keyframes story-plate{from{translate:0 0;opacity:1}85%{opacity:1}to{translate:900% 0;opacity:0}}
 .story.is-staged .chapter.is-current{animation:chapter-in .55s .12s cubic-bezier(.16,1,.3,1) both}
-.story.is-staged .chapter.is-current :is(.chapter-title,.chapter-text,.chapter-cast li,.arsenal-tech li){animation:chapter-line .5s cubic-bezier(.16,1,.3,1) both}
+.story.is-staged .chapter.is-current :is(.chapter-title,.chapter-text,.chapter-cast li,.chapter-decisions li,.arsenal-tech li){animation:chapter-line .5s cubic-bezier(.16,1,.3,1) both}
 .story.is-staged .chapter.is-current .chapter-title{animation-delay:.18s}
 .story.is-staged .chapter.is-current .chapter-text{animation-delay:.28s}
-.story.is-staged .chapter.is-current :is(.chapter-cast li,.arsenal-tech li){animation-delay:calc(.34s + var(--k,0)*60ms)}
+.story.is-staged .chapter.is-current :is(.chapter-cast li,.chapter-decisions li,.arsenal-tech li){animation-delay:calc(.34s + var(--k,0)*60ms)}
 .story.is-staged .chapter.is-leaving{animation:chapter-out .4s cubic-bezier(.7,0,.84,0) forwards}
 @keyframes chapter-in{from{clip-path:inset(0 100% 0 0);translate:calc(var(--d,1)*24px) 0}to{clip-path:inset(0 -2% 0 0);translate:0 0}}
 @keyframes chapter-line{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 -4% 0 0)}}
@@ -108,6 +114,7 @@
 .story{grid-template-columns:190px minmax(0,1fr);padding-right:3vw}
 .story-art{left:calc(var(--split-top) + 10vw)}
 .story-numeral{font-size:min(32svh,24vw)}
+.chapter-decisions{grid-template-columns:minmax(0,1fr);gap:16px}
 }
 @media(max-width:700px){
 .story{display:block;padding:0 18px 40px}
@@ -122,6 +129,7 @@
 .story-controls{margin-top:14px}
 .chapter{padding:18px 18px 20px}
 .chapter-text{font-size:18px}
+.chapter-decisions{grid-template-columns:minmax(0,1fr);gap:16px}
 }
 @media(prefers-reduced-motion:reduce){
 .story-art img{transition:none}
@@ -135,3 +143,18 @@
 .story .story-tab:is(.is-current,:hover){color:var(--on-accent)}
 .story .story-links a{color:var(--ink)}
 .story .story-links a:hover,.story .story-next-project:is(:hover,:focus-visible){color:var(--on-accent)}
+
+/* Helios: a página veste a identidade do projeto. O menu e a inundação da seção continuam os do site; a cena
+   (chão, obra, numeral, sumário, etiquetas) usa Marine Blue e Electric Green, e a obra é a gravura da cidade
+   com a rede acesa. A câmera percorre a rede: ponte, viaduto, cúpula. */
+.room.story[data-project=edp-helios]{--accent:#28ff52;--on-accent:#212e3e;--room-ground:#212e3e}
+:root:has(.room.story[data-project=edp-helios]) .inner.section-scene{--room-ground:#212e3e}
+.story[data-project=edp-helios] .story-art img{object-position:74% 50%}
+/* O numeral vira contorno: em verde cheio, um III seria uma parede de néon sobre a rede. */
+.story[data-project=edp-helios] .story-numeral{color:transparent;-webkit-text-stroke:2px var(--accent)}
+.story[data-project=edp-helios][data-chapter="0"]{--px:-3%;--py:3%;--z:1.1}
+.story[data-project=edp-helios][data-chapter="1"]{--px:9%;--py:-9%;--z:1.3}
+.story[data-project=edp-helios][data-chapter="2"]{--px:-5%;--py:2%;--z:1.36}
+.story[data-project=edp-helios][data-chapter="3"]{--px:-9%;--py:9%;--z:1.3}
+.story[data-project=edp-helios][data-chapter="4"]{--px:4%;--py:-4%;--z:1.18}
+.story[data-project=edp-helios][data-chapter="5"]{--px:0%;--py:0%;--z:1.04}

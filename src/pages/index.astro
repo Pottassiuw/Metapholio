@@ -4,8 +4,14 @@ import {route} from '../data/portfolio';
 ---
 <Portfolio home routeKey="menu">
 <section class="preview" id="conteudo" aria-label="Seção selecionada">
+<div class="preview-head" aria-hidden="true">
+<span class="preview-tag" id="preview-tag">missões acadêmicas</span>
+<span class="preview-seal"><svg viewBox="0 0 100 100"><polygon points="50,3 90,22 99,65 72,97 28,97 1,65 10,22"/><polygon points="50,16 79,30 86,62 66,85 34,85 14,62 21,30"/><line x1="50" y1="3" x2="50" y2="50"/><line x1="90" y1="22" x2="50" y2="50"/><line x1="99" y1="65" x2="50" y2="50"/><line x1="72" y1="97" x2="50" y2="50"/><line x1="28" y1="97" x2="50" y2="50"/><line x1="1" y1="65" x2="50" y2="50"/><line x1="10" y1="22" x2="50" y2="50"/></svg><small>Seção</small><b id="preview-rank">2</b></span>
+</div>
+<div class="preview-paper">
 <h2 class="preview-title" id="preview-title">Projetos acadêmicos</h2>
 <p class="preview-copy" id="preview-copy">As APIs da FATEC, trabalhos de disciplina e o TCC da ETEC.</p>
 <a class="preview-action" id="explore" href={route('projetos')}><span>Explorar projetos</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a>
+</div>
 </section>
 </Portfolio>

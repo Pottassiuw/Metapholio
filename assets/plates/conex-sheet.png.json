@@ -1,0 +1,7 @@
+{
+  "prompt": "Produce one production illustration asset for a portfolio, not a full UI. A flat front-facing horizontal 2:1 sheet of ivory archival paper with subtle natural deckled edges and fine paper grain, isolated on true transparent background with a small margin. No external shadow or rotation. On the right third and bottom edge, render a gorgeous precise historical copper engraving of an imaginary architectural message exchange: three little connected archive halls and narrow bridges, tiny envelopes passing between separate destinations. It suggests routing communications across distinct organizations, not a real software screenshot. Dark teal ink #173c3e with turquoise #73c9c5 over paper. Left two thirds mostly blank lightly textured paper for title and description to be added in HTML. Match the approved Metapholio reference's printing craft, hatching and paper, not its exact artwork. No words, characters, labels, numbers, logos, UI controls, satellite dishes or robots. Strong detailed illustration at the right, quiet at the left; high contrast and coherent perspective. Real alpha only outside the paper.",
+  "generator": "image_gen",
+  "purpose": "Mesa de criação — arte sem interface",
+  "status": "candidate",
+  "reference": ".impeccable/mocks/decision/mesa.png"
+}

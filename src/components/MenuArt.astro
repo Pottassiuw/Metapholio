@@ -5,13 +5,13 @@ const activeIndex=Math.max(0,sections.findIndex(s=>s.id===active));
 ---
 
 <picture><source type="image/avif" srcset={asset('images/melencolia-anjo.avif')}/><img class="art" src={asset('images/melencolia-anjo.webp')} width="1200" height="1783" alt="" fetchpriority="high"/></picture>
-<div class="wash" aria-hidden="true"></div><div class="cut" aria-hidden="true"></div><div class="red-cut" aria-hidden="true"></div><div class="orbit" aria-hidden="true"></div><div class="dial" aria-hidden="true"><span class="dial-ring"></span><span class="dial-num">{activeIndex+1}</span><span class="dial-label">Menu</span></div>
+<div class="wash" aria-hidden="true"></div><div class="cut" aria-hidden="true"></div><div class="red-cut" aria-hidden="true"></div><div class="orbit" aria-hidden="true"></div><div class="dial" aria-hidden="true"><span class="dial-ring"></span><span class="dial-cross"></span><span class="dial-num">{activeIndex+1}</span><span class="dial-label">Selected · Menu</span></div>
 <header>
 <a class="identity" href={route()} aria-label="Thiago Nascimento — início"><span class="identity-mark" aria-hidden="true">T.</span><div><h1>Thiago Nascimento</h1><p>Desenvolvedor · DSM / FATEC São José dos Campos</p></div></a>
 <div class="edition"><b>Portfólio</b></div>
 </header>
 <nav class="menu" aria-label="Seções do portfólio" transition:name="menu" transition:animate="initial">
-{sections.map((s) => <a class:list={["menu-item",{ "is-selected": active === s.id }]} href={route(s.id)} data-section={s.id} style={`--accent:${s.accent};--on-accent:${s.onAccent}`} aria-current={active === s.id ? 'page' : undefined} aria-label={s.label}><span class="arrow" aria-hidden="true"></span><span class="menu-word" aria-hidden="true">{[...s.label].map((letter,i)=><span class="menu-letter" style={`--letter:${i}`}>{letter}</span>)}</span><span class="menu-hint" aria-hidden="true">{s.hint}</span></a>)}
+{sections.map((s) => <a class:list={["menu-item",{ "is-selected": active === s.id }]} href={route(s.id)} data-section={s.id} style={`--accent:${s.accent};--on-accent:${s.onAccent}`} aria-current={active === s.id ? 'page' : undefined} aria-label={s.label}><span class="arrow" aria-hidden="true"></span><span class="menu-word" data-text={s.label} aria-hidden="true">{[...s.label].map((letter,i)=><span class="menu-letter" style={`--letter:${i}`}>{letter}</span>)}</span><span class="menu-hint" aria-hidden="true">{s.hint}</span></a>)}
 <span class="menu-splash" aria-hidden="true"></span>
 </nav>
 <div class="vertical-note">Uma trajetória em construção</div>

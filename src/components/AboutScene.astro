@@ -18,7 +18,7 @@ const slides=[
 ---
 <section class="about-scene" id="conteudo" aria-labelledby="about-title">
 <div class="room-flood" aria-hidden="true"></div>
-<h1 class="about-title" id="about-title">Sobre mim</h1>
+<h1 class="about-title scene-title" id="about-title"><span class="sr-only">Sobre mim</span><span class="scene-word" data-text="SOBRE MIM" aria-hidden="true">{[...'SOBRE MIM'].map((l,i)=><span class="scene-letter" style={`--i:${i}`}>{l===' '?'\u00a0':l}</span>)}</span></h1>
 <div class="about-slides" aria-roledescription="carrossel" aria-label="Quem é Thiago Nascimento">
 {slides.map((s,i)=><article class:list={['about-slide',{'is-active':i===0}]} data-art={s.art} aria-roledescription="slide" aria-label={`${i+1} de ${slides.length}`}>
 <picture class="about-art"><source type="image/avif" srcset={asset(`images/thiago/pintura-${s.art}.avif`)}/><img src={asset(`images/thiago/pintura-${s.art}.webp`)} width="1672" height="941" alt={art[s.art].alt} loading={i===0?'eager':'lazy'}/></picture>
