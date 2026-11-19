@@ -27,6 +27,19 @@ class Page(HTMLParser):
         if not target.is_file(): errors.append(f'{self.path}: missing {value}')
 pages = list(root.rglob('*.html'))
 for path in pages: Page(path).feed(path.read_text())
-assert len(pages) == 18, f'Expected 18 routes, got {len(pages)}'
+assert len(pages) == 21, f"Expected 21 routes, got {len(pages)}"
+# Menu: sete entradas; apenas rotas internas têm uma entrada marcada como página atual.
+import re
+for path in pages:
+    html = path.read_text()
+    items = re.findall(r'class="menu-item[^"]*"[^>]*data-section="([a-z]+)"', html)
+    if not items: continue
+    if len(items) != 7 or 'interesses' not in items:
+        errors.append(f'{path}: menu has {len(items)} entries {items}')
+    expected_current = 0 if path == root / 'index.html' else 1
+    if html.count('aria-current="page"') != expected_current:
+        errors.append(f'{path}: expected {expected_current} current menu entries')
+    if not expected_current and ('class="dial"' in html or 'class="edition"' in html or html.count('class="preview-seal"') != 1):
+        errors.append(f'{path}: expected only the preview seal on the home page')
 if errors: raise SystemExit('\n'.join(errors))
-print(f'PASS: {len(pages)} static pages; local href/src targets exist; base {base or "/"}.')
+print(f'PASS: {len(pages)} static pages; local href/src targets exist; menus have 7 entries; base {base or "/"}.')

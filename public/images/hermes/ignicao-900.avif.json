@@ -1,0 +1,4 @@
+{
+  "prompt": "DERIVED by scripts/create-interests-art.ts from official Hermes Agent artwork supplied by Thiago Nascimento (OneDrive/Pictures/Arts/Hermes/3.webp, 1488x1304). No blur, median or Kuwahara: original lines and halftone kept at native resolution, then Lanczos-resized to 900px. Only the luminance is re-inked: shadows to ink #040407 (the page ground), mid-tones to a slate-blue wash, light to near-red rose (#d61a40–#ff3a5c) that pools where a low-frequency noise field is high, with pigment grain. 900x789. The composition and figures belong to the original artwork.",
+  "createdAt": "2026-11-17T02:35:28.110Z"
+}

@@ -1,0 +1,4 @@
+{
+  "prompt": "AUTHORED 3D RENDER, not AI-generated: exported with canvas.toDataURL from the Three.js model in src/scripts/raspberry.ts (hand-modelled Raspberry Pi 4 Model B board, approximate 85x56 mm layout, no logos, in a two-tone case: raspberry base #c51a4a, white lid), case aberta, 1600x1000 with transparent background. Master PNG kept in OneDrive/Pictures/Arts/Raspberry/raspberry-pi4-case-aberta.png. Used as the no-WebGL / no-JS fallback for the live model.",
+  "createdAt": "2026-11-17T02:20:25.251Z"
+}

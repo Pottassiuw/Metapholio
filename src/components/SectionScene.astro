@@ -38,13 +38,13 @@ const orbit=(a:number,r:number)=>`--a:${a}deg;--r:${r}`;
 {section.id==='projetos'&&<div class="bridge">
 <picture class="room-art bridge-art"><source type="image/avif" srcset={art.avif}/><img src={art.webp} alt="" width="1100" height="1481"/></picture>
 <p class="room-label"><strong>{room.artist}</strong><em>{room.work}</em><span>{room.from} · {room.year}</span><span>{room.source}</span></p>
-<ol class="plaques">{list.map((p,i)=><li style={`--n:${i}`}><a class="plaque" href={route(p.id)}>
-<span class="plaque-tag">{p.context}</span>
+<ol class="plaques">{list.map((p,i)=>{const ch=('decisions' in p&&p.decisions?.length)?'VI':'V';return <li style={`--n:${i}`}><a class="plaque" href={route(p.id)}>
+<span class="plaque-head"><span class="plaque-num" aria-hidden="true">0{i+1}</span><span class="plaque-tag">{p.context}</span></span>
 <span class="plaque-name">{p.name}</span>
 <span class="plaque-sub">{p.subtitle}</span>
 <span class="plaque-lead">{p.lead}</span>
-<span class="plaque-tech">{p.tech.slice(0,5).map(n=><TechMark name={n} size={20}/>)}</span>
-<svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow}/></svg></a></li>)}</ol>
+<div class="plaque-foot"><ul class="plaque-tech" aria-label="Tecnologias principais">{p.tech.slice(0,5).map(t=><li><TechMark name={t} size={18}/></li>)}</ul><span class="plaque-cta" aria-hidden="true">Crônica · {ch} cap.</span></div>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow}/></svg></a></li>})}</ol>
 </div>}
 
 {section.id==='experiencia'&&<div class="sea">
@@ -57,8 +57,8 @@ const orbit=(a:number,r:number)=>`--a:${a}deg;--r:${r}`;
 </div>
 <p class="room-label"><strong>{room.artist}</strong><em>{room.work}</em><span>{room.from} · {room.year}</span><span>{room.source}</span></p>
 <ol class="crests">
-<li class="crest"><div class="crest-hud"><span class="crest-mark">PIT</span><span class="crest-place">São José dos Campos</span></div><h2>Estágio no PIT</h2><p>Em São José dos Campos. Do ReObserve ao ConexZap, trabalhei com organização de dados e roteamento de mensagens.</p><div class="crest-links"><a class="crest-link" href={route('conexzap')}>ConexZap<svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow}/></svg></a><a class="crest-link" href={route('reobserve')}>ReObserve<svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow}/></svg></a></div></li>
-<li class="crest is-now"><div class="crest-hud"><span class="crest-mark">EDP · atual</span><span class="crest-place">Planejamento de manutenção</span></div><h2>Estágio na EDP</h2><p>Planejamento de manutenção de redes, com Python, Power BI, Excel, Databricks e ferramentas internas.</p><div class="crest-links"><a class="crest-link" href={route('edp-helios')}>Helios<svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow}/></svg></a></div></li>
+<li class="crest"><div class="crest-hud"><span class="crest-mark">STAGE 01 · PIT</span><span class="crest-place">São José dos Campos</span></div><h2>Estágio no PIT</h2><p>Em São José dos Campos. Do ReObserve ao ConexZap, trabalhei com organização de dados e roteamento de mensagens.</p><p class="crest-stack" aria-label="Tecnologias usadas">TypeScript · React · Node.js · PostgreSQL · LLM</p><div class="crest-links"><a class="crest-link" href={route('conexzap')}>ConexZap<svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow}/></svg></a><a class="crest-link" href={route('reobserve')}>ReObserve<svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow}/></svg></a></div></li>
+<li class="crest is-now"><div class="crest-hud"><span class="crest-mark">STAGE 02 · EDP · ATUAL</span><span class="crest-place">Planejamento de manutenção</span></div><h2>Estágio na EDP</h2><p>Planejamento de manutenção de redes, com Python, Power BI, Excel, Databricks e ferramentas internas.</p><p class="crest-stack" aria-label="Tecnologias usadas">Python · Power BI · Databricks · React · FastAPI</p><div class="crest-links"><a class="crest-link" href={route('edp-helios')}>Helios<svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow}/></svg></a></div></li>
 </ol>
 <span class="room-watermark" aria-hidden="true">TRAJETÓRIA</span>
 </div>}
@@ -67,34 +67,33 @@ const orbit=(a:number,r:number)=>`--a:${a}deg;--r:${r}`;
 <figure class="print"><picture class="room-art"><source type="image/avif" srcset={art.avif}/><img src={art.webp} alt="" width="1050" height="1516"/></picture><figcaption>Tafel 8 · Discomedusae</figcaption></figure>
 <p class="room-label"><strong>{room.artist}</strong><em>{room.work}</em><span>{room.from} · {room.year}</span><span>{room.source}</span></p>
 <ol class="specimens">
-{list.map((p,i)=><li><a class="specimen" href={route(p.id)}><span class="specimen-fig">Fig. {i+1}</span><span class="specimen-name">{p.name}</span><span class="specimen-lead">{p.lead}</span><span class="specimen-tech">{p.tech.join(' · ')}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow}/></svg></a></li>)}
-<li><a class="specimen" href="https://github.com/Pottassiuw" target="_blank" rel="noopener noreferrer"><span class="specimen-fig">Fig. {list.length+1}</span><span class="specimen-name">Outros repositórios</span><span class="specimen-lead">Exercícios, configurações e estudos.</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d={external}/></svg></a></li>
+{list.map((p,i)=><li><a class="specimen" href={route(p.id)}><span class="specimen-head"><span class="specimen-fig">Fig. {i+1}</span><span class="specimen-tag">ARCHETYPE · EXPERIMENTO</span></span><span class="specimen-name">{p.name}</span><span class="specimen-lead">{p.lead}</span><ul class="plaque-tech" aria-label="Tecnologias">{p.tech.slice(0,5).map(t=><li><TechMark name={t} size={17}/></li>)}</ul><svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow}/></svg></a></li>)}
+<li><a class="specimen" href="https://github.com/Pottassiuw" target="_blank" rel="noopener noreferrer"><span class="specimen-head"><span class="specimen-fig">Fig. {list.length+1}</span><span class="specimen-tag">ARQUIVO · CÓDIGO ABERTO</span></span><span class="specimen-name">Outros repositórios</span><span class="specimen-lead">Exercícios, configurações e estudos.</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d={external}/></svg></a></li>
 </ol>
 </div>}
 
 {section.id==='formacao'&&<div class="orrery-room">
 <div class="level-sheet" aria-label="Resumo da trajetória acadêmica">
-<div class="level-head"><span class="level-lv"><small>Curso</small><b>DSM</b></span><span class="level-banner">FATEC São José dos Campos</span></div>
+<div class="level-head"><span class="level-lv"><small>Rank · Acadêmico</small><b>DSM</b></span><span class="level-banner">FATEC São José dos Campos</span></div>
 <dl class="level-bars">
-<div class="level-row is-peak"><dt>FATEC SJC</dt><dd><span class="level-line" aria-hidden="true"></span><b>Atual</b></dd></div>
-<div class="level-row"><dt>ETEC</dt><dd><span class="level-line" aria-hidden="true"></span><b>2023–24</b></dd></div>
-<div class="level-row"><dt>IT Essentials</dt><dd><span class="level-line" aria-hidden="true"></span><b>12/2025</b></dd></div>
-<div class="level-row"><dt>Linux Unhatched</dt><dd><span class="level-line" aria-hidden="true"></span><b>10/2025</b></dd></div>
+<div class="level-row is-peak"><dt>FATEC SJC · DSM</dt><dd><span class="level-line" aria-hidden="true"></span><b>Atual</b></dd></div>
+<div class="level-row"><dt>ETEC · Des. Sistemas (<a class="level-link" href={route('weeat')}>TCC Weeat ↗</a>)</dt><dd><span class="level-line" aria-hidden="true"></span><b>2023–24</b></dd></div>
+<div class="level-row"><dt>Cisco · IT Essentials (ITE 7.01)</dt><dd><span class="level-line" aria-hidden="true"></span><b>12/2025</b></dd></div>
+<div class="level-row"><dt>Cisco · Linux Unhatched</dt><dd><span class="level-line" aria-hidden="true"></span><b>10/2025</b></dd></div>
 </dl>
-<p class="level-foot"><span> Acervo</span><b>SJC · SP</b></p>
+<p class="level-foot"><span>Acervo</span><b>SJC · SP</b></p>
 </div>
 <div class="orrery">
 <div class="orrery-disc" aria-hidden="true"><picture><source type="image/avif" srcset={pic('museu/formacao-disco').avif}/><img src={pic('museu/formacao-disco').webp} alt="" width="1100" height="1100"/></picture></div>
 <span class="orbit-ring" style="--r:1" aria-hidden="true"></span><span class="orbit-ring" style="--r:2" aria-hidden="true"></span><span class="orbit-ring" style="--r:3" aria-hidden="true"></span>
 <ul class="bodies" aria-label="Formação, certificações e idiomas">
-<li class="body is-sun"><span class="body-kind">Atual</span><b>Desenvolvimento de Software Multiplataforma</b><span>FATEC São José dos Campos — Prof. Jessen Vidal</span></li>
-<li class="body" style={orbit(270,1)}><span class="body-kind">2023–24</span><b>Técnico em Desenvolvimento de Sistemas</b><span>TCC da ETEC: <a href={route('weeat')}>Weeat</a></span></li>
-<li class="body" style={orbit(25,2)}><span class="body-kind">12/2025</span><b>IT Essentials · ITE 7.01</b><span>Cisco Networking Academy</span></li>
-<li class="body" style={orbit(150,2)}><span class="body-kind">10/2025</span><b>Linux Unhatched</b><span>Cisco Networking Academy</span></li>
-<li class="body is-tongue" style={orbit(40,3)}><b>Português</b><span class="tongue">Nativo</span></li>
-<li class="body is-tongue" style={orbit(70,3)}><b>Inglês</b><span class="tongue">C1</span></li>
-<li class="body is-tongue" style={orbit(125,3)}><b>Espanhol</b><span class="tongue">B2</span></li>
-<li class="body is-tongue" style={orbit(215,3)}><b>Italiano</b><span class="tongue">B1</span></li>
+<li class="body is-sun"><span class="body-kind">Atual</span><b>DSM · FATEC SJC</b><span>Prof. Jessen Vidal</span></li>
+<li class="body" style={orbit(270,2.3)}><span class="body-kind">2023–24</span><b>ETEC · Técnico em Sistemas</b><span>TCC: <a href={route('weeat')}>Weeat</a></span></li>
+<li class="body" style={orbit(90,2.3)}><span class="body-kind">2025</span><b>Cisco Networking</b><span>ITE 7.01 · Linux Unhatched</span></li>
+<li class="body is-tongue" style={orbit(325,1.75)}><span class="body-code">01 · PT</span><b>Português</b><span class="tongue">Nativo</span></li>
+<li class="body is-tongue" style={orbit(35,1.75)}><span class="body-code">02 · EN</span><b>Inglês</b><span class="tongue">C1</span></li>
+<li class="body is-tongue" style={orbit(145,1.75)}><span class="body-code">03 · ES</span><b>Espanhol</b><span class="tongue">B2</span></li>
+<li class="body is-tongue" style={orbit(215,1.75)}><span class="body-code">04 · IT</span><b>Italiano</b><span class="tongue">B1</span></li>
 </ul>
 </div>
 <p class="room-label"><strong>{room.artist}</strong><em>{room.work}</em><span>{room.from} · {room.year}</span><span>{room.source}</span></p>

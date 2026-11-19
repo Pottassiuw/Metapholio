@@ -49,7 +49,7 @@ Não abra os arquivos `.astro` diretamente no navegador; use o servidor de desen
 | `bun run check` | Verifica Astro e TypeScript. |
 | `bun run build` | Gera o site estático em `dist/`. |
 | `bun run preview` | Serve o build usando o preview do Astro. |
-| `bun run check:static` | Confere as 18 rotas e os destinos locais de links/assets; requer Python 3. |
+| `bun run check:static` | Confere as 21 rotas e os destinos locais de links/assets; requer Python 3. |
 | `bun run preview:static` | Serve `dist/` em `http://127.0.0.1:4323/`, com Bun. |
 
 ### Testar a versão compilada
@@ -73,6 +73,8 @@ Use o endereço exibido pelo terminal. Para apenas compilar e visualizar, o pass
 | `/experiencia/` | Sala de Hokusai: estágios na EDP e no PIT. |
 | `/laboratorio/` | Sala de Haeckel: experimentos pessoais. |
 | `/formacao/` | Sala de Cellarius: formação, certificações, idiomas e competências. |
+| `/interesses/` | Índice dos interesses pessoais (portais independentes). |
+| `/interesses/hermes-agent/`, `/interesses/raspberry-pi/` | Experiências dedicadas ao Hermes Agent e ao homelab Raspberry Pi. |
 | `/contato/` | Sala de Doré: canais de contato e retrato oficial. |
 | `/api-altave/` | Detalhe da API de ordens de serviço. |
 | `/weeat/` | Detalhe do TCC da ETEC. |
@@ -120,7 +122,7 @@ Pesquisas internas, estado de sessões, capturas locais e protótipos de decisã
 
 - **Conteúdo:** edite `src/data/portfolio.ts`; textos específicos de apresentação, formação e contato também estão em `src/pages/[screen].astro`.
 - **Links/rotas:** use os helpers `route()` e `asset()` de `portfolio.ts`, para respeitar a base de publicação.
-- **Hero e menu:** `src/components/MenuArt.astro` e `src/styles/menu.css`.
+- **Hero e menu:** `src/components/MenuArt.astro`, `src/styles/menu.css` e `src/styles/navigation-print.css` (leque na home, trilho disciplinado nas internas desktop e barra compacta abaixo de 900px).
 - **Telas internas:** `src/styles/portfolio.css` e o layout compartilhado.
 - **Identidade visual:** consulte `DESIGN.md` antes de adicionar telas ou mudar os tokens.
 - **Retrato:** veja [`assets/source/README.md`](assets/source/README.md). Pillow e NumPy são necessários somente para recriar o asset, não para executar ou compilar o site.

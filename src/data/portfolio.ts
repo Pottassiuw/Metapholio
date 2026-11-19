@@ -1,12 +1,13 @@
 // accent: cor da seção (pincel de seleção e campos de cor, como os submenus de Metaphor).
 // fragment: objeto recortado da gravura de Dürer que faz o papel de arte da seção (public/images/frag-*.avif).
 export const sections = [
-  {id:'sobre',hint:'quem eu sou',label:'Sobre',accent:'#ff3461',onAccent:'#101c20',fragment:'',title:'Sobre mim',copy:'Quem sou, o que estudo e o que me interessa.'},
-  {id:'projetos',hint:'missões acadêmicas',label:'Projetos',accent:'#f26b1d',onAccent:'#101c20',fragment:'poliedro',title:'Projetos acadêmicos',copy:'As APIs da FATEC, trabalhos de disciplina e o TCC da ETEC.'},
-  {id:'experiencia',hint:'estágios e trabalho',label:'Experiência',accent:'#e0b400',onAccent:'#101c20',fragment:'ampulheta',title:'Experiência profissional',copy:'Os estágios na EDP e no PIT, e o que desenvolvi em cada um.'},
-  {id:'laboratorio',hint:'experimentos pessoais',label:'Laboratório',accent:'#2fb36b',onAccent:'#101c20',fragment:'balanca',title:'Laboratório pessoal',copy:'Um chat em tempo real, este portfólio e o meu ambiente de trabalho.'},
-  {id:'formacao',hint:'estudos e certificações',label:'Formação',accent:'#d24fdb',onAccent:'#101c20',fragment:'quadrado',title:'Formação',copy:'DSM na FATEC, formação técnica, certificações e idiomas.'},
-  {id:'contato',hint:'vamos conversar',label:'Contato',accent:'#d7262f',onAccent:'#f4f3e9',fragment:'sino',title:'Vamos conversar?',copy:'Fale comigo por e-mail, GitHub ou LinkedIn.'},
+  {id:'sobre',hint:'quem eu sou',label:'Sobre',accent:'#ff4054',onAccent:'#101c20',fragment:'',title:'Sobre mim',copy:'Quem sou, o que estudo e o que me interessa.'},
+  {id:'projetos',hint:'missões acadêmicas',label:'Projetos',accent:'#ff9463',onAccent:'#101c20',fragment:'poliedro',title:'Projetos acadêmicos',copy:'As APIs da FATEC, trabalhos de disciplina e o TCC da ETEC.'},
+  {id:'experiencia',hint:'estágios e trabalho',label:'Experiência',accent:'#e7cd90',onAccent:'#101c20',fragment:'ampulheta',title:'Experiência profissional',copy:'Os estágios na EDP e no PIT, e o que desenvolvi em cada um.'},
+  {id:'laboratorio',hint:'experimentos pessoais',label:'Laboratório',accent:'#a6bd81',onAccent:'#101c20',fragment:'balanca',title:'Laboratório pessoal',copy:'Um chat em tempo real, este portfólio e o meu ambiente de trabalho.'},
+  {id:'formacao',hint:'estudos e certificações',label:'Formação',accent:'#c29dbf',onAccent:'#101c20',fragment:'quadrado',title:'Formação',copy:'DSM na FATEC, formação técnica, certificações e idiomas.'},
+  {id:'interesses',hint:'o que me prende',label:'Interesses',accent:'#65cbd4',onAccent:'#101c20',fragment:'',title:'Meus interesses',copy:'O Hermes Agent e o meu Raspberry Pi: o que eu gosto de entender por dentro.'},
+  {id:'contato',hint:'vamos conversar',label:'Contato',accent:'#9b2948',onAccent:'#f4f3e9',fragment:'sino',title:'Vamos conversar?',copy:'Fale comigo por e-mail, GitHub ou LinkedIn.'},
 ];
 export const projects = [
  {id:'api-altave',name:'Ordens de serviço',subtitle:'API Altave',category:'projetos',context:'API · 2º DSM · 2026-2 · Em andamento',lead:'Ordens de serviço acompanhadas do primeiro ticket ao encerramento.',problem:'Na Altave, as ordens de serviço passavam por ferramentas e fluxos separados. Ficava difícil acompanhar cada uma e saber o que tinha acontecido com ela.',solution:'Uma aplicação web que junta tickets, projetos, equipes, registros de atendimento e a aprovação de encerramento.',role:'Sou um dos desenvolvedores da equipe. Trabalhei nos logs dos tickets, na edição de prioridade e nas verificações de sessão e de concorrência.',tech:['Next.js','React','TypeScript','Prisma','MySQL'],skills:['Integração de logs de tickets','Edição de prioridade','Validação de sessão','Verificações de concorrência'],links:[] as {label:string,url:string}[],note:'O código fica no repositório da equipe, na organização FawkesCode.',visual:['Ticket','Equipe','Histórico','Encerramento']},

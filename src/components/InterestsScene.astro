@@ -1,0 +1,34 @@
+---
+// Meus interesses: o índice, uma entrada do menu como as outras salas. Não guarda conteúdo
+// longo: são duas portas, cada uma já na matéria da página para onde leva. Hermes Agent abre no preto;
+// Raspberry Pi abre no papel claro do pacote de sementes.
+import {asset,route} from '../data/portfolio';
+import '../styles/interests.css';
+const word='INTERESSES';
+---
+<section class="scene room interests" id="conteudo" data-scene="interesses" aria-labelledby="scene-title">
+<div class="room-flood" aria-hidden="true"></div>
+<h1 class="scene-title" id="scene-title"><span class="sr-only">Meus interesses</span><span class="scene-word" data-text={word} aria-hidden="true">{[...word].map((l,i)=><span class="scene-letter" style={`--i:${i}`}>{l}</span>)}</span></h1>
+
+<div class="room-body interests-index">
+<p class="room-story">Ninguém me cobra isso. Talvez por isso eu não pare.</p>
+<p class="interests-note">Não são competências para listar: são coisas que eu gosto de entender por dentro. Cada uma tem a sua própria página.</p>
+<ul class="doors">
+<li><a class="door door-hermes" href={route('interesses/hermes-agent')}>
+<span class="door-tag">PORTAL I · AGENTES &amp; MEMÓRIA</span>
+<picture aria-hidden="true"><source type="image/avif" srcset={asset('images/hermes/busto-720.avif')}/><img src={asset('images/hermes/busto-720.webp')} width="720" height="720" alt="" loading="lazy" decoding="async"/></picture>
+<span class="door-name">Hermes Agent</span>
+<span class="door-line">Harness, um grupo de agentes e memória que fica do lado de fora.</span>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>
+</a></li>
+<li><a class="door door-pi" href={route('interesses/raspberry-pi')}>
+<span class="door-crimp" aria-hidden="true"></span>
+<span class="door-tag">PORTAL II · HOMELAB &amp; HARDWARE</span>
+<img class="door-render" src={asset('images/interesses/raspberry-fechada.webp')} width="1600" height="1000" alt="" loading="lazy" decoding="async"/>
+<span class="door-name">Raspberry Pi</span>
+<span class="door-line">Um servidor em casa, cultivado por curiosidade.</span>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>
+</a></li>
+</ul>
+</div>
+</section>

@@ -1,0 +1,123 @@
+---
+// Hermes Agent: uma procissão noturna em cinco atos, em tela cheia sobre preto. Cada ato é uma arte oficial
+// do Hermes Agent repintada (scripts/create-interests-art.ts) e um arranjo próprio de texto. Sem o menu do
+// portfólio: a navegação é a régua de atos à direita e o retorno no alto. Sem JS, tudo aparece em sequência.
+import {asset,route} from '../data/portfolio';
+import '../styles/hermes.css';
+const pic=(name:string,small:number,big:number)=>({
+ avif:`${asset(`images/hermes/${name}-${small}.avif`)} ${small}w, ${asset(`images/hermes/${name}.avif`)} ${big}w`,
+ webp:`${asset(`images/hermes/${name}-${small}.webp`)} ${small}w, ${asset(`images/hermes/${name}.webp`)} ${big}w`,
+ src:asset(`images/hermes/${name}.webp`),
+});
+const busto=pic('busto',720,1080),ignicao=pic('ignicao',900,1488),fios=pic('fios',640,950),lembranca=pic('lembranca',900,1600),escada=pic('escada',800,1416);
+const acts=[
+ {id:'descoberta',label:'Descoberta'},
+ {id:'harness',label:'Harness'},
+ {id:'grupo',label:'O grupo'},
+ {id:'memoria',label:'Memória'},
+ {id:'uso',label:'Com o uso'},
+];
+// Os quatro agentes, ancorados nos feixes de fios da figura (posição em % da arte).
+const party=[
+ {name:'Orquestrador',line:'O que eu mais uso. Quebra o pedido em partes e coordena quem faz o quê.',x:50,y:47,lead:true},
+ {name:'Back-end',line:'APIs, dados e servidor.',x:16,y:17},
+ {name:'Front-end',line:'A interface.',x:86,y:20},
+ {name:'Bot pessoal',line:'O do dia a dia, fora do código.',x:15,y:84},
+];
+---
+<div class="hermes" id="conteudo">
+<header class="hm-top">
+<a class="hm-back" href={route('interesses')}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg><span>Meus interesses</span></a>
+<a class="hm-owner" href={route()}>Thiago Nascimento</a>
+</header>
+
+<nav class="hm-acts" aria-label="Atos desta página">
+<ol>{acts.map(a=><li><a href={`#${a.id}`} data-act={a.id}><span>{a.label}</span></a></li>)}</ol>
+</nav>
+
+<div class="hm-main">
+<section class="hm-act hm-open" id="descoberta" aria-labelledby="hm-title">
+<picture class="hm-art"><source type="image/avif" srcset={busto.avif} sizes="(max-width:700px) 100vw, 60vw"/><img src={busto.src} srcset={busto.webp} sizes="(max-width:700px) 100vw, 60vw" width="1080" height="1080" alt="Busto de Hermes com o capacete alado, entre janelas de interface: arte oficial do Hermes Agent em rosa e azul sobre preto." fetchpriority="high"/></picture>
+<div class="hm-open-text">
+<h1 class="hm-title" id="hm-title"><span>Hermes</span><span>Agent</span></h1>
+<p class="hm-hook">Eu queria um agente que não se esquecesse de mim no dia seguinte.</p>
+<p class="hm-by">Um interesse de Thiago Nascimento</p>
+</div>
+</section>
+
+<section class="hm-act hm-harness" id="harness" aria-labelledby="hm-harness-title">
+<picture class="hm-art"><source type="image/avif" srcset={ignicao.avif} sizes="(max-width:700px) 100vw, 58vw"/><img src={ignicao.src} srcset={ignicao.webp} sizes="(max-width:700px) 100vw, 58vw" width="1488" height="1304" alt="Gravura de duas mãos, uma humana e uma de madeira articulada, se tocando numa faísca, sobre a palavra HERMES: arte oficial do Hermes Agent." loading="lazy" decoding="async"/></picture>
+<div class="hm-copy">
+<h2 class="hm-h" id="hm-harness-title">O que fica em volta do modelo</h2>
+<p>Faz tempo que o que mais me prende em IA não é só o modelo, é o <em>harness</em>: o laço que deixa um agente usar ferramentas, guardar memória, conferir o próprio trabalho e seguir sem alguém segurando a mão dele a cada passo.</p>
+<p>Quando descobri o Hermes Agent, foi isso que me fisgou. É um harness aberto, que roda na minha máquina e que eu posso montar do meu jeito. IA generativa deixou de ser uma janela de chat e virou algo que trabalha comigo.</p>
+</div>
+</section>
+
+<section class="hm-act hm-grupo" id="grupo" aria-labelledby="hm-grupo-title">
+<h2 class="hm-h hm-grupo-title" id="hm-grupo-title">Hoje eu tenho um pequeno grupo deles</h2>
+<div class="hm-loom">
+<picture class="hm-art"><source type="image/avif" srcset={fios.avif} sizes="(max-width:700px) 100vw, 46vw"/><img src={fios.src} srcset={fios.webp} sizes="(max-width:700px) 100vw, 46vw" width="950" height="1024" alt="Figura de muitos braços segurando feixes de fios que se abrem em todas as direções: arte oficial do Hermes Agent." loading="lazy" decoding="async"/></picture>
+<span class="hm-spot" aria-hidden="true"></span>
+<ul class="hm-party">
+{party.map(m=><li class:list={['hm-agent',{'is-lead':m.lead}]} style={`--x:${m.x}%;--y:${m.y}%`}><b>{m.name}</b><span>{m.line}</span></li>)}
+<li class="hm-agent is-pi" style="--x:85%;--y:82%"><b>No Raspberry Pi</b><span>Um deles roda nele, de olho no sistema e desenvolvendo 24 horas por dia. <a href={route('interesses/raspberry-pi')}>Ver o Pi</a></span></li>
+</ul>
+</div>
+</section>
+
+<section class="hm-act hm-memoria" id="memoria" aria-labelledby="hm-memoria-title">
+<picture class="hm-art"><source type="image/avif" srcset={lembranca.avif} sizes="100vw"/><img src={lembranca.src} srcset={lembranca.webp} sizes="100vw" width="1600" height="1411" alt="Rosto pontilhado que olha para uma esfera de luz entre as mãos: arte oficial do Hermes Agent." loading="lazy" decoding="async"/></picture>
+<div class="hm-copy">
+<h2 class="hm-h" id="hm-memoria-title">A memória fica do lado de fora</h2>
+<p>Uso o Hindsight como memória externa.</p>
+<p>O que o agente aprende sobre mim e sobre os projetos não se perde quando a conversa acaba: fica guardado fora dele, pronto para a próxima.</p>
+</div>
+</section>
+
+<section class="hm-act hm-uso" id="uso" aria-labelledby="hm-uso-title">
+<picture class="hm-art"><source type="image/avif" srcset={escada.avif} sizes="(max-width:700px) 100vw, 40vw"/><img src={escada.src} srcset={escada.webp} sizes="(max-width:700px) 100vw, 40vw" width="1416" height="1800" alt="Figura que sobe uma escada entre montanhas, rumo a um sol: arte oficial do Hermes Agent." loading="lazy" decoding="async"/></picture>
+<div class="hm-copy">
+<h2 class="hm-h" id="hm-uso-title">Ele não fica mais esperto sozinho</h2>
+<p>O modelo por trás continua o mesmo; ninguém retreina nada. O que melhora é o que ele carrega: lembra das minhas preferências e dos projetos, e transforma o que deu certo em <em>skills</em> que reaproveita da próxima vez.</p>
+<p class="hm-coda">Quanto mais eu uso, menos eu preciso explicar.</p>
+<nav class="hm-next" aria-label="Continuar">
+<a href={route('interesses/raspberry-pi')}><span>Raspberry Pi</span><small>onde um deles mora</small><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a>
+<a href={route('interesses')}><span>Meus interesses</span><small>voltar ao índice</small><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></a>
+</nav>
+</div>
+</section>
+</div>
+</div>
+
+<script>
+let controller:AbortController|null=null;
+function initHermes(){
+ controller?.abort();
+ const root=document.querySelector<HTMLElement>('.hermes');if(!root)return;
+ controller=new AbortController();const {signal}=controller;
+ const still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const acts=[...root.querySelectorAll<HTMLElement>('.hm-act')];
+ const ticks=[...root.querySelectorAll<HTMLAnchorElement>('.hm-acts a')];
+ // Régua de atos: marca o ato que ocupa o meio da tela.
+ const mark=(id:string)=>ticks.forEach(t=>{const on=t.dataset.act===id;t.classList.toggle('is-on',on);if(on)t.setAttribute('aria-current','true');else t.removeAttribute('aria-current');});
+ const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)mark(e.target.id);}),{rootMargin:'-45% 0px -50% 0px'});
+ acts.forEach(a=>io.observe(a));signal.addEventListener('abort',()=>io.disconnect());
+ // Cada arte "revela" o pigmento ao chegar: do cinza apagado ao rosa. Só com JS e com movimento.
+ if(!still){
+  acts.forEach(a=>a.classList.add('is-armed'));
+  const reveal=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('is-lit');reveal.unobserve(e.target);}}),{rootMargin:'0px 0px -25% 0px'});
+  acts.forEach(a=>reveal.observe(a));signal.addEventListener('abort',()=>reveal.disconnect());
+ }
+ // O grupo: a luz segue o agente sob o ponteiro ou em foco; sem ponteiro, fica no orquestrador.
+ const loom=root.querySelector<HTMLElement>('.hm-loom');
+ if(loom){
+  const agents=[...loom.querySelectorAll<HTMLElement>('.hm-agent')];
+  const aim=(el:HTMLElement)=>{loom.style.setProperty('--sx',el.style.getPropertyValue('--x'));loom.style.setProperty('--sy',el.style.getPropertyValue('--y'));agents.forEach(a=>a.classList.toggle('is-lit',a===el));};
+  const lead=agents.find(a=>a.classList.contains('is-lead'));if(lead)aim(lead);
+  agents.forEach(a=>{a.addEventListener('pointerenter',()=>aim(a),{signal});a.addEventListener('focusin',()=>aim(a),{signal});});
+  loom.addEventListener('pointerleave',()=>{if(lead)aim(lead);},{signal});
+ }
+}
+document.addEventListener('astro:page-load',initHermes);
+</script>

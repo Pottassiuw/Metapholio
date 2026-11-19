@@ -1,0 +1,9 @@
+---
+// Hermes Agent: página própria, preta em tela cheia, sem o menu do portfólio (layout "bare").
+import Portfolio from '../../layouts/Portfolio.astro';
+import HermesAgent from '../../components/HermesAgent.astro';
+import {route} from '../../data/portfolio';
+---
+<Portfolio title="Hermes Agent — Thiago Nascimento" active="interesses" routeKey="hermes-agent" bare escape={route('interesses')} description="Por que o Hermes Agent e o harness de agentes autônomos me prendem: o meu grupo de agentes, a memória externa e o que melhora com o uso.">
+<HermesAgent/>
+</Portfolio>

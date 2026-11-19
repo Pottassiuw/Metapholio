@@ -2,7 +2,7 @@
    título gigante em papel cortado pela borda, fragmento de Dürer monumental em órbita, cor da seção só em pincel. */
 .sr-only{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 
-.inner.section-scene{padding:0;height:auto;min-height:100svh;background:var(--aqua)}
+.inner.section-scene{padding:0;height:auto;min-height:100svh;background:var(--ground,#5aa9ab)}
 .section-scene>picture,.section-scene .art,.section-scene>.red-cut{display:none}
 .section-scene>.wash{background:none}
 /* A cena fica sob o menu, o cabeçalho e o rodapé fixos: eles precisam continuar clicáveis. */
@@ -158,28 +158,28 @@ html.has-splash .stage.is-leaving::after{display:none}
 @keyframes band-cross{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 
 @media(min-width:1600px){.section-scene>.menu{transform:rotate(-8deg) scale(.52)}}
-@media(max-width:1100px) and (min-width:701px){
+@media(max-width:1100px) and (min-width:901px){
 .section-scene>.menu{transform:rotate(-8deg) scale(.36)}
 .scene{--split-top:36vw;--split-bottom:30vw;--title:min(12vw,240px)}
 .scene-body{margin-left:calc(var(--split-top) + 1vw);width:58vw}
 .record{grid-template-columns:1fr}
 }
-@media(max-width:700px){
-.inner.section-scene{background:var(--aqua)}
-.section-scene>.menu{position:relative;top:auto;transform:rotate(-6deg);margin:44px 10px 30px}
-.scene{--split-top:0px;--split-bottom:0px;--title:19vw;min-height:0;margin-top:10px}
+@media(max-width:900px){
+.inner.section-scene{background:var(--ground,#5aa9ab)}
+.section-scene>.menu{position:relative;top:auto;transform:none}
+.scene{--split-top:0px;--split-bottom:0px;--title:clamp(34px,10.4vw,68px);min-height:0;margin-top:0}
 .scene-ground::before,.scene-stain{clip-path:polygon(0 4%,100% 0,100% 100%,0 100%)}
-.scene .scene-title{left:3vw;top:.1em}
+.scene .scene-title{position:relative;top:auto;left:0;right:auto;padding:8px 18px 4px;white-space:normal;overflow-wrap:normal;line-height:.94}
 .scene-art{width:96vw;right:-34vw;top:2svh}
 [data-scene=experiencia] .scene-art,[data-scene=laboratorio] .scene-art{height:110vw;top:0;right:-12vw}
 [data-scene=formacao] .scene-art,[data-scene=contato] .scene-art{width:86vw;top:4svh;right:-28vw}
 .scene-art img{opacity:.45}
 .scene-orbit{width:110vw;right:-50vw;top:0}
 .scene-line{left:78%}
-.scene-body{margin:0 18px;width:auto;padding:calc(var(--title)*1.1) 0 60px}
-[data-scene=experiencia] .scene-body{padding:calc(var(--title)*1.1) 0 60px}
-[data-scene=experiencia] .scene-title{top:.1em;bottom:auto}
-[data-scene=contato] .scene-body{padding-top:calc(var(--title)*1.1)}
+.scene-body{margin:0 18px;width:auto;padding:12px 0 60px}
+[data-scene=experiencia] .scene-body{padding:12px 0 60px}
+[data-scene=experiencia] .scene-title{top:auto;bottom:auto}
+[data-scene=contato] .scene-body{padding-top:12px}
 .quests,.entries{transform:none}
 .quest,.entry{padding:14px 14px 16px}
 .stop{grid-template-columns:64px 1fr;gap:14px}

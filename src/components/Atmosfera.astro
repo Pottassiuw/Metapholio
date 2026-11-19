@@ -13,7 +13,7 @@ let stop:(()=>void)|null=null,loading=false;
 async function boot(){
  if(!canvas||stop||loading||still.matches)return;
  loading=true;
- try{const {start}=await import('../scripts/atmosfera');const result=start(canvas);if(result)stop=result;}catch{}
+ try{const {start}=await import('../scripts/atmosfera');if(!still.matches&&canvas.isConnected){const result=start(canvas);if(result)stop=result;}}catch{}
  loading=false;
 }
 // O Three.js só é baixado depois que a página está de pé.

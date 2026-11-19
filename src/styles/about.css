@@ -6,6 +6,8 @@
 .about-scene[data-dir="-1"]{--d:-1}
 .about-ground{display:none}
 .about-scene .about-title{position:absolute;z-index:3;top:-.18em;left:33vw;margin:0;font:900 min(9.4vw,170px)/1 var(--display);letter-spacing:-.04em;word-spacing:.2em;text-transform:uppercase;white-space:nowrap;color:var(--paper);pointer-events:auto}
+.about-dossier{position:absolute;z-index:4;left:33vw;top:calc(min(9.4vw,170px)*.86);display:flex;flex-wrap:wrap;gap:6px;pointer-events:none}
+.about-dossier span{padding:3px 10px;font:700 12px/1.1 var(--body);letter-spacing:.12em;text-transform:uppercase;background:rgba(16,28,32,.9);color:var(--paper);border-top:2px solid var(--accent)}
 
 /* Cada slide é uma pintura de Thiago em tela cheia; a cor da seção inunda o canto do menu por cima. */
 .about-slides{position:absolute;inset:0}
@@ -21,9 +23,9 @@
 
 .about-copy{position:absolute;z-index:4;bottom:12svh;width:max-content;max-width:min(60vw,860px);display:flex;flex-direction:column;align-items:flex-start}
 .about-slide[data-art=perfil] .about-copy{left:43vw}
-.about-slide:is([data-art=biblioteca],[data-art=cidade]) .about-copy{right:4vw;bottom:14svh}
+.about-slide:is([data-art=biblioteca],[data-art=cidade]) .about-copy{right:3.5vw;bottom:11svh;max-width:min(54vw,760px)}
 .about-phrase{margin:0;display:flex;flex-direction:column;align-items:flex-start;gap:5px;transform:rotate(-6deg);transform-origin:0 100%}
-.about-phrase span{display:block;padding:.04em .32em .12em;font:900 clamp(32px,3.9vw,64px)/1.04 var(--display);letter-spacing:-.03em;background:var(--ink);color:var(--paper);clip-path:polygon(1.5% 0,100% 0,98.5% 100%,0 100%)}
+.about-phrase span{display:block;padding:.05em .44em .13em;font:900 clamp(32px,3.9vw,64px)/1.04 var(--display);letter-spacing:-.03em;background:var(--ink);color:var(--paper);clip-path:polygon(1.5% 0,100% 0,98.5% 100%,0 100%)}
 .about-phrase span:nth-child(2){margin-left:.55em;background:var(--paper);color:var(--ink)}
 .about-phrase span:last-child{margin-left:1.1em;background:var(--rose);color:var(--ink)}
 .about-note{margin:22px 1.2em 0 0;transform-origin:100% 0}
@@ -35,8 +37,13 @@
 .about-links a:focus-visible{outline:3px solid var(--ink);outline-offset:3px;box-shadow:0 0 0 3px var(--paper)}
 .about-links svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5}
 
-.about-controls{position:absolute;z-index:5;right:4vw;bottom:4svh;display:flex;align-items:center;gap:8px}
+.about-controls{position:absolute;z-index:5;right:4vw;bottom:4svh;display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px}
 .about-controls[hidden]{display:none}
+.about-chapters{display:inline-flex;flex-wrap:wrap;gap:6px;margin-right:6px}
+.about-pill{padding:6px 11px;min-height:44px;border:0;font:700 13px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;background:rgba(16,28,32,.88);color:var(--paper);clip-path:polygon(8% 0,100% 0,92% 100%,0 100%)}
+.about-pill:hover{background:var(--paper);color:var(--ink)}
+.about-pill.is-current{background:var(--accent);color:var(--on-accent)}
+.about-pill:focus-visible{outline:3px solid var(--paper);outline-offset:3px;box-shadow:0 0 0 3px var(--ink)}
 .about-btn{position:relative;isolation:isolate;display:grid;place-items:center;width:52px;height:44px;border:0;background:none;color:var(--ink)}
 .about-btn::before{content:'';position:absolute;z-index:-1;inset:0;background:var(--paper);clip-path:polygon(14% 0,100% 0,86% 100%,0 100%)}
 .about-btn:hover::before{background:var(--rose)}
@@ -59,43 +66,46 @@
 .is-carousel .about-slide.is-active .about-art{animation:about-paint 1s cubic-bezier(.16,1,.3,1) both;-webkit-mask:url('../assets/brush/brush-3.svg') 30% 50%/520% 300% no-repeat;mask:url('../assets/brush/brush-3.svg') 30% 50%/520% 300% no-repeat}
 .is-carousel .about-slide.is-active .about-art img{animation:about-breathe 9s ease-out both}
 .is-carousel .about-slide.is-active::after{content:'';position:absolute;z-index:3;top:-20%;bottom:-20%;left:-30%;width:22%;background:var(--paper);rotate:14deg;animation:about-plate .7s cubic-bezier(.7,0,.3,1) both;pointer-events:none}
-.is-carousel .about-slide.is-active .about-phrase span{animation:about-line-in .5s cubic-bezier(.16,1,.3,1) both}
-.is-carousel .about-slide.is-active .about-phrase span:nth-child(1){animation-delay:.35s}
-.is-carousel .about-slide.is-active .about-phrase span:nth-child(2){animation-delay:.43s}
-.is-carousel .about-slide.is-active .about-phrase span:nth-child(3){animation-delay:.51s}
-.is-carousel .about-slide.is-active :is(.about-note,.about-links,.constellation){animation:about-line-in .5s .6s cubic-bezier(.16,1,.3,1) both}
+.is-carousel .about-slide.is-active .about-phrase span{animation:about-line-in .28s cubic-bezier(.16,1,.3,1) both}
+.is-carousel .about-slide.is-active .about-phrase span:nth-child(1){animation-delay:.08s}
+.is-carousel .about-slide.is-active .about-phrase span:nth-child(2){animation-delay:.14s}
+.is-carousel .about-slide.is-active .about-phrase span:nth-child(3){animation-delay:.20s}
+.is-carousel .about-slide.is-active :is(.about-note,.about-links,.constellation){animation:about-line-in .28s .26s cubic-bezier(.16,1,.3,1) both}
 @keyframes about-paint{from{-webkit-mask-size:6% 30%;mask-size:6% 30%;filter:blur(8px) saturate(.4)}to{-webkit-mask-size:520% 300%;mask-size:520% 300%;filter:none}}
 @keyframes about-breathe{from{transform:scale(1.08)}to{transform:scale(1)}}
 @keyframes about-plate{from{translate:0 0;opacity:1}85%{opacity:1}to{translate:calc(var(--d)*900%) 0;opacity:0}}
-@keyframes about-line-in{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0)}}
+@keyframes about-line-in{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 -3% 0 0)}}
 
 @media(min-width:701px){.about-phrase span{white-space:nowrap}}
-@media(max-width:1100px) and (min-width:701px){
-.about-scene .about-title{left:38vw;font-size:min(8.6vw,170px)}
+@media(max-width:1100px) and (min-width:901px){
+.about-scene .about-title{left:36vw;font-size:min(8.6vw,170px)}
+.about-dossier{left:36vw}
 }
-@media(max-width:700px){
-.inner.immersive{height:auto;min-height:0;padding:0 0 25px}
-.about-scene{position:relative;z-index:0;height:max(620px,100svh);margin-top:8px}
-.about-scene .about-title{left:4vw;font-size:15vw}
+@media(max-width:900px){
+.inner.immersive{height:auto;min-height:100svh;padding:0 0 25px}
+.about-scene{position:relative;z-index:0;height:auto;min-height:max(580px,82svh);margin-top:0;padding-bottom:24px}
+.about-scene .about-title{position:relative;top:auto;left:0;padding:8px 18px 4px;font-size:clamp(34px,11vw,72px);white-space:normal;line-height:.94}
+.about-dossier{position:relative;left:auto;top:auto;padding:4px 18px 12px}
 .about-slide :is(.about-copy,.about-phrase){align-items:flex-start!important}
 .about-slide[data-art=perfil] .about-art img{object-position:74% 30%}
 .about-slide[data-art=biblioteca] .about-art img{object-position:60% 20%}
 .about-slide[data-art=cidade] .about-art img{object-position:72% 20%}
 .about-slide[data-art] .about-copy{left:5vw;right:5vw}
-/* No celular a pintura ocupa o alto e a frase fica abaixo, no chão de tinta, longe do rosto. */
-.about-art{bottom:auto;height:56%}
-.about-art::after{content:'';position:absolute;inset:auto 0 0;height:30%;background:linear-gradient(transparent,var(--ink))}
+/* Abaixo de 900px a pintura ocupa o alto e a frase fica abaixo, no chão de tinta, longe do rosto. */
+.about-art{bottom:auto;height:52%}
+.about-art::after{content:'';position:absolute;inset:auto 0 0;height:36%;background:linear-gradient(transparent,var(--ink))}
 .about-scene>.room-flood{display:none}
-.about-copy{left:5vw;right:5vw;bottom:13svh;width:auto;max-width:none}
-.about-phrase span{font-size:clamp(25px,7.6vw,38px)}
+.about-copy{left:5vw;right:5vw;bottom:calc(72px + 9svh);width:auto;max-width:none}
+.about-phrase span{font-size:clamp(25px,7.2vw,42px)}
 .about-note{font-size:16px;margin-left:1.2em}
 .about-links{margin-left:1.2em}
 .about-links a{font-size:16px;padding:6px 12px}
-.about-controls{left:5vw;right:auto;bottom:72px;gap:6px}
-.about-copy{bottom:calc(72px + 9svh)}
-.about-btn{width:46px}
-.about-count{margin:0 0 0 8px;font-size:22px;white-space:nowrap}
-.about-progress{position:absolute;left:0;right:0;top:-12px;width:auto}
+.about-controls{left:5vw;right:5vw;bottom:18px;justify-content:flex-start;gap:6px}
+.about-chapters{width:100%;margin:0 0 2px}
+.about-pill{min-height:38px;padding:5px 10px;font-size:12px}
+.about-btn{width:44px}
+.about-count{margin:0 0 0 6px;font-size:22px;white-space:nowrap}
+.about-progress{position:absolute;left:0;right:0;top:-10px;width:auto}
 }
 @media(prefers-reduced-motion:reduce){
 .is-carousel .about-slide :is(.about-art,.about-art img,.about-phrase span,.about-note,.about-links,.constellation),.is-carousel .about-slide.is-leaving,.is-carousel .about-slide.is-active::after{animation:none}

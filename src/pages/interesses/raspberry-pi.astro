@@ -1,0 +1,9 @@
+---
+// Raspberry Pi: página própria, clara, em forma de pacote de sementes (layout "bare", sem o menu do portfólio).
+import Portfolio from '../../layouts/Portfolio.astro';
+import RaspberryPi from '../../components/RaspberryPi.astro';
+import {route} from '../../data/portfolio';
+---
+<Portfolio title="Raspberry Pi — Thiago Nascimento" active="interesses" routeKey="raspberry-pi" bare escape={route('interesses')} description="O meu Raspberry Pi 4 com 8 GB: homelab, servidores em casa, cloud e DevOps aprendidos na prática, e autonomia em relação à Big Tech.">
+<RaspberryPi/>
+</Portfolio>

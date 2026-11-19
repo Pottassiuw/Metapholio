@@ -4,7 +4,7 @@
 /* No celular a caixa ocupa a largura toda: só a placa recebe toques. */
 .trilha>*{pointer-events:auto}
 .trilha[hidden]{display:none}
-html[data-screen=home] .trilha{top:86px;right:38px}
+html[data-screen=home] .trilha{top:24px;right:38px}
 html[data-screen=inner] .trilha{left:24px;bottom:18px}
 @media(min-width:701px){
 html[data-screen=inner] body:has(>.trilha:not([hidden])) .inner>.footer{bottom:92px}
@@ -60,7 +60,12 @@ html[data-screen=inner] .inner>.footer{transition:bottom .45s var(--ease)}
 @keyframes trilha-abre{from{clip-path:inset(0 0 100% 0);opacity:0}to{clip-path:inset(0);opacity:1}}
 @keyframes trilha-chega{from{opacity:0;translate:26px 0}}
 
-@media(max-width:1100px) and (min-width:701px){html[data-screen=home] .trilha{right:22px}html[data-screen=inner] .trilha{left:14px}}
+@media(max-width:1100px) and (min-width:701px){html[data-screen=home] .trilha{top:20px;right:22px}}
+@media(max-width:1100px) and (min-width:901px){html[data-screen=inner] .trilha{left:14px}}
+@media(max-width:900px){
+html[data-screen=inner] .trilha{top:auto;bottom:12px;left:auto;right:12px}
+html[data-screen=inner] body{padding-bottom:76px}
+}
 @media(max-width:700px){
 html[data-screen] .trilha{top:auto;bottom:12px;left:auto;right:10px}
 .trilha-plate{min-width:0}

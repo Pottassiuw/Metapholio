@@ -1,0 +1,130 @@
+/* Sistema de navegação em três modos (Metaphor 7.jpg + 10.jpg):
+   1) Home Desktop: leque monumental inclinado à esquerda com índice, pincelada e sub-etiqueta editorial.
+   2) Internas Desktop (>=901px): trilho lateral disciplinado com placas escuras chanfradas e estado atual persistente.
+   3) Mobile e Tablet (<=900px): barra horizontal compacta nas internas; leque enxuto com prévia na primeira tela da home. */
+
+.menu-item .menu-word{position:relative;display:inline-block}
+.menu-item .menu-meta{display:inline-flex;align-items:center;gap:6px;line-height:1}
+.menu-item .menu-idx{font:700 12px/1 var(--body);letter-spacing:.12em;color:var(--aqua)}
+.menu-item .menu-hint{display:none;font:700 11px/1 var(--body);letter-spacing:.14em;text-transform:uppercase}
+
+/* Efeito curto de serigrafia fora de registro na seleção da home (9.jpg). */
+.menu-word::before,.menu-word::after{content:attr(data-text);position:absolute;inset:0;pointer-events:none;opacity:0}
+.menu-word.is-misprint{animation:home-misprint .14s steps(1) both}
+.menu-word.is-misprint::before{animation:home-misprint-a .14s steps(1) both}
+.menu-word.is-misprint::after{animation:home-misprint-b .14s steps(1) both}
+@keyframes home-misprint{
+ 0%,100%{transform:none;text-shadow:none}
+ 35%{transform:translate(-1px,0);text-shadow:-3px -1px 0 var(--aqua),3px 1px 0 var(--rose)}
+ 70%{transform:translate(1px,0);text-shadow:3px -1px 0 var(--rose),-3px 1px 0 var(--aqua)}
+}
+@keyframes home-misprint-a{
+ 0%,100%{opacity:0;transform:none}
+ 35%,70%{opacity:.9;clip-path:inset(8% -6% 54% -6%);transform:translate(-4px,-1px);color:var(--aqua)}
+}
+@keyframes home-misprint-b{
+ 0%,100%{opacity:0;transform:none}
+ 35%,70%{opacity:.9;clip-path:inset(54% -6% 8% -6%);transform:translate(4px,1px);color:var(--rose)}
+}
+
+/* ── Modo 1: Home Desktop ────────────────────────────────────────────────── */
+@media(min-width:701px){
+ .stage.home>.wash{display:block;background:linear-gradient(102deg,rgba(16,28,32,.78) 0%,rgba(16,28,32,.56) 28%,rgba(98,180,178,.32) 48%,transparent 64%);mask:none}
+ .stage.home>header{color:var(--paper)}
+ .stage.home>header .identity-mark{background:var(--paper);color:var(--ink);box-shadow:0 4px 14px rgba(16,28,32,.4)}
+ .stage.home>header .identity p{color:var(--aqua)}
+ .stage.home>.menu{width:min(46vw,660px);left:2vw;top:clamp(112px,17.5svh,180px);align-items:flex-end;transform:none;gap:2px;--page-on:var(--ink)}
+ .stage.home>.menu .menu-item:nth-child(n){margin:0 var(--recuo) 0 0;padding:2px .24em 4px;font-size:clamp(38px,min(4.6vw,6.8svh),78px);line-height:1.02;color:var(--paper);text-shadow:0 2px 0 var(--ink),0 8px 20px rgba(16,28,32,.55);transform:rotate(var(--giro));transform-origin:92% 50%}
+ .stage.home>.menu .menu-word{transform:none}
+ .stage.home>.menu .menu-item::before{transform:none;inset:-.22em -.42em -.14em -.36em;mask-size:145% 100%;mask-position:left center}
+ .stage.home>.menu .menu-item:last-of-type{color:var(--paper)}
+ .stage.home>.menu .menu-meta{vertical-align:super;margin-left:6px;opacity:.78;text-shadow:none}
+ .stage.home>.menu .menu-item:hover:not(.is-selected){transform:rotate(var(--giro)) translateX(-4px)}
+ .stage.home>.menu .menu-item.is-selected{margin-top:4px;margin-bottom:14px;z-index:3;color:var(--on-accent);text-shadow:none;transform:rotate(var(--giro)) translateX(-8px) scale(1.03)}
+ .stage.home>.menu .menu-item.is-selected::before{clip-path:inset(0 -4% 0 0)}
+ .stage.home>.menu .menu-item.is-selected .arrow{opacity:1;left:-.38em;background:var(--on-accent)}
+ .stage.home>.menu .menu-item.is-selected .menu-meta{position:absolute;right:-.15em;bottom:-.18em;z-index:4;margin-left:0;opacity:1;display:inline-flex;align-items:center;gap:6px;padding:2px 8px 3px;background:var(--ink);color:var(--paper);clip-path:polygon(6% 0,100% 0,94% 100%,0 100%);box-shadow:0 6px 16px rgba(16,28,32,.4)}
+ .stage.home>.menu .menu-item.is-selected .menu-idx{color:var(--accent)}
+ .stage.home>.menu .menu-item.is-selected .menu-hint{display:inline}
+}
+
+.stage:is(.home,.inner)>.menu .menu-item:focus-visible{outline:2px solid var(--paper);outline-offset:3px;box-shadow:0 0 0 5px var(--ink)}
+.stage.home>.cut{clip-path:polygon(0 91%,69% 80%,100% 93%,100% 100%,0 100%)}
+
+/* Manchas de tinta nas bordas da estampa (sem obstruir menu ou gravura). */
+.home::before{content:'';position:absolute;inset:0;z-index:-3;pointer-events:none;background:linear-gradient(122deg,rgba(115,201,197,.42) 0%,transparent 28% 69%,rgba(155,41,72,.52) 83%,rgba(255,64,84,.48) 100%);-webkit-mask:url('../assets/textures/mancha.webp') center/cover;mask:url('../assets/textures/mancha.webp') center/cover;mix-blend-mode:multiply}
+
+/* ── Modo 2: Internas Desktop (>=901px) — trilho disciplinado (10.jpg PARTY) ─ */
+@media(min-width:901px){
+ .stage.inner>.menu{position:fixed;left:2.2vw;top:clamp(106px,16.5svh,156px);width:min(23.5vw,315px);transform:rotate(-4deg);transform-origin:0 0;display:flex;flex-direction:column;align-items:stretch;gap:5px;border-left:1px solid rgba(244,243,233,.32);padding-left:14px;--page-on:var(--paper)}
+ .stage.inner>.menu::before{content:none;display:none}
+ .stage.inner>.menu .menu-splash{display:block;left:-14%;width:128%;background:var(--ink);opacity:.92}
+ .stage.inner>.menu .menu-item:nth-child(n){margin:0;padding:6px 14px 7px 22px;font-size:clamp(22px,1.85vw,31px);line-height:1.05;color:var(--paper);background:rgba(16,28,32,.88);clip-path:polygon(0 0,100% 0,97% 100%,0 100%);display:flex;align-items:baseline;justify-content:space-between;gap:10px;transform:none;text-shadow:none;box-shadow:inset 0 1px 0 rgba(244,243,233,.16)}
+ .stage.inner>.menu .menu-item:last-of-type{color:var(--paper)}
+ .stage.inner>.menu .menu-word{transform:none}
+ .stage.inner>.menu .menu-item::before{transform:none;inset:-10% -14% -12% -6%;background:var(--accent)}
+ .stage.inner>.menu .menu-meta{flex-shrink:0;justify-content:flex-end}
+ .stage.inner>.menu .menu-idx{color:var(--aqua)}
+ .stage.inner>.menu .menu-item:hover:not(.is-selected){transform:none;translate:4px 0}
+ /* Página atual em repouso: pincelada na cor da seção sobre a tinta de fundo. */
+ .stage.inner>.menu .menu-item.is-selected{translate:10px 0;color:var(--on-accent);background:transparent;clip-path:none;box-shadow:none}
+ .stage.inner>.menu .menu-item.is-selected::before{clip-path:inset(0 -2% 0 0)}
+ .stage.inner>.menu .menu-item.is-selected .arrow{opacity:1;left:6px;width:9px;height:9px;background:var(--on-accent)}
+ .stage.inner>.menu .menu-item.is-selected .menu-idx{color:var(--on-accent)}
+ /* Prévia de hover/foco em outro item: o destino ganha pincelada e dica, enquanto a página atual segue marcada. */
+ .stage.inner>.menu:has(.is-painted:not(.is-selected)) .menu-item.is-selected:not(.is-painted){translate:6px 0;color:var(--paper);background:var(--ink);clip-path:polygon(0 0,100% 0,97% 100%,0 100%);box-shadow:inset 0 1px 0 var(--accent),inset 0 -1px 0 var(--accent)}
+ .stage.inner>.menu:has(.is-painted:not(.is-selected)) .menu-item.is-selected:not(.is-painted)::before{clip-path:inset(0 100% 0 0);animation:none}
+ .stage.inner>.menu:has(.is-painted:not(.is-selected)) .menu-item.is-selected:not(.is-painted) .arrow{opacity:1;left:6px;width:9px;height:9px;background:var(--accent)}
+ .stage.inner>.menu:has(.is-painted:not(.is-selected)) .menu-item.is-selected:not(.is-painted) .menu-idx{color:var(--aqua)}
+ .stage.inner>.menu .menu-item.is-painted:not(.is-selected){translate:6px 0;color:var(--on-accent);background:transparent;clip-path:none;box-shadow:none}
+ .stage.inner>.menu .menu-item.is-painted:not(.is-selected)::before{clip-path:inset(0 -2% 0 0)}
+ .stage.inner>.menu .menu-item.is-painted:not(.is-selected) .arrow{opacity:1;left:6px;width:9px;height:9px;background:var(--on-accent)}
+ .stage.inner>.menu .menu-item.is-painted:not(.is-selected) .menu-idx{color:var(--on-accent)}
+}
+
+/* ── Modo 3: Tablet e Mobile ─────────────────────────────────────────────── */
+@media(max-width:900px){
+ .inner.section-scene,.inner.immersive{padding:0 0 24px}
+ .inner>header{position:relative;inset:auto;padding:16px 18px 8px;pointer-events:auto}
+ .stage.inner>.menu{position:relative;top:auto;left:auto;width:calc(100% - 32px);margin:8px 16px 18px;padding:10px 12px;transform:none;display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:6px;background:rgba(16,28,32,.92);border-top:1px solid rgba(244,243,233,.35);border-bottom:2px solid var(--accent);border-left:0}
+ .stage.inner>.menu::before,.stage.inner>.menu .menu-splash,.stage.inner>.menu .arrow,.stage.inner>.menu .menu-hint{display:none}
+ .stage.inner>.menu .menu-item:nth-child(n){margin:0;padding:6px 11px;min-height:40px;font-size:clamp(17px,3.8vw,22px);line-height:1;display:inline-flex;align-items:center;gap:6px;color:var(--paper);background:rgba(244,243,233,.06);transform:none;text-shadow:none;clip-path:none}
+ .stage.inner>.menu .menu-item::before{display:none}
+ .stage.inner>.menu .menu-word{transform:none}
+ .stage.inner>.menu .menu-meta{opacity:.82}
+ .stage.inner>.menu .menu-item.is-selected{color:var(--on-accent);background:var(--accent);transform:none}
+ .stage.inner>.menu .menu-item.is-selected .menu-idx{color:var(--on-accent)}
+ .stage.inner>.menu .menu-item:hover:not(.is-selected){background:rgba(244,243,233,.16);transform:none}
+ .stage.inner>.footer{position:relative;inset:auto;width:auto;margin:24px 18px 0}
+}
+
+@media(max-width:700px){
+ .stage.home{--plate-height:clamp(92px,24vw,136px);background-color:var(--ink);background-blend-mode:normal}
+ .stage.home>.wash,.stage:is(.home,.inner)>.cut{display:none}
+ .stage.home::before{display:none}
+ .stage.home>.menu{position:relative;top:auto;left:auto;width:92%;margin:calc(var(--plate-height) + 12px) auto 30px;align-items:flex-end;gap:0;transform:none}
+ .stage.home>.menu::before{content:'';position:absolute;z-index:-3;inset:-24px -100vw -20px -100vw;background:var(--aqua);pointer-events:none}
+ .stage.home>.menu .menu-item:nth-child(n){margin:0 var(--recuo) 0 0;padding:1px 10px 3px;font-size:clamp(25px,6.8vw,38px);line-height:1.06;min-height:38px;color:var(--ink);text-shadow:none;transform:rotate(var(--giro));transform-origin:92% 50%}
+ .stage.home>.menu .menu-item:nth-child(7){--giro:-13deg;--recuo:4%}
+ .stage.home>.menu .menu-item::before{transform:none;inset:-.18em -.34em -.1em -.24em}
+ .stage.home>.menu .menu-word{transform:none}
+ .stage.home>.menu .menu-item:last-of-type{color:var(--ink)}
+ .stage.home>.menu .menu-item.is-selected{color:var(--on-accent);transform:rotate(var(--giro)) translateX(-4px)}
+ .stage.home>.menu .menu-item.is-selected::before{clip-path:inset(0 -2% 0 0)}
+ .stage.home>.menu .menu-meta{display:none}
+ .stage.home>.menu .menu-item .arrow{left:-12px;width:9px;height:9px}
+ .stage.home>.menu .menu-item.is-selected .arrow{opacity:1;background:var(--on-accent)}
+ .stage.home .art{top:72px;height:var(--plate-height)}
+ .stage.home .preview-paper{padding:14px 16px}
+ .stage.home .preview-title{font-size:25px}
+ .stage.home .preview-copy{font-size:16px;margin:6px 0 12px}
+ .stage.home .preview-action{min-height:44px;padding:10px 14px;font-size:15px}
+ .stage.home>.footer{background:rgba(16,28,32,.92);color:var(--paper);padding:14px 16px;margin:18px 22px 0}
+ .stage.home>.footer .caption{color:var(--muted-paper);margin-top:8px}
+ html[data-screen=home] body{padding-bottom:76px}
+}
+
+@media(prefers-reduced-motion:reduce){
+ .menu-word.is-misprint,.menu-word.is-misprint::before,.menu-word.is-misprint::after{animation:none}
+ .menu-word::before,.menu-word::after{display:none}
+}

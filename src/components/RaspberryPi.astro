@@ -1,0 +1,134 @@
+---
+// Raspberry Pi: um pacote de sementes à luz do dia. A frente mostra a variedade e o modelo 3D da placa na case
+// (src/scripts/raspberry.ts), que se abre por uma régua; o verso traz as instruções de cultivo. A ideia é a
+// infraestrutura plantada em casa em vez de comprada pronta. Sem JS ou sem WebGL, ficam as duas renderizações
+// estáticas do mesmo modelo, fechada e aberta, lado a lado.
+import {asset,route} from '../data/portfolio';
+import '../styles/raspberry.css';
+
+// Ramo de framboesa desenhado aqui mesmo: cada fruto é um cacho de drupéolas (círculos com brilho) e cada
+// folha tem a borda serrilhada gerada ponto a ponto. Determinístico, sem imagem externa.
+let seed=7;const rnd=()=>((seed=(seed*16807)%2147483647)/2147483647);
+function berry(cx:number,cy:number,r:number){
+ const out:{x:number,y:number,s:number}[]=[];
+ for(let row=-4;row<=4;row++){
+  const y=cy+row*r*.22,half=Math.sqrt(Math.max(0,1-(row/4.6)**2))*r*.78;
+  const n=Math.max(1,Math.round(half*2/(r*.24)));
+  for(let k=0;k<n;k++){const x=cx-half+(k+.5)*(half*2/n)+(row%2?r*.06:0);out.push({x:x+(rnd()-.5)*r*.04,y:y+(rnd()-.5)*r*.04,s:r*(.15+rnd()*.03)});}
+ }
+ return out;
+}
+function leaf(cx:number,cy:number,len:number,angle:number){
+ const pts:string[]=[],N=26,wid=len*.42;
+ const side=(dir:1|-1)=>{for(let i=0;i<=N;i++){const t=i/N,w=Math.sin(Math.PI*Math.pow(t,.8))*wid*(1-t*.15),tooth=(i%2?.0:.09)*wid*Math.sin(Math.PI*t);pts.push(`${(t*len).toFixed(1)},${(dir*(w+tooth)).toFixed(1)}`);}};
+ side(1);const back:string[]=[];for(let i=N;i>=0;i--){const t=i/N,w=Math.sin(Math.PI*Math.pow(t,.8))*wid*(1-t*.15),tooth=(i%2?.0:.09)*wid*Math.sin(Math.PI*t);back.push(`${(t*len).toFixed(1)},${(-(w+tooth)).toFixed(1)}`);}
+ const veins=Array.from({length:6},(_,i)=>{const t=.15+i*.13;return `M${(t*len).toFixed(1)} 0 l${(len*.12).toFixed(1)} ${(wid*.55).toFixed(1)} M${(t*len).toFixed(1)} 0 l${(len*.12).toFixed(1)} ${(-wid*.55).toFixed(1)}`;}).join(' ');
+ return {transform:`translate(${cx} ${cy}) rotate(${angle})`,points:[...pts,...back].join(' '),veins,len};
+}
+const berries=[{x:150,y:250,r:46},{x:236,y:300,r:40},{x:96,y:338,r:36}].map(b=>({...b,d:berry(b.x,b.y,b.r)}));
+const leaves=[leaf(170,170,150,-150),leaf(200,180,130,-35),leaf(150,190,120,-95)];
+const spec=[
+ ['Variedade','Raspberry Pi 4 Model B'],
+ ['Memória','8 GB'],
+ ['Processador','4 núcleos ARM Cortex-A72'],
+ ['Rede','Gigabit Ethernet'],
+ ['Pinos','40 de GPIO'],
+];
+---
+<div class="pi" id="conteudo">
+<header class="pi-top">
+<a class="pi-back" href={route('interesses')}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg><span>Meus interesses</span></a>
+<a class="pi-owner" href={route()}>Thiago Nascimento</a>
+</header>
+
+<article class="pi-packet" aria-labelledby="pi-title">
+<!-- Frente do pacote -->
+<section class="pi-front">
+<div class="pi-crimp" aria-hidden="true"></div>
+<div class="pi-band">
+<h1 class="pi-title" id="pi-title">Raspberry Pi</h1>
+<p class="pi-sub">Pi 4 Model B · 8 GB <span>variedade cultivada em casa</span></p>
+</div>
+<div class="pi-window">
+<svg class="pi-sprig" viewBox="0 0 320 400" aria-hidden="true">
+<defs>
+<radialGradient id="drupe" cx="35%" cy="30%" r="70%"><stop offset="0" stop-color="#ff8fa8"/><stop offset=".35" stop-color="#e2245a"/><stop offset="1" stop-color="#8e0f33"/></radialGradient>
+</defs>
+<path class="pi-stem" d="M170 60 C 175 130 160 200 150 250 M165 200 C 200 240 225 270 236 300 M155 230 C 130 280 110 310 96 338"/>
+{leaves.map(l=><g transform={l.transform}><polygon class="pi-leaf" points={l.points}/><path class="pi-vein" d={`M0 0 L${l.len} 0 ${l.veins}`}/></g>)}
+{berries.map(b=><g>{b.d.map(c=><circle cx={c.x.toFixed(1)} cy={c.y.toFixed(1)} r={c.s.toFixed(1)} fill="url(#drupe)"/>)}<path class="pi-calyx" d={`M${b.x-b.r*.5} ${b.y-b.r*.95} l${b.r*.25} ${b.r*.25} l${b.r*.25} ${-b.r*.28} l${b.r*.25} ${b.r*.28} l${b.r*.25} ${-b.r*.25}`}/></g>)}
+</svg>
+<figure class="pi-model" data-live="false">
+<div class="pi-stills">
+<img class="pi-still" src={asset('images/interesses/raspberry-fechada.webp')} width="1600" height="1000" alt="Renderização 3D de um Raspberry Pi 4 na case de base framboesa e tampa branca, fechada." decoding="async"/>
+<img class="pi-still" src={asset('images/interesses/raspberry-aberta.webp')} width="1600" height="1000" alt="A mesma case com a tampa levantada: a placa verde, as portas USB e Ethernet e os 40 pinos à mostra." loading="lazy" decoding="async"/>
+</div>
+<canvas class="pi-canvas" aria-hidden="true"></canvas>
+<figcaption class="pi-caption">Modelo 3D feito à mão para este site; arraste para girar.</figcaption>
+</figure>
+<div class="pi-open" hidden>
+<label for="pi-amount">Abrir a caixa</label>
+<input id="pi-amount" type="range" min="0" max="100" step="1" value="0" aria-valuetext="fechada"/>
+<p class="pi-open-note" aria-live="polite">Quero saber o que acontece dentro da caixa.</p>
+</div>
+</div>
+<p class="pi-net">Conteúdo: curiosidade, não certificado.</p>
+</section>
+
+<!-- Verso: instruções de cultivo -->
+<section class="pi-back-side" aria-labelledby="pi-cultivo">
+<h2 class="pi-h" id="pi-cultivo">Instruções de cultivo</h2>
+<ol class="pi-steps">
+<li><h3>Onde plantar</h3><p>Em casa. O Pi é a minha porta de entrada para homelab: servidores em casa e serviços que eu mesmo subo e mantenho.</p></li>
+<li><h3>Como cuidar</h3><p>Mexendo. É o meu jeito de aprender cloud e DevOps em algo que eu consigo tocar, quebrar e consertar.</p></li>
+<li><h3>Por que plantar</h3><p>Autonomia. Gosto de ter uma infraestrutura local, minha, que eu entendo e consigo integrar com o resto, em vez de depender da Big Tech para tudo.</p></li>
+</ol>
+<div class="pi-harvest">
+<h3>Já brotou</h3>
+<p>Um dos meus agentes do Hermes roda nele, de olho no sistema e desenvolvendo 24 horas por dia.</p>
+<a href={route('interesses/hermes-agent')}>Conhecer o Hermes Agent<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a>
+</div>
+<dl class="pi-spec" aria-label="Ficha da variedade">
+{spec.map(([k,v])=><div><dt>{k}</dt><dd>{v}</dd></div>)}
+</dl>
+<svg class="pi-stamp" viewBox="0 0 200 200" role="img" aria-label="Carimbo: curiosidade, não certificado">
+<defs><path id="pi-ring" d="M100 100 m-70 0 a70 70 0 1 1 140 0 a70 70 0 1 1 -140 0"/></defs>
+<circle cx="100" cy="100" r="92"/><circle cx="100" cy="100" r="52"/>
+<text><textPath href="#pi-ring" startOffset="0">CURIOSIDADE · NÃO CERTIFICADO · CURIOSIDADE ·</textPath></text>
+<text class="pi-stamp-mid" x="100" y="108" text-anchor="middle">em casa</text>
+</svg>
+<nav class="pi-next" aria-label="Continuar">
+<a href={route('interesses')}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg>Meus interesses</a>
+<a href={route('interesses/hermes-agent')}>Hermes Agent<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a>
+</nav>
+</section>
+</article>
+</div>
+
+<script>
+type Pi=import('../scripts/raspberry').Pi;
+let pi:Pi|null=null,controller:AbortController|null=null;
+function initPi(){
+ controller?.abort();pi?.stop();pi=null;
+ const root=document.querySelector<HTMLElement>('.pi');if(!root)return;
+ controller=new AbortController();const {signal}=controller;
+ const still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const figure=root.querySelector<HTMLElement>('.pi-model')!,canvas=root.querySelector<HTMLCanvasElement>('.pi-canvas')!;
+ const control=root.querySelector<HTMLElement>('.pi-open')!,range=root.querySelector<HTMLInputElement>('#pi-amount')!,note=root.querySelector<HTMLElement>('.pi-open-note')!;
+ const words=(v:number)=>v<5?'fechada':v<95?`${v}% aberta`:'aberta';
+ const notes=['Quero saber o que acontece dentro da caixa.','A tampa sobe…','Lá dentro: a placa, as portas e os 40 pinos.'];
+ range.addEventListener('input',()=>{const v=Number(range.value);range.style.setProperty('--v',String(v));range.setAttribute('aria-valuetext',words(v));pi?.setAmount(v/100,still);note.textContent=notes[v<5?0:v<95?1:2];},{signal});
+ const near=new IntersectionObserver(async([e])=>{
+  if(!e.isIntersecting)return;near.disconnect();
+  try{
+   const {start}=await import('../scripts/raspberry');if(signal.aborted)return;
+   pi=start(canvas,{still});
+   if(pi){figure.dataset.live='true';control.hidden=false;pi.setAmount(Number(range.value)/100,true);
+    if(import.meta.env.DEV)(window as unknown as {__piShot?:Pi['shot']}).__piShot=pi.shot;}
+  }catch{}
+ },{rootMargin:'300px 0px'});
+ near.observe(figure);signal.addEventListener('abort',()=>near.disconnect());
+}
+document.addEventListener('astro:page-load',initPi);
+document.addEventListener('astro:before-swap',()=>{controller?.abort();pi?.stop();pi=null;});
+</script>

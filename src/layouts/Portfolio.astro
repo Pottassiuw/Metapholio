@@ -11,30 +11,31 @@ import '../styles/about.css';
 import '../styles/scenes.css';
 import '../styles/rooms.css';
 import '../styles/tech.css';
-const {title='Thiago Nascimento — Metapholio',description='Portfólio de Thiago Nascimento: desenvolvimento de software, projetos acadêmicos e experiência profissional.',active='projetos',home=false,routeKey='menu',immersive=false,scene=false}=Astro.props;
+import '../styles/navigation-print.css';
+const {title='Thiago Nascimento — Metapholio',description='Portfólio de Thiago Nascimento: desenvolvimento de software, projetos acadêmicos e experiência profissional.',active='projetos',home=false,routeKey='menu',immersive=false,scene=false,bare=false,escape=''}=Astro.props;
 const current=sections.find(s=>s.id===active)??sections[1];
 ---
 <!doctype html>
 <html lang="pt-BR" data-screen={home?'home':'inner'} data-route={routeKey} data-page-section={current.id} style={`--accent:${current.accent};--on-accent:${current.onAccent};--accent-sel:${current.accent}`} transition:animate="none">
 <head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><meta name="theme-color" content="#73c9c5"/>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><meta name="theme-color" content="#5aa9ab"/>
 <title>{title}</title><meta name="description" content={description}/>
 <link rel="icon" type="image/svg+xml" href={asset('favicon.svg')}/>
 <ClientRouter fallback="swap"/>
 </head>
 <body>
 <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
-<main class:list={['stage',home?'home':'inner',{immersive,'section-scene':scene}]} id="menu">
-<MenuArt active={active}/>
-{home||immersive||scene ? <slot/> : <article class="content-sheet" id="conteudo" aria-label={title}>
+<main class:list={['stage',bare?'bare':home?'home':'inner',{immersive,'section-scene':scene}]} id="menu" data-escape={escape||undefined}>
+{!bare&&<MenuArt active={active} home={home}/>}
+{home||immersive||scene||bare ? <slot/> : <article class="content-sheet" id="conteudo" aria-label={title}>
 <div class="sheet-tools"><a href={route()} class="back-link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg> Voltar ao menu</a><span>Metapholio / Thiago Nascimento</span></div>
 <slot/>
 <footer class="sheet-footer"><a href={route('contato')}>Vamos conversar</a><a href={route()}>Menu principal</a></footer>
 </article>}
-<footer class="footer">
+{!bare&&<footer class="footer">
 <div><div class="social"><a href="https://github.com/Pottassiuw" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://www.linkedin.com/in/thiago-nascimento-729077292" target="_blank" rel="noopener noreferrer">LinkedIn</a></div><p class="caption">Gravura: A. Dürer, Melencolia I (1514), The Met — domínio público.</p></div>
 <div class="controls"><span class="control"><span class="key-arrows"><kbd>↑</kbd><kbd>↓</kbd></span> Navegar</span><span class="control"><kbd>Enter</kbd> Abrir</span><span class="control"><kbd>Esc</kbd> Menu</span></div>
-</footer>
+</footer>}
 </main>
 <Trilha/>
 <Atmosfera/>
@@ -42,10 +43,13 @@ const current=sections.find(s=>s.id===active)??sections[1];
 import {navigate,swapFunctions} from 'astro:transitions/client';
 import {route,sections,projects} from '../data/portfolio';
 
-let lastTap:{x:number,y:number,el:Element|null,t:number}={x:0,y:0,el:null,t:0};
+let splashOrigin={x:innerWidth*.24,y:innerHeight*.4,accent:''};
 document.addEventListener('pointerdown',e=>{
- lastTap={x:e.clientX,y:e.clientY,el:(e.target as Element|null)?.closest?.('a,button')??null,t:performance.now()};
-},{passive:true,capture:true});
+ const a=(e.target as HTMLElement|null)?.closest<HTMLAnchorElement>('a[href]');
+ if(!a)return;
+ const sec=a.dataset.section?sections.find(s=>s.id===a.dataset.section):undefined;
+ splashOrigin={x:e.clientX||innerWidth*.24,y:e.clientY||innerHeight*.4,accent:sec?.accent??''};
+});
 
 // Troca só o palco (#menu): o resto do <body>, inclusive a trilha e a atmosfera, continua vivo entre páginas.
 document.addEventListener('astro:before-swap',event=>{
@@ -63,27 +67,27 @@ document.addEventListener('astro:before-swap',event=>{
  };
 });
 
-// Saída no idioma de Metaphor: quando a atmosfera WebGL está ativa, dispara um respingo de tinta do ponto
-// de clique/foco na cor da seção de destino; sem WebGL, mantém a faixa de papel cruzando a tela.
+function destColor(pathname:string){
+ if(splashOrigin.accent)return splashOrigin.accent;
+ const sec=sections.find(s=>pathname===route(s.id));
+ if(sec)return sec.accent;
+ const proj=projects.find(p=>pathname===route(p.id));
+ if(proj)return sections.find(s=>s.id===proj.category)?.accent;
+ return getComputedStyle(document.documentElement).getPropertyValue('--accent-sel').trim()||undefined;
+}
+
+// A faixa de papel ou o respingo WebGL mantém a troca entre salas; a máscara do canvas nunca é removida para cobrir a obra.
 document.addEventListener('astro:before-preparation',event=>{
  const stage=document.querySelector<HTMLElement>('.stage');
- if(!stage||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
- let x=innerWidth*.5,y=innerHeight*.5,link:HTMLAnchorElement|null=null;
- if(performance.now()-lastTap.t<600){
-  x=lastTap.x;y=lastTap.y;link=lastTap.el?.closest?.('a')??null;
- }else{
-  const act=document.activeElement as HTMLElement|null;
-  const focusEl=(act&&act!==document.body&&act!==document.documentElement?act:null)
-   ??document.querySelector<HTMLElement>('.menu-item.is-painted,.menu-item.is-selected');
-  const b=focusEl?.getBoundingClientRect();
-  if(b&&b.width>0){x=b.left+b.width*.55;y=b.top+b.height*.5;}
-  link=focusEl?.closest?.('a')??null;
- }
- const slug=event.to.pathname.replace(/\/+$/,'').split('/').pop()||'';
- const secId=link?.dataset.section||sections.find(s=>s.id===slug)?.id||projects.find(p=>p.id===slug)?.category;
- const cor=sections.find(s=>s.id===secId)?.accent
-  ||getComputedStyle(document.documentElement).getPropertyValue('--accent-sel').trim()||'#ff3461';
- (window as unknown as {__splash?:(x:number,y:number,c?:string)=>boolean}).__splash?.(x,y,cor);
+ // A abertura entra e sai sem bloquear a navegação com um efeito de tela inteira.
+ if(!stage||stage.classList.contains('home')||event.to.pathname===route()||matchMedia('(prefers-reduced-motion: reduce)').matches){splashOrigin.accent='';return;}
+ const activeEl=document.activeElement as HTMLElement|null;
+ const rect=activeEl?.closest('a')?.getBoundingClientRect();
+ const ox=splashOrigin.accent?splashOrigin.x:(rect?rect.left+rect.width*.5:innerWidth*.24);
+ const oy=splashOrigin.accent?splashOrigin.y:(rect?rect.top+rect.height*.5:innerHeight*.4);
+ const cor=destColor(event.to.pathname);
+ splashOrigin.accent='';
+ (window as unknown as {__splash?:(x:number,y:number,cor?:string)=>boolean}).__splash?.(ox,oy,cor);
  const load=event.loader;
  event.loader=async()=>{
   stage.classList.add('is-leaving');
@@ -97,63 +101,37 @@ function init(){
  const links=[...document.querySelectorAll<HTMLAnchorElement>('[data-section]')];
  const stage=document.querySelector<HTMLElement>('.stage')!;
  const home=stage.classList.contains('home');
- function ground(){
-  if(!home&&window.innerWidth>700)return;
-  const el=links[5];if(!el)return;const b=el.getBoundingClientRect(),f=stage.getBoundingClientRect();
-  const angle=(window.innerWidth<=700?6:8)*Math.PI/180,slope=Math.tan(angle);
-  // Recover the rotated top-left corner, not the bounding box's bottom-left.
-  // Keep the dark ground below Formação even after fonts and selection settle.
-  const left=b.top-f.top+Math.sin(angle)*el.offsetWidth+slope*(b.left-f.left+Math.sin(angle)*el.offsetHeight)-2;
-  stage.style.setProperty('--cut-left',left+'px');stage.style.setProperty('--cut-mid',(left-slope*f.width*.66)+'px');stage.style.setProperty('--cut-right',(left-slope*f.width)+'px');
- }
- window.addEventListener('resize',ground,{passive:true,signal});document.fonts.ready.then(()=>{if(!signal.aborted)ground();});
- // Seleção no idioma do menu de Metaphor: a cor da seção inunda o fundo e uma mancha é repintada atrás
- // da linha; as letras pulam. Na hero também muda a prévia e o dial; nas internas é só a pintura (sai ao deixar o menu).
+ const menu=document.querySelector<HTMLElement>('.menu');
+ // Na abertura, só a pincelada responde à seleção; a prévia é atualizada sem animação própria.
  const root=document.documentElement;
  const splash=document.querySelector<HTMLElement>('.menu-splash');
  const floods=[...document.querySelectorAll<HTMLElement>('.room-flood')];
  const replay=(el:Element|null,cls:string)=>{if(!el)return;el.classList.remove(cls);void (el as HTMLElement).offsetWidth;el.classList.add(cls);};
  let painted:HTMLAnchorElement|null=null;
  const still=matchMedia('(prefers-reduced-motion: reduce)');
- // Respingos de tinta da ponta da pincelada: gotas e riscos na cor da seção e em tinta, com um arco de queda.
- function burst(link:HTMLAnchorElement,accent:string){
-  const menu=link.parentElement;if(!menu||still.matches)return;
-  const x0=link.offsetLeft+link.offsetWidth*.92,y0=link.offsetTop+link.offsetHeight*.52,unit=link.offsetHeight/100;
-  for(let i=0;i<24;i++){
-   const streak=i%5===0,el=document.createElement('span');
-   const size=(streak?4:6+Math.random()*20)*unit,len=streak?(40+Math.random()*80)*unit:size*(.8+Math.random()*.6);
-   el.className=streak?'fleck is-streak':'fleck';el.setAttribute('aria-hidden','true');
-   el.style.cssText=`width:${len}px;height:${size}px;--c:${Math.random()<.72?accent:'#101c20'}`;
-   menu.appendChild(el);
-   const dx=(60+Math.random()*420)*unit,dy=(Math.random()-.62)*170*unit,fall=(30+Math.random()*70)*unit,spin=(Math.random()-.5)*160;
-   const from=`translate(${x0}px,${y0-size/2}px) rotate(${streak?-4:0}deg) scale(.2)`;
-   el.animate([{transform:from,opacity:1},{transform:`translate(${x0+dx*.7}px,${y0+dy}px) rotate(${spin*.6}deg) scale(1)`,opacity:1,offset:.45},{transform:`translate(${x0+dx}px,${y0+dy+fall}px) rotate(${spin}deg) scale(.35)`,opacity:0}],{duration:620+Math.random()*420,delay:Math.random()*90,easing:'cubic-bezier(.16,1,.3,1)',fill:'backwards'}).finished.then(()=>el.remove(),()=>el.remove());
-  }
- }
+ // Partículas vivem apenas no canvas mascarado; não lançar flecks DOM sobre a obra.
  function paint(link:HTMLAnchorElement){
   if(painted===link)return;painted=link;
   const s=sections.find(s=>s.id===link.dataset.section)!;
   root.style.setProperty('--accent-sel',s.accent);root.style.setProperty('--on-sel',s.onAccent);
-  if(splash){splash.style.setProperty('--y',(link.offsetTop+link.offsetHeight/2)+'px');splash.style.setProperty('--h',(link.offsetHeight*2.4)+'px');replay(splash,'is-painting');}
+  if(home){replay(link,'is-brushing');return;}
+  if(splash){splash.style.setProperty('--y',(link.offsetTop+link.offsetHeight/2)+'px');splash.style.setProperty('--h',(link.offsetHeight*1.2)+'px');replay(splash,'is-painting');}
   floods.forEach(f=>replay(f,'is-painting'));
   links.forEach(el=>el.classList.toggle('is-painted',el===link));
   replay(link,'is-pop');
-  burst(link,s.accent);
  }
- function misprint(el:HTMLElement|null){
+ function misprint(el:HTMLElement|null,ms=300){
   if(!el||still.matches||document.hidden)return;
   replay(el,'is-misprint');
-  window.setTimeout(()=>el.classList.remove('is-misprint'),300);
+  window.setTimeout(()=>el.classList.remove('is-misprint'),ms);
  }
  function select(link:HTMLAnchorElement){
   paint(link);
   if(!home||link.classList.contains('is-selected'))return;
   links.forEach(el=>el.classList.toggle('is-selected',el===link));
-  misprint(link.querySelector<HTMLElement>('.menu-word'));
+  misprint(link.querySelector<HTMLElement>('.menu-word'),140);
   const s=sections.find(s=>s.id===link.dataset.section)!;
-  const idx=sections.indexOf(s)+1;
-  const num=document.querySelector<HTMLElement>('.dial-num');if(num){num.textContent=String(idx);replay(num,'is-turning');}
-  const rk=document.querySelector<HTMLElement>('#preview-rank');if(rk){rk.textContent=String(idx);replay(rk,'is-turning');}
+  const rk=document.querySelector<HTMLElement>('#preview-rank');if(rk)rk.textContent=String(sections.indexOf(s)+1);
   const tag=document.querySelector<HTMLElement>('#preview-tag');if(tag)tag.textContent=s.hint;
   document.querySelector('#preview-title')!.textContent=s.title;document.querySelector('#preview-copy')!.textContent=s.copy;const explore=document.querySelector<HTMLAnchorElement>('#explore')!;explore.href=link.href;explore.querySelector('span')!.textContent='Explorar '+s.label.toLowerCase();
  }
@@ -193,12 +171,23 @@ function init(){
  links.forEach(link=>{link.addEventListener('focus',()=>select(link),{signal});// Pelo tipo do ponteiro, não por (hover:hover): o Firefox no Linux com tela de toque responde 'none' mesmo com mouse.
   link.addEventListener('pointerenter',e=>{if(e.pointerType!=='touch')select(link)},{signal});});
  // Nas internas, ao sair do menu a pintura volta para a seção da página.
- const menu=document.querySelector<HTMLElement>('.menu');
  if(!home&&menu&&current){
   menu.addEventListener('pointerleave',()=>paint(current),{signal});
   menu.addEventListener('focusout',e=>{if(!menu.contains(e.relatedTarget as Node))paint(current)},{signal});
  }
- document.addEventListener('keydown',e=>{if(/INPUT|TEXTAREA|SELECT/.test((e.target as HTMLElement).tagName))return;if(e.key==='Escape'&&!home){navigate(route());return;}if(!['ArrowDown','ArrowUp'].includes(e.key))return;e.preventDefault();let i=links.findIndex(l=>l===document.activeElement);if(i<0)i=links.findIndex(l=>l.classList.contains('is-selected'));links[(i+(e.key==='ArrowDown'?1:-1)+links.length)%links.length].focus();},{signal});
+ document.addEventListener('keydown',e=>{
+  if(e.defaultPrevented||e.altKey||e.ctrlKey||e.metaKey||e.shiftKey)return;
+  const target=e.target as HTMLElement;
+  if(target.closest('input,textarea,select,[contenteditable]'))return;
+  if(e.key==='Escape'&&!home){navigate(stage.dataset.escape??route());return;}
+  const inMenu=menu?.contains(target),landingStart=home&&target===document.body;
+  if(!links.length||(!inMenu&&!landingStart)||!['ArrowDown','ArrowUp'].includes(e.key))return;
+  e.preventDefault();
+  const i=links.findIndex(l=>l===(inMenu?document.activeElement:links.find(l=>l.classList.contains('is-selected'))));
+  const next=links[(i+(e.key==='ArrowDown'?1:-1)+links.length)%links.length];
+  if(home)select(next);
+  next.focus();
+ },{signal});
 }
 document.addEventListener('astro:page-load',init);
 </script>

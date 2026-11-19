@@ -1,6 +1,6 @@
 // Atmosfera: a camada 3D que fica por cima do site inteiro (Three.js), no idioma dos menus de Metaphor.
-//  · Astrolábio: uma esfera armilar de anéis finos, com escala graduada, miras e um triângulo. Mora no numeral
-//    da home, viaja até o numeral dos capítulos nas páginas de projeto e encolhe num canto nas salas.
+//  · Astrolábio: uma esfera armilar entre menu e rosto na abertura, ancorada no numeral dos capítulos
+//    nas páginas de projeto e num canto nas salas.
 //  · Estilhaços: triângulos de cor chapada que flutuam em profundidade, fogem do ponteiro, saltam da ponta da
 //    pincelada a cada seleção do menu e cruzam a tela em rajada a cada troca de página.
 //  · Brasas: pontos pequenos que sobem devagar e cintilam.
@@ -64,7 +64,8 @@ export function start(canvas:HTMLCanvasElement){
  const tri=new Group();arm.add(tri);spins.push({pivot:tri,axis:Z,speed:-.07});
  for(let i=0;i<3;i++){const a=Math.PI/2+i*Math.PI*2/3,b=a+Math.PI*2/3,R=1.36,ax=Math.cos(a)*R,ay=Math.sin(a)*R,bx=Math.cos(b)*R,by=Math.sin(b)*R;
   const side=new Mesh(new BoxGeometry(Math.hypot(bx-ax,by-ay),.0026,.0026),faint);side.position.set((ax+bx)/2,(ay+by)/2,0);side.rotation.z=Math.atan2(by-ay,bx-ax);tri.add(side);}
- for(const a of [TILT,TILT+Math.PI/2]){const m=new Mesh(new BoxGeometry(9,.0022,.0022),faint);m.rotation.z=-a;arm.add(m);}
+ const crosshairs=new Group();arm.add(crosshairs);
+ for(const a of [TILT,TILT+Math.PI/2]){const m=new Mesh(new BoxGeometry(2.8,.0022,.0022),faint);m.rotation.z=-a;crosshairs.add(m);}
 
  // ── Estilhaços ────────────────────────────────────────────────────────────
  const triGeo=new BufferGeometry();triGeo.setAttribute('position',new Float32BufferAttribute([0,.64,0,-.5,-.36,0,.5,-.36,0],3));
@@ -98,7 +99,7 @@ vec3 col=vMix<.5?uA:vMix<.8?uB:uC;gl_FragColor=vec4(col,a*.92);
  let embers:Points|null=null;
  function sow(){
   if(embers){scene.remove(embers);embers.geometry.dispose();}
-  const n=small?300:900,pos=new Float32Array(n*3),sd=new Float32Array(n),sz=new Float32Array(n);
+  const n=small?160:420,pos=new Float32Array(n*3),sd=new Float32Array(n),sz=new Float32Array(n);
   for(let i=0;i<n;i++){pos[i*3]=rand(-w*.7,w*.7);pos[i*3+1]=rand(-h*.6,h*.6);pos[i*3+2]=rand(-800,300);sd[i]=Math.random();sz[i]=Math.random()<.12?rand(5.5,9.5):rand(2,4.6);}
   const g=new BufferGeometry();g.setAttribute('position',new Float32BufferAttribute(pos,3));g.setAttribute('aSeed',new Float32BufferAttribute(sd,1));g.setAttribute('aSize',new Float32BufferAttribute(sz,1));
   embers=new Points(g,emberMat);embers.frustumCulled=false;scene.add(embers);
@@ -163,17 +164,49 @@ void main(){
 
  // ── Tamanho, âncora e cor ─────────────────────────────────────────────────
  const at={x:0,y:0,s:200,o:1},to={x:0,y:0,s:200,o:1};let placed=false,calm=1;
+ // Áreas de leitura (prévia da home, cartões e textos das salas) ficam fora da camada: a máscara do canvas abre
+ // um buraco em cada uma, com folga, para que estilhaços e brasas nunca atravessem texto.
+ const QUIET='header,.footer,.trilha,.menu,.preview,.scene-title,.room-body,.room-figure,.room-label,.scene-body,.about-copy,.about-controls,.story-chapters,.story-head,.story-index,.crests,.print,.follower,.official,.level-sheet,.orrery';
+ let landing=false,landingFrame:DOMRect|undefined,lastMask='';
+ function quiet(){
+  // Durante o respingo WebGL de troca de página, libera o canvas inteiro e restaura a máscara ao encerrar.
+  if(spPhase!==0){canvas.style.visibility='';if(canvas.style.mask!=='none')canvas.style.mask='none';return;}
+  // Positive graphic zones first: a missing/new content selector must never expose the artwork.
+  // One SVG mask unions the exclusions; hidden carousel slides cannot punch holes in the armillary.
+  const menu=document.querySelector<HTMLElement>('.menu')?.getBoundingClientRect();
+  const zone=landing?landingFrame:menu?new DOMRect(0,100,Math.min(w*.32,menu.right+12),Math.max(0,h-100)):undefined;
+  canvas.style.visibility=!zone||small?'hidden':'';
+  if(!zone||small)return;
+  const rects=[...document.querySelectorAll<HTMLElement>(QUIET)]
+   .filter(el=>!el.closest('[inert],[hidden]')&&getComputedStyle(el).visibility!=='hidden')
+   .map(el=>el.getBoundingClientRect()).filter(b=>b.width>0&&b.height>0&&b.bottom>0&&b.top<h);
+  const holes=rects.map(b=>`<rect x="${b.left-12}" y="${b.top-12}" width="${b.width+24}" height="${b.height+24}" fill="black"/>`).join('');
+  const field=landing?`<ellipse cx="${zone.left+zone.width/2}" cy="${zone.top+zone.height/2}" rx="${zone.width/2}" ry="${zone.height/2}" fill="url(#fade)"/>`:`<rect x="${zone.left}" y="${zone.top}" width="${zone.width}" height="${zone.height}" fill="white"/>`;
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><defs><radialGradient id="fade"><stop offset="65%" stop-color="white"/><stop offset="100%" stop-color="black"/></radialGradient><mask id="zone"><rect width="100%" height="100%" fill="black"/>${field}${holes}</mask></defs><rect width="100%" height="100%" fill="white" mask="url(#zone)"/></svg>`;
+  const mask=`url("data:image/svg+xml,${encodeURIComponent(svg)}") 0 0 / 100% 100% no-repeat`;
+  if(lastMask!==mask||canvas.style.mask==='none'){canvas.style.mask=mask;lastMask=mask;}
+ }
  function measure(){
-  const dial=document.querySelector<HTMLElement>('.home .dial-num'),numeral=document.querySelector<HTMLElement>('.story-numeral');
-  const box=(el:HTMLElement|null)=>{const b=el?.getBoundingClientRect();return b&&b.width>0&&b.height>0?b:null;};
-  const a=box(dial),b=box(numeral);
-  if(a&&!small){to.x=a.left+a.width*.5;to.y=a.top+a.height*.52;to.s=a.height*.47;to.o=1;}
-  else if(b){to.x=b.left+b.width*.5;to.y=b.top+b.height*.45;to.s=Math.min(b.height*.62,w*.24);to.o=.62;}
-  else if(small){to.x=w*.86;to.y=Math.max(90,150-scrollY);to.s=w*.3;to.o=document.documentElement.dataset.screen==='home'?.8:.42;}
-  else{to.x=w*.93;to.y=h*.16;to.s=Math.min(w,h)*.17;to.o=.46;}
-  // Nas páginas de leitura a chuva de estilhaços rareia: a home é o palco, as internas são para ler.
-  calm=document.documentElement.dataset.screen==='home'?1:.5;
-  if(!placed){Object.assign(at,to);placed=true;}
+  const wasLanding=landing;
+  landing=document.documentElement.dataset.screen==='home';
+  const b=document.querySelector<HTMLElement>(landing?'.home-atmosphere-frame':'.story-numeral')?.getBoundingClientRect();
+  const box=b&&b.width>0&&b.height>0?b:undefined;
+  landingFrame=landing?box:undefined;
+  if(landing){
+   to.o=box ? .86 : 0;
+   if(box){to.x=box.left+box.width*.5;to.y=box.top+box.height*.5;to.s=Math.min(box.width,box.height)*.25;}
+  }else{
+   const menu=document.querySelector<HTMLElement>('.menu')?.getBoundingClientRect();
+   const footer=document.querySelector<HTMLElement>('.footer')?.getBoundingClientRect();
+   const wordBottom=Math.max(0,...[...document.querySelectorAll('.menu-word')].map(el=>el.getBoundingClientRect().bottom));
+   const bottom=Math.min(h-90,footer?.top??h),top=Math.max(menu?.bottom??bottom,wordBottom)+24;
+   to.x=Math.min(w*.22,(menu?.right??0)*.72);to.y=(top+bottom)/2;
+   to.s=Math.max(0,Math.min(66,(bottom-top)/3));to.o=small||to.s<18?0:.72;
+  }
+  calm=landing?.62:.36;
+  crosshairs.visible=!landing;shards.visible=true;
+  quiet();
+  if(!placed||landing||wasLanding!==landing){Object.assign(at,to);placed=true;}
  }
  function resize(){
   w=innerWidth;h=innerHeight;small=w<=700;d=h/2/Math.tan(FOV*Math.PI/360);
@@ -195,7 +228,8 @@ void main(){
  let boost=0,next=0,lastBurst=0,mx=-9999,my=-9999,nx=0,ny=0,level=0;
  const gust=new Vector3();
  runSplash=(x:number,y:number,cor?:string)=>{
-  if(document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches)return false;
+  // The decorative canvas is masked; retain the CSS paper transition rather than a clipped full-screen splash.
+  if(small||landing||document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches)return false;
   const ox=Number.isFinite(x)?Math.max(0,Math.min(w,x)):w*.5;
   const oy=Number.isFinite(y)?Math.max(0,Math.min(h,y)):h*.5;
   (splashMat.uniforms.uOrigin.value as Vector2).set(ox,oy);
@@ -212,7 +246,7 @@ void main(){
   const now=performance.now();if(now-lastBurst<110)return;lastBurst=now;boost=Math.min(9,boost+4.5);
   const link=document.querySelector<HTMLElement>('.menu-item.is-painted')??document.querySelector<HTMLElement>('.menu-item.is-selected');
   const b=link?.getBoundingClientRect();if(!b||b.width===0)return;
-  const ox=b.left+b.width*.9-w/2,oy=h/2-(b.top+b.height*.5),n=small?10:24;
+  const ox=(landing&&landingFrame?landingFrame.left+landingFrame.width*.25:b.left+b.width*.9)-w/2,oy=h/2-(landing&&landingFrame?landingFrame.top+landingFrame.height*.65:b.top+b.height*.5),n=small?0:24;
   for(let k=0;k<n;k++){
    const i=next=(next+1)%Math.max(1,Math.floor(count*calm)),z=rand(-140,220),f=(d-z)/d,sp=rand(260,980),a=-TILT+rand(-.5,.5);
    P[i*3]=ox*f;P[i*3+1]=oy*f;P[i*3+2]=z;V[i*3]=Math.cos(a)*sp;V[i*3+1]=Math.sin(a)*sp;V[i*3+2]=rand(-120,160);
@@ -222,29 +256,36 @@ void main(){
  }
  const onStyle=new MutationObserver(()=>{if(readAccent())burst();});
  onStyle.observe(document.documentElement,{attributes:true,attributeFilter:['style']});
- const onLeave=()=>{if(spPhase===0){gust.set(1700*Math.cos(6*Math.PI/180),1700*Math.sin(6*Math.PI/180),0);boost=Math.min(9,boost+3);}};
- const onLoad=()=>{document.documentElement.classList.add('has-splash');spSwapped=true;readAccent();measure();};
+ const onLeave=()=>{if(!landing&&spPhase===0){gust.set(1700*Math.cos(6*Math.PI/180),1700*Math.sin(6*Math.PI/180),0);boost=Math.min(9,boost+3);}};
+ const onLoad=()=>{
+  spSwapped=true;measure();readAccent();
+  if(landing){spPhase=0;splashMesh.visible=false;gust.set(0,0,0);boost=0;}
+ };
  const onPointer=(e:PointerEvent)=>{mx=e.clientX;my=e.clientY;nx=mx/w*2-1;ny=my/h*2-1;};
  const onOut=()=>{mx=my=-9999;};
  let scrollTick=0;const onScroll=()=>{if(!scrollTick)scrollTick=requestAnimationFrame(()=>{scrollTick=0;measure();});};
- document.addEventListener('astro:before-preparation',onLeave);document.addEventListener('astro:page-load',onLoad);
+ document.addEventListener('astro:before-preparation',onLeave);document.addEventListener('astro:after-swap',onLoad);document.addEventListener('astro:page-load',onLoad);
  addEventListener('pointermove',onPointer,{passive:true});document.documentElement.addEventListener('pointerleave',onOut);
  addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',resize);
  const timer=setInterval(measure,800);
 
  // ── Quadro ────────────────────────────────────────────────────────────────
  const dummy=new Object3D();let raf=0,last=performance.now(),t=0,tx=0,ty=0;
+ let qTick=0;
  function frame(now:number){
   raf=requestAnimationFrame(frame);
+  // Refresh exclusions during mounting and hover, without rebuilding the renderer.
+  if(++qTick%5===0)quiet();
   const dt=Math.min(.05,(now-last)/1000);last=now;t+=dt;
-  const want=sound.on?(sound.live?sound.bass:.16+.1*Math.sin(t*2.4)):0;level+=(want-level)*Math.min(1,dt*(want>level?14:5));
+  if(small||(landing&&!landingFrame))return;
+  const want=!landing&&sound.on?(sound.live?sound.bass:.16+.1*Math.sin(t*2.4)):0;level+=(want-level)*Math.min(1,dt*(want>level?14:5));
   boost*=Math.exp(-2.6*dt);gust.multiplyScalar(Math.exp(-3*dt));
   if(spPhase===1){
    spT+=dt;splashMat.uniforms.uOut.value=Math.min(1,spT/OUT_DUR);
    if(spT>=OUT_DUR&&(spSwapped||spT>=.44)){spPhase=2;spT=0;}
   }else if(spPhase===2){
    spT+=dt;const p=Math.min(1,spT/IN_DUR);splashMat.uniforms.uIn.value=p;
-   if(p>=1){spPhase=0;splashMesh.visible=false;}
+   if(p>=1){spPhase=0;splashMesh.visible=false;quiet();}
   }
   // cor da seção
   if(!accent.equals(accentTo)){accent.lerp(accentTo,Math.min(1,dt*7));if(Math.abs(accent.r-accentTo.r)+Math.abs(accent.g-accentTo.g)+Math.abs(accent.b-accentTo.b)<.004)accent.copy(accentTo);
@@ -253,8 +294,8 @@ void main(){
   // astrolábio
   const ease=Math.min(1,dt*2.4);at.x+=(to.x-at.x)*ease;at.y+=(to.y-at.y)*ease;at.s+=(to.s-at.s)*ease;at.o+=(to.o-at.o)*ease;
   arm.position.set(at.x-w/2,h/2-at.y,0);arm.scale.setScalar(at.s*(1+level*.07));
-  tx+=(ny*.38-tx)*Math.min(1,dt*3);ty+=(nx*.55-ty)*Math.min(1,dt*3);arm.rotation.set(tx+.18,ty-.25,0);
-  const turn=dt*(1+boost+level*2.2);for(const s of spins)s.pivot.rotateOnAxis(s.axis,s.speed*turn);
+  tx+=((landing?0:ny*.38)-tx)*Math.min(1,dt*3);ty+=((landing?0:nx*.55)-ty)*Math.min(1,dt*3);arm.rotation.set(tx+.18,ty-.25,0);
+  const turn=dt*(landing ? .36 : 1+boost+level*2.2);for(const s of spins)s.pivot.rotateOnAxis(s.axis,s.speed*turn);
   for(const [m,base] of fades)m.opacity=base*at.o;accentMat.opacity=Math.min(1,.96*at.o+level*.3);bandMat.opacity=(.2+level*.3)*at.o;
   // estilhaços
   const push=1+level*1.6,bx=w*.62+90,by=h*.62+90,lim=count*calm;
@@ -273,21 +314,23 @@ void main(){
    dummy.position.set(P[j],P[j+1],z);dummy.rotation.set(R[j],R[j+1],R[j+2]);dummy.scale.set(S[i*2]*k,S[i*2+1]*k,1);dummy.updateMatrix();shards.setMatrixAt(i,dummy.matrix);
   }
   shards.instanceMatrix.needsUpdate=true;
-  emberMat.uniforms.uTime.value=t;emberMat.uniforms.uLevel.value=level;
-  if(embers){embers.position.x+=(-nx*26-embers.position.x)*Math.min(1,dt*2);embers.position.y+=(ny*18-embers.position.y)*Math.min(1,dt*2);}
+  emberMat.uniforms.uTime.value=landing?t*.75:t;emberMat.uniforms.uLevel.value=level;
+  if(embers){embers.position.x+=((landing?0:-nx*26)-embers.position.x)*Math.min(1,dt*2);embers.position.y+=((landing?0:ny*18)-embers.position.y)*Math.min(1,dt*2);}
   renderer.render(scene,camera);
  }
  const onVisible=()=>{cancelAnimationFrame(raf);if(!document.hidden){last=performance.now();raf=requestAnimationFrame(frame);}else if(spPhase!==0){spPhase=0;splashMesh.visible=false;}};
  document.addEventListener('visibilitychange',onVisible);
- readAccent();accent.copy(accentTo);accentMat.color.copy(accent);bandMat.color.copy(accent);(emberMat.uniforms.uB.value as Color).copy(accent);
- resize();raf=requestAnimationFrame(frame);canvas.classList.add('is-on');document.documentElement.classList.add('has-splash');
+ resize();readAccent();accent.copy(accentTo);accentMat.color.copy(accent);bandMat.color.copy(accent);(emberMat.uniforms.uB.value as Color).copy(accent);
+ raf=requestAnimationFrame(frame);canvas.classList.add('is-on');document.documentElement.classList.add('has-splash');
 
  return ()=>{
   runSplash=null;splashMesh.visible=false;splashMesh.geometry.dispose();splashMat.dispose();
   cancelAnimationFrame(raf);clearInterval(timer);onStyle.disconnect();canvas.classList.remove('is-on');document.documentElement.classList.remove('has-splash');
-  document.removeEventListener('astro:before-preparation',onLeave);document.removeEventListener('astro:page-load',onLoad);
+  document.removeEventListener('astro:before-preparation',onLeave);document.removeEventListener('astro:after-swap',onLoad);document.removeEventListener('astro:page-load',onLoad);
   removeEventListener('pointermove',onPointer);document.documentElement.removeEventListener('pointerleave',onOut);
   removeEventListener('scroll',onScroll);removeEventListener('resize',resize);document.removeEventListener('visibilitychange',onVisible);
+  cancelAnimationFrame(scrollTick);
+  scene.traverse(obj=>{if(obj instanceof Mesh||obj instanceof Points){obj.geometry.dispose();const materials=Array.isArray(obj.material)?obj.material:[obj.material];materials.forEach(m=>m.dispose());}});
   renderer.dispose();
  };
 }

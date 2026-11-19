@@ -4,7 +4,8 @@ import AboutScene from '../components/AboutScene.astro';
 import ProjectStory from '../components/ProjectStory.astro';
 import SectionScene from '../components/SectionScene.astro';
 import {sections,projects} from '../data/portfolio';
-export function getStaticPaths(){return [...sections.map(s=>({params:{screen:s.id}})),...projects.map(p=>({params:{screen:p.id}}))]}
+// Interesses tem página própria (src/pages/interesses.astro e src/pages/interesses/*).
+export function getStaticPaths(){return [...sections.filter(s=>s.id!=='interesses').map(s=>({params:{screen:s.id}})),...projects.map(p=>({params:{screen:p.id}}))]}
 const id=Astro.params.screen;
 const project=projects.find(p=>p.id===id);
 const section=sections.find(s=>s.id===(project?.category??id))!;

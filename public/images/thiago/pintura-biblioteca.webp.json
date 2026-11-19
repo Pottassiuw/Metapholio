@@ -1,4 +1,4 @@
 {
-  "prompt": "SOURCE: Painted portrait illustration of Thiago Nascimento supplied directly by him for the portfolio (assets/source/thiago/pintura-biblioteca.png, 1672x941). Re-encoded only by scripts/create-museum-art.sh; the supplied image itself is user-provided artwork, not generated in this project. Full-bleed slide for the Sobre scene.",
-  "createdAt": "2026-11-12T03:17:52.951Z"
+  "prompt": "SOURCE: Painted portrait illustration of Thiago Nascimento supplied directly by him on 2026-11-16 as a session attachment to replace the second Sobre slide (kept locally as assets/source/thiago/pintura-biblioteca-v2.png, 1672x941: white coat, blue armchair, open book, cat on the left, stained glass behind). Re-encoded only with ffmpeg (webp q76 / AVIF libaom crf30), no retouching; user-provided artwork, not generated in this project. The 'mao' and 'esfera' crops in this folder still come from the previous biblioteca painting.",
+  "createdAt": "2026-11-16T23:09:00.000Z"
 }
