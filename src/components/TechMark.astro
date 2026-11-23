@@ -1,11 +1,14 @@
 ---
 // Um logotipo de tecnologia: o glifo do Simple Icons em uma cor, ou o monograma quando não há logotipo.
+// `grade` acrescenta o grau declarado: 'stars' (estrelas e nome do grau) ou 'numeral' (só o romano).
 import {tech} from '../data/tech';
-interface Props{name:string;size?:number}
-const {name,size=28}=Astro.props;
+import Grade from './Grade.astro';
+interface Props{name:string;size?:number;grade?:'stars'|'numeral'}
+const {name,size=28,grade}=Astro.props;
 const t=tech(name);
 ---
 <span class="tech-mark" title={t.name} style={`--s:${size}px`}>
 {t.path?<svg viewBox="0 0 24 24" aria-hidden="true"><path d={t.path}/></svg>:<span class="tech-mono" aria-hidden="true">{t.mono}</span>}
 <span class="tech-name">{t.name}</span>
+{grade&&t.level&&<Grade level={t.level} name={t.name} compact={grade==='numeral'}/>}
 </span>

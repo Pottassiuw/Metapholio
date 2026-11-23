@@ -1,9 +1,11 @@
 ---
-import {sections,asset,route} from '../data/portfolio';
+import {sections,route} from '../data/portfolio';
+import Picture from './Picture.astro';
+interface Props{active?:string;home?:boolean}
 const {active='projetos',home=false}=Astro.props;
 ---
 
-<picture><source type="image/avif" srcset={asset('images/melencolia-anjo.avif')}/><img class="art" src={asset('images/melencolia-anjo.webp')} width="1200" height="1783" alt="" fetchpriority="high"/></picture>
+<Picture src="melencolia-anjo" imgClass="art" width={1200} height={1783} alt="" fetchpriority="high"/>
 <div class="wash" aria-hidden="true"></div><div class="cut" aria-hidden="true"></div><div class="red-cut" aria-hidden="true"></div><div class="orbit" aria-hidden="true"></div>
 <header>
 <a class="identity" href={route()} aria-label="Thiago Nascimento — início"><span class="identity-mark" aria-hidden="true">T.</span><div><h1>Thiago Nascimento</h1><p>Desenvolvedor · DSM / FATEC São José dos Campos</p></div></a>

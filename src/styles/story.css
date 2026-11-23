@@ -28,7 +28,8 @@
 .story-sub{display:grid;margin:0;padding:6px 12px;background:var(--ink);color:var(--paper)}
 .story-sub strong{font:900 20px/1.15 var(--display)}
 .story-sub span{font-size:14px;letter-spacing:.05em;text-transform:uppercase;color:#bcd8d5}
-.story-badge{margin-left:auto;padding:5px 12px;font:700 12px/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--on-accent);background:var(--accent);clip-path:polygon(6% 0,100% 0,94% 100%,0 100%)}
+.story-contribution{flex:1 0 100%;max-width:62ch;margin:0;padding:8px 12px;border-inline-start:4px solid var(--accent);font:400 16px/1.4 var(--body);color:var(--paper);background:var(--ink)}
+.story-contribution strong{margin-inline-end:.35em;font-weight:700}
 
 /* Sumário: a lista de capítulos no idioma do menu, com a pincelada fervendo no capítulo atual. */
 .story-index{position:relative;z-index:2}
@@ -84,6 +85,8 @@
 .arsenal-tech li:nth-child(3n+2){color:var(--accent)}
 .arsenal-h{margin:20px 0 8px;padding-bottom:6px;font-size:14px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;border-bottom:1px solid rgba(244,243,233,.4)}
 .arsenal-skills{margin:0;padding-left:20px;font-size:18px;line-height:1.5}
+.arsenal-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:0 28px}
+.story-sub .story-partner{color:var(--paper);text-transform:none;letter-spacing:0;font-size:15px}
 
 /* V · Onde encontrar. */
 .story-links{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
@@ -165,3 +168,34 @@
 .story[data-project=edp-helios][data-chapter="3"]{--px:-9%;--py:9%;--z:1.3}
 .story[data-project=edp-helios][data-chapter="4"]{--px:4%;--py:-4%;--z:1.18}
 .story[data-project=edp-helios][data-chapter="5"]{--px:0%;--py:0%;--z:1.04}
+
+/* Em funcionamento: capturas do projeto numa tira com rolagem lateral; cada uma amplia num <dialog>. */
+.demo-strip{display:flex;gap:14px;margin:4px 0 0;padding:0 0 10px;list-style:none;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-color:var(--accent) transparent}
+.demo-strip li{flex:0 0 100%;scroll-snap-align:start}
+.demo-strip figure{margin:0}
+.demo-open{display:block;border:2px solid var(--paper);box-shadow:6px 6px 0 var(--accent);transition:transform .2s}
+.demo-open:hover{transform:translate(-2px,-2px)}
+.demo-open:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.demo-open img{display:block;width:100%;height:auto}
+.demo-strip figcaption{margin:12px 0 0;font-size:16px;line-height:1.4}
+.demo-strip figcaption b{margin-right:6px;font:900 18px/1 var(--display);color:var(--accent)}
+.demo-nav{display:flex;align-items:center;gap:10px;margin:8px 0 0}
+.demo-nav[hidden]{display:none}
+.demo-step{display:grid;place-items:center;width:44px;height:40px;border:0;background:var(--paper);color:var(--ink);clip-path:polygon(14% 0,100% 0,86% 100%,0 100%);cursor:pointer}
+.demo-step:hover{background:var(--accent)}
+.demo-step:disabled{opacity:.35;cursor:default}
+.demo-step:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.demo-step svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2}
+.demo-count{margin:0;padding:4px 10px;font:900 22px/1 var(--display);background:var(--ink);color:var(--paper)}
+.demo-count b{color:var(--accent)}
+.demo-note{margin:8px 0 0;font-size:13px;letter-spacing:.04em;color:rgba(244,243,233,.7)}
+.demo-box{max-width:min(1440px,94vw);padding:0;border:2px solid var(--paper);background:var(--ink);color:var(--paper)}
+.demo-box::backdrop{background:rgba(10,14,18,.86)}
+.demo-box img{display:block;max-width:100%;max-height:82vh;width:auto;height:auto}
+.demo-box p{margin:0;padding:10px 54px 12px 14px;font-size:16px}
+.demo-close{position:absolute;top:8px;right:8px;width:40px;height:40px;border:2px solid var(--paper);font:900 26px/1 var(--display);background:var(--ink);color:var(--paper);cursor:pointer}
+.demo-close:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){.demo-open{transition:none}}
+/* Com as setas ativas, a barra de rolagem nativa sai (o arraste lateral continua). */
+.demo:has(.demo-nav:not([hidden])) .demo-strip{scrollbar-width:none}
+.demo:has(.demo-nav:not([hidden])) .demo-strip::-webkit-scrollbar{display:none}

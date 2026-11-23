@@ -5,39 +5,45 @@
 import {projects,sections,route,asset} from '../data/portfolio';
 import '../styles/story.css';
 import TechMark from './TechMark.astro';
+import Picture from './Picture.astro';
+import SceneTitle from './SceneTitle.astro';
+import Icon from './Icon.astro';
 interface Props{project:(typeof projects)[number];section:(typeof sections)[number]}
 const {project,section}=Astro.props;
 const helios=project.id==='edp-helios';
 // Projetos com decisões registradas (hoje, o Helios) ganham um capítulo a mais, entre a resposta e a minha parte.
 const decisions:{title:string,text:string}[]=('decisions' in project&&project.decisions)||[];
-const ROMAN=['I','II','III','IV','V','VI'];
+const ROMAN=['I','II','III','IV','V','VI','VII'];
+// Demonstração visual (capturas do projeto rodando com dados fictícios), quando houver.
+const demo=('demo' in project&&project.demo)||[];
+const shot=(n:number)=>`demos/${project.id}/${String(n+1).padStart(2,'0')}`;
 const chapters=[
  {id:'partida',label:'O ponto de partida',kind:'text',text:project.problem},
  {id:'resposta',label:'A resposta',kind:'cast',text:project.solution},
+ ...(demo.length?[{id:'em-funcionamento',label:'Em funcionamento',kind:'demo',text:''}]:[]),
  ...(decisions.length?[{id:'decisoes',label:'Por trás das decisões',kind:'decisions',text:''}]:[]),
- {id:'minha-parte',label:'Minha parte',kind:'text',text:project.role},
+ {id:'minha-responsabilidade',label:'Minha responsabilidade',kind:'text',text:project.role},
  {id:'arsenal',label:'O arsenal',kind:'arsenal',text:''},
  {id:'onde',label:'Onde encontrar',kind:'sources',text:''},
 ].map((c,i)=>({...c,numeral:ROMAN[i]}));
 const siblings=projects.filter(p=>p.category===project.category);
 const next=siblings[(siblings.indexOf(project)+1)%siblings.length];
-const word=project.name.toUpperCase();
 // A obra é a da sala; o Helios traz a própria gravura, impressa nas cores do projeto (scripts/create-helios-art.ts).
 const art=helios
- ?{avif:`${asset('images/helios/cidade-760.avif')} 760w, ${asset('images/helios/cidade.avif')} 1186w`,webp:asset('images/helios/cidade.webp'),webpSet:`${asset('images/helios/cidade-760.webp')} 760w, ${asset('images/helios/cidade.webp')} 1186w`,sizes:'(max-width:700px) 100vw, 60vw',width:1186,height:956}
- :{avif:asset(`images/museu/${section.id}.avif`),webp:asset(`images/museu/${section.id}.webp`),webpSet:undefined,sizes:undefined,width:1100,height:1400};
+ ?{src:'helios/cidade',small:760,sizes:'(max-width:700px) 100vw, 60vw',width:1186,height:956}
+ :{src:`museu/${section.id}`,width:1100,height:1400};
 ---
 <section class="scene room story" id="conteudo" data-scene={section.id} data-project={project.id} data-chapter="0" aria-labelledby="story-title">
 <div class="room-flood" aria-hidden="true"></div>
-<div class="story-art" aria-hidden="true"><picture><source type="image/avif" srcset={art.avif} sizes={art.sizes}/><img src={art.webp} srcset={art.webpSet} sizes={art.sizes} alt="" width={art.width} height={art.height}/></picture></div>
+<div class="story-art" aria-hidden="true"><Picture {...art} alt=""/></div>
 <span class="story-numeral" aria-hidden="true">I</span>
 
-<h1 class="scene-title" id="story-title"><span class="sr-only">{project.name}</span><span class="scene-word" data-text={word} aria-hidden="true">{[...word].map((l,i)=><span class="scene-letter" style={`--i:${i}`}>{l===' '?'\u00a0':l}</span>)}</span></h1>
+<SceneTitle id="story-title" text={project.name.toUpperCase()} label={project.name}/>
 
 <header class="story-head">
-<a class="story-back" href={route(section.id)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg>{section.title}</a>
-<p class="story-sub"><strong>{project.subtitle}</strong><span>{project.context}</span></p>
-<span class="story-badge">{chapters.length} capítulos · {project.tech.length} tecnologias</span>
+<a class="story-back" href={route(section.id)}><Icon name="back"/>{section.title}</a>
+<p class="story-sub"><strong>{project.subtitle}</strong><span>{project.context}</span>{'partner' in project&&<span class="story-partner">Empresa parceira: {project.partner}</span>}</p>
+<p class="story-contribution"><strong>Minha contribuição</strong> {project.contribution}</p>
 </header>
 
 <nav class="story-index" aria-label="Capítulos do projeto">
@@ -55,20 +61,35 @@ const art=helios
 <ol>{project.visual.map((v,k)=><li style={`--k:${k}`}><small aria-hidden="true">0{k+1}</small><span>{v}</span></li>)}</ol>
 </div>
 </>}
+{c.kind==='demo'&&<div class="demo">
+<ol class="demo-strip" aria-label="Capturas de tela">{demo.map((d,k)=><li><figure>
+<a class="demo-open" href={asset(`images/${shot(k)}.webp`)} data-caption={d.caption} aria-label={`Ampliar: ${d.caption}`}><Picture src={shot(k)} small={720} width={1440} height={900} sizes="(max-width:700px) 90vw, 560px" alt={d.caption} loading="lazy" decoding="async"/></a>
+<figcaption><b>{String(k+1).padStart(2,'0')}</b> {d.caption}</figcaption>
+</figure></li>)}</ol>
+<div class="demo-nav" hidden>
+<button type="button" class="demo-step" data-demo="-1" aria-label="Captura anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg></button>
+<p class="demo-count" aria-live="polite"><b>1</b> / {demo.length}</p>
+<button type="button" class="demo-step" data-demo="1" aria-label="Próxima captura"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+</div>
+<p class="demo-note">{demo.length} capturas do projeto rodando no meu computador, com dados de teste. Clique numa delas para ver em tamanho real.</p>
+</div>}
 {c.kind==='decisions'&&<ul class="chapter-decisions">{decisions.map((d,k)=><li style={`--k:${k}`}><h3>{d.title}</h3><p>{d.text}</p></li>)}</ul>}
 {c.kind==='arsenal'&&<>
-<ul class="arsenal-tech">{project.tech.map((t,k)=><li style={`--k:${k}`}><TechMark name={t} size={40}/></li>)}</ul>
-<h3 class="arsenal-h">Competências em prática</h3>
-<ul class="arsenal-skills">{project.skills.map(s=><li>{s}</li>)}</ul>
+<ul class="arsenal-tech">{project.tech.map((t,k)=><li style={`--k:${k}`}><TechMark name={t} size={40} grade="stars"/></li>)}</ul>
+<div class="arsenal-grid">
+<section><h3 class="arsenal-h">Hard skills · técnicas</h3><ul class="arsenal-skills">{project.skills.map(s=><li>{s}</li>)}</ul></section>
+<section><h3 class="arsenal-h">Soft skills · pessoais e sociais</h3><ul class="arsenal-skills">{project.softSkills.map(s=><li>{s}</li>)}</ul></section>
+</div>
 </>}
 {c.kind==='sources'&&<>
 <p class="chapter-text">{project.note}</p>
-{project.links.length>0&&<ul class="story-links">{project.links.map(l=><li><a href={l.url} target="_blank" rel="noopener noreferrer">{l.label}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a></li>)}</ul>}
+{project.links.length>0&&<ul class="story-links">{project.links.map(l=><li><a href={l.url} target="_blank" rel="noopener noreferrer">{l.label}<Icon name="external"/></a></li>)}</ul>}
 {next.id!==project.id&&<a class="story-next-project" href={route(next.id)}><span>Próxima história</span><b>{next.name}</b></a>}
 </>}
 </section>)}
 </div>
 
+{demo.length>0&&<dialog class="demo-box" aria-label="Captura ampliada"><img src="" alt=""/><p></p><button type="button" class="demo-close" aria-label="Fechar">×</button></dialog>}
 <div class="story-controls" hidden>
 <button class="story-btn" type="button" data-step="-1" aria-label="Capítulo anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg></button>
 <p class="story-count"><b>I</b> / {chapters[chapters.length-1].numeral}</p>
@@ -99,8 +120,8 @@ function initStory(){
   chapters.forEach((c,k)=>{if(k===index){c.classList.remove('is-leaving');c.classList.add('is-current');}c.inert=k!==index;});
   tabs.forEach((t,k)=>{t.classList.toggle('is-current',k===index);if(k===index)t.setAttribute('aria-current','step');else t.removeAttribute('aria-current');});
   numeral.textContent=NUMERALS[index];
-  const replay=(el:HTMLElement,cls:string)=>{el.classList.remove(cls);void el.offsetWidth;el.classList.add(cls);};
-  replay(numeral,'is-turning');
+  // Reinicia a animação do numeral: tira a classe, força o reflow e devolve.
+  numeral.classList.remove('is-turning');void numeral.offsetWidth;numeral.classList.add('is-turning');
   count.textContent=NUMERALS[index];
   history.replaceState(null,'',`#${chapters[index].id}`);
   if(focus)chapters[index].querySelector<HTMLElement>('.chapter-title')?.focus({preventScroll:true});
@@ -109,9 +130,29 @@ function initStory(){
  tabs.forEach((t,k)=>t.addEventListener('click',e=>{e.preventDefault();go(k,true);},{signal}));
  story.querySelectorAll<HTMLButtonElement>('[data-step]').forEach(b=>b.addEventListener('click',()=>go(index+Number(b.dataset.step)),{signal}));
  document.addEventListener('keydown',e=>{
-  if((e.target as HTMLElement).closest('.menu,.trilha,input,textarea,select,[contenteditable]'))return;
+  if(box?.open||(e.target as HTMLElement).closest('.menu,.trilha,.demo-strip,input,textarea,select,[contenteditable]'))return;
   if(e.key==='ArrowRight')go(index+1);else if(e.key==='ArrowLeft')go(index-1);
  },{signal});
+ // Tira de capturas: setas e contador; a rolagem lateral continua valendo (toque, trackpad).
+ const strip=story.querySelector<HTMLElement>('.demo-strip');
+ if(strip){
+  const nav=story.querySelector<HTMLElement>('.demo-nav')!,shown=nav.querySelector('b')!,total=strip.children.length;
+  const at=()=>Math.round(strip.scrollLeft/strip.clientWidth);
+  const update=()=>{const k=at();shown.textContent=String(k+1);nav.querySelectorAll<HTMLButtonElement>('[data-demo]').forEach(b=>{b.disabled=k+Number(b.dataset.demo)<0||k+Number(b.dataset.demo)>=total;});};
+  nav.hidden=false;update();
+  nav.querySelectorAll<HTMLButtonElement>('[data-demo]').forEach(b=>b.addEventListener('click',()=>strip.scrollTo({left:(at()+Number(b.dataset.demo))*strip.clientWidth,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}),{signal}));
+  strip.addEventListener('scroll',update,{signal,passive:true});
+ }
+ // Captura ampliada num <dialog>; sem JS, o link abre a imagem.
+ const box=story.querySelector<HTMLDialogElement>('.demo-box');
+ if(box){
+  const img=box.querySelector('img')!,cap=box.querySelector('p')!;
+  story.querySelectorAll<HTMLAnchorElement>('.demo-open').forEach(a=>a.addEventListener('click',e=>{
+   e.preventDefault();img.src=a.href;img.alt=a.dataset.caption??'';cap.textContent=a.dataset.caption??'';box.showModal();
+  },{signal}));
+  box.querySelector('.demo-close')!.addEventListener('click',()=>box.close(),{signal});
+  box.addEventListener('click',e=>{if(e.target===box)box.close();},{signal});
+ }
  const start=chapters.findIndex(c=>`#${c.id}`===location.hash);
  if(start>0){story.classList.add('no-anim');go(start);requestAnimationFrame(()=>story.classList.remove('no-anim'));}
 }

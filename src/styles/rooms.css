@@ -177,7 +177,7 @@
 [data-scene=formacao] .room-label{left:calc(var(--split-top) + 27vw);bottom:4svh}
 .room .level-link{color:var(--aqua);text-underline-offset:3px}
 .room .level-row.is-peak .level-link{color:var(--ink)}
-/* Ficha de formação no idioma visual de Metaphor (11.jpg): cabeçalho sobre faixa de papel rasgada e linhas cronológicas com pincelada rosa (sem níveis nem barras de habilidade). */
+/* Ficha de formação no idioma visual de Metaphor (11.jpg): cabeçalho sobre faixa de papel rasgada e linhas cronológicas com pincelada rosa (sem barras de habilidade). */
 .level-sheet{position:relative;z-index:3;padding:14px 16px 12px;background:rgba(12,14,28,.9);border-left:1px solid rgba(244,243,233,.45);border-top:2px solid var(--accent);box-shadow:0 18px 40px rgba(0,0,0,.42)}
 .level-head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(244,243,233,.3)}
 .level-lv{display:inline-flex;align-items:baseline;gap:5px;line-height:.85;color:var(--paper)}
@@ -196,6 +196,7 @@
 .level-row.is-peak dt{color:#101c20;font-weight:700}
 .level-row.is-peak b{color:var(--paper);text-shadow:2px 2px 0 #101c20,-1px -1px 0 #101c20}
 .level-row b{font:900 20px/.95 var(--display);text-align:right;color:var(--aqua)}
+.level-note{margin:10px 0 0;max-width:46ch;font-size:15px;line-height:1.45;color:rgba(244,243,233,.88)}
 .level-foot{margin:10px 0 0;padding:4px 10px;display:flex;align-items:baseline;justify-content:space-between;gap:10px;background:rgba(244,243,233,.1);border-top:1px solid rgba(244,243,233,.35)}
 .level-foot span{font:900 13px/1 var(--display);letter-spacing:.14em;text-transform:uppercase;color:var(--paper)}
 .level-foot b{font:900 22px/.9 var(--display);letter-spacing:.04em;color:var(--aqua)}

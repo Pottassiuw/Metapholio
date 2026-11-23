@@ -1,0 +1,13 @@
+---
+// Imagem de public/images/<src> em AVIF, com WebP de reserva. Com `small`, entra também a variante
+// <src>-<small> e o navegador escolhe pela largura (`sizes`). Atributos extras vão para o <img>.
+import type {HTMLAttributes} from 'astro/types';
+import {asset} from '../data/portfolio';
+interface Props extends Omit<HTMLAttributes<'img'>,'src'|'srcset'|'width'|'height'|'alt'|'class'>{
+ src:string;alt:string;width:number;height:number;small?:number;class?:string;imgClass?:string;
+}
+const {src,alt,width,height,small,sizes,class:className,imgClass,...img}=Astro.props;
+const url=(ext:string,name=src)=>asset(`images/${name}.${ext}`);
+const srcset=(ext:string)=>small?`${url(ext,`${src}-${small}`)} ${small}w, ${url(ext)} ${width}w`:url(ext);
+---
+<picture class={className}><source type="image/avif" srcset={srcset('avif')} sizes={sizes}/><img class={imgClass} src={url('webp')} srcset={small?srcset('webp'):undefined} sizes={sizes} width={width} height={height} alt={alt} {...img}/></picture>

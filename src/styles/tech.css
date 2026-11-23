@@ -44,7 +44,7 @@
 /* A frase desce para não cobrir o rosto; o slide pede mais tempo de leitura. */
 @media(min-width:701px){.about-slide[data-art=biblioteca] .about-copy{bottom:calc(4svh + 76px)}}
 @media(min-width:701px) and (max-height:780px){.about-slide[data-art=biblioteca] .about-note{display:none}.about-slide[data-art=biblioteca] .about-phrase span{font-size:clamp(28px,3vw,46px)}.about-copy .constellation{margin-top:18px;gap:6px 16px;padding:10px 14px}}
-.about-scene[data-index="1"] .about-progress span{animation-duration:16s}
+.about-scene:is([data-index="0"],[data-index="2"]) .about-progress span{animation-duration:16s}
 /* Em telas menores só os logotipos (o nome segue para leitores de tela e no title). */
 @media(max-width:1500px){.about-copy .constellation .tech-name{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}.about-copy .constellation .stars ul{gap:8px}.about-copy .constellation .stars ul::before{display:block;top:50%}}
 @media(max-width:700px){.about-slide[data-art=biblioteca] .about-copy{bottom:calc(72px + 9svh + 26px)}.about-slide[data-art=biblioteca] .about-note{margin-top:14px}.about-copy .constellation{grid-template-columns:1fr;gap:3px;margin:14px 0 0;padding:8px 12px;transform:none}.about-copy .constellation .stars h3{font-size:14px;margin-top:4px}.about-copy .constellation .stars ul{gap:8px}}
@@ -56,3 +56,19 @@
 .about-copy .constellation .stars ul{gap:2px 0}
 .about-copy .constellation .stars li+li::before{content:'·';margin:0 7px;color:rgba(244,243,233,.5)}
 .about-copy .constellation .stars li{animation:none}
+
+/* Grau declarado: estrelas de quatro pontas (cheias em papel, a do grau atual em rosa) e o nome do grau. */
+.grade{display:grid;justify-items:center;gap:4px}
+.grade-stars{display:flex;gap:2px}
+.grade-stars svg{width:11px;height:11px;fill:none;stroke:rgba(244,243,233,.5);stroke-width:.8}
+.grade-stars svg.on{fill:var(--paper);stroke:none;animation:grade-in .3s calc(.35s + var(--i)*60ms) cubic-bezier(.34,1.56,.64,1) backwards}
+.grade-stars svg.is-now{fill:var(--rose);scale:1.25}
+.grade-label{display:grid;gap:1px;font:500 11px/1.15 var(--body);letter-spacing:.06em;text-transform:uppercase;color:rgba(244,243,233,.82)}
+.grade-label b{font:900 15px/1 var(--display);letter-spacing:0;color:var(--rose)}
+@keyframes grade-in{from{opacity:0;scale:.2;rotate:-90deg}}
+.story .arsenal-tech .tech-mark{width:108px}
+.grade-numeral{margin-left:5px;font:900 13px/1 var(--display);letter-spacing:.04em;color:var(--rose)}
+.about-copy .constellation .grade-legend{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:2px 12px;margin:4px 0 0;padding-top:8px;border-top:1px solid rgba(244,243,233,.3);font-size:12px;letter-spacing:.04em;color:rgba(244,243,233,.85)}
+.grade-legend>span:first-child{font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--paper)}
+.grade-legend b{font:900 13px/1 var(--display);letter-spacing:.04em;color:var(--rose)}
+@media(prefers-reduced-motion:reduce){.grade-stars svg.on{animation:none}}

@@ -3,7 +3,7 @@ import {ClientRouter} from 'astro:transitions';
 import MenuArt from '../components/MenuArt.astro';
 import Trilha from '../components/Trilha.astro';
 import Atmosfera from '../components/Atmosfera.astro';
-import {route,asset,sections} from '../data/portfolio';
+import {asset,sections} from '../data/portfolio';
 import '../styles/menu.css';
 import '../styles/portfolio.css';
 import '../styles/trilha.css';
@@ -27,11 +27,7 @@ const current=sections.find(s=>s.id===active)??sections[1];
 <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
 <main class:list={['stage',bare?'bare':home?'home':'inner',{immersive,'section-scene':scene}]} id="menu" data-escape={escape||undefined}>
 {!bare&&<MenuArt active={active} home={home}/>}
-{home||immersive||scene||bare ? <slot/> : <article class="content-sheet" id="conteudo" aria-label={title}>
-<div class="sheet-tools"><a href={route()} class="back-link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg> Voltar ao menu</a><span>Metapholio / Thiago Nascimento</span></div>
 <slot/>
-<footer class="sheet-footer"><a href={route('contato')}>Vamos conversar</a><a href={route()}>Menu principal</a></footer>
-</article>}
 {!bare&&<footer class="footer">
 <div><div class="social"><a href="https://github.com/Pottassiuw" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://www.linkedin.com/in/thiago-nascimento-729077292" target="_blank" rel="noopener noreferrer">LinkedIn</a></div><p class="caption">Gravura: A. Dürer, Melencolia I (1514), The Met — domínio público.</p></div>
 <div class="controls"><span class="control"><span class="key-arrows"><kbd>↑</kbd><kbd>↓</kbd></span> Navegar</span><span class="control"><kbd>Enter</kbd> Abrir</span><span class="control"><kbd>Esc</kbd> Menu</span></div>
@@ -130,10 +126,15 @@ function init(){
   if(!home||link.classList.contains('is-selected'))return;
   links.forEach(el=>el.classList.toggle('is-selected',el===link));
   misprint(link.querySelector<HTMLElement>('.menu-word'),140);
+  // Atualiza a prévia da abertura com a seção selecionada.
   const s=sections.find(s=>s.id===link.dataset.section)!;
-  const rk=document.querySelector<HTMLElement>('#preview-rank');if(rk)rk.textContent=String(sections.indexOf(s)+1);
-  const tag=document.querySelector<HTMLElement>('#preview-tag');if(tag)tag.textContent=s.hint;
-  document.querySelector('#preview-title')!.textContent=s.title;document.querySelector('#preview-copy')!.textContent=s.copy;const explore=document.querySelector<HTMLAnchorElement>('#explore')!;explore.href=link.href;explore.querySelector('span')!.textContent='Explorar '+s.label.toLowerCase();
+  const text=(id:string,value:string)=>{const el=document.getElementById(id);if(el)el.textContent=value;};
+  text('preview-rank',String(sections.indexOf(s)+1));
+  text('preview-tag',s.hint);
+  text('preview-title',s.title);
+  text('preview-copy',s.copy);
+  const explore=document.querySelector<HTMLAnchorElement>('#explore');
+  if(explore){explore.href=link.href;explore.querySelector('span')!.textContent='Explorar '+s.label.toLowerCase();}
  }
  const current=links.find(l=>l.classList.contains('is-selected'));
  if(current){painted=null;paint(current);}
@@ -177,6 +178,8 @@ function init(){
  }
  document.addEventListener('keydown',e=>{
   if(e.defaultPrevented||e.altKey||e.ctrlKey||e.metaKey||e.shiftKey)return;
+  // Um <dialog> aberto (captura ampliada) é quem responde ao Esc.
+  if(document.querySelector('dialog[open]'))return;
   const target=e.target as HTMLElement;
   if(target.closest('input,textarea,select,[contenteditable]'))return;
   if(e.key==='Escape'&&!home){navigate(stage.dataset.escape??route());return;}

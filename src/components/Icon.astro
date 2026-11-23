@@ -1,0 +1,6 @@
+---
+// Ícones de traço usados nos links: seguir, abrir fora do site e voltar.
+const paths={arrow:'M4 12h16m-6-6 6 6-6 6',external:'M6 18 18 6M6 6h12v12',back:'M19 12H5m6-6-6 6 6 6'};
+interface Props{name:keyof typeof paths}
+---
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d={paths[Astro.props.name]}/></svg>

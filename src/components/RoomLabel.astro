@@ -1,0 +1,6 @@
+---
+// Etiqueta de museu da obra de domínio público que ocupa a sala.
+interface Props{artist:string;work:string;from:string;year:string;source:string}
+const {artist,work,from,year,source}=Astro.props;
+---
+<p class="room-label"><strong>{artist}</strong><em>{work}</em><span>{from} · {year}</span><span>{source}</span></p>

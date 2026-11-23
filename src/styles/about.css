@@ -1,10 +1,9 @@
 /* Sobre: cena em tela cheia no lugar da folha de leitura. */
 .inner.immersive{padding:0;height:100svh;min-height:640px}
-.immersive .art,.immersive>.orbit,.immersive>.monogram,.immersive>.red-cut{display:none}
+.immersive .art,.immersive>.orbit,.immersive>.red-cut{display:none}
 
 .about-scene{position:absolute;z-index:-1;inset:0;overflow:hidden;isolation:isolate;background:var(--ink);--d:1}
 .about-scene[data-dir="-1"]{--d:-1}
-.about-ground{display:none}
 .about-scene .about-title{position:absolute;z-index:3;top:-.18em;left:33vw;margin:0;font:900 min(9.4vw,170px)/1 var(--display);letter-spacing:-.04em;word-spacing:.2em;text-transform:uppercase;white-space:nowrap;color:var(--paper);pointer-events:auto}
 .about-dossier{position:absolute;z-index:4;left:33vw;top:calc(min(9.4vw,170px)*.86);display:flex;flex-wrap:wrap;gap:6px;pointer-events:none}
 .about-dossier span{padding:3px 10px;font:700 12px/1.1 var(--body);letter-spacing:.12em;text-transform:uppercase;background:rgba(16,28,32,.9);color:var(--paper);border-top:2px solid var(--accent)}
@@ -19,7 +18,33 @@
 .about-slide[data-art=perfil] .about-art img{object-position:72% 40%}
 .about-slide[data-art=biblioteca] .about-art img{object-position:60% 30%}
 .about-slide[data-art=cidade] .about-art img{object-position:66% 30%}
+/* Na biblioteca o rosto fica mais baixo: a pintura sobe e é cortada no alto (sob o título) para a frase não cobrir o rosto. */
+@media(min-width:901px) and (min-aspect-ratio:3/2){.about-slide[data-art=biblioteca] .about-art{top:-12%}}
 .about-scene>.room-flood{z-index:2}
+/* No slide da foto, a inundação recua num corte diagonal e fica só atrás do menu, longe da ficha.
+   (Máscara, não clip-path: o clip-path pertence à animação de entrada flood-in.) */
+.about-scene[data-index="0"]>.room-flood{-webkit-mask:linear-gradient(97deg,#000 29vw,transparent 29.2vw);mask:linear-gradient(97deg,#000 29vw,transparent 29.2vw)}
+
+/* I · Apresentação: a foto profissional numa ficha de papel; o slide seguinte pinta o retrato por cima dela. */
+/* Fundo próprio em tinta: cobre a pintura do slide que sai (ela fica visível por baixo até a próxima troca). */
+.about-slide[data-art=foto]{background:var(--ink)}
+.is-carousel .about-slide.is-active[data-art=foto]{animation:about-fade .45s ease-out both}
+@keyframes about-fade{from{opacity:0}}
+.about-id{position:absolute;z-index:1;right:6vw;top:calc(min(9.4vw,170px)*.86 + 64px);width:min(26vw,48svh);margin:0;padding:10px 10px 0;background:var(--paper);rotate:3deg;box-shadow:0 24px 60px rgba(0,0,0,.45)}
+.about-id img{display:block;width:100%;height:auto}
+.about-id figcaption{padding:9px 2px 11px;font:900 15px/1.2 var(--display);letter-spacing:.03em;text-transform:uppercase;color:var(--ink)}
+.about-slide[data-art=foto] .about-copy{left:36vw;bottom:11svh;max-width:min(32vw,560px)}
+.about-facts{margin:22px 0 0 1.2em;padding:12px 16px 14px;display:grid;gap:9px;background:rgba(16,28,32,.94);border-top:3px solid var(--accent);transform:rotate(-3deg);transform-origin:0 0}
+.about-facts div{display:grid;grid-template-columns:8.6em 1fr;gap:12px;align-items:baseline}
+.about-facts dt{font:700 12px/1.3 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--rose)}
+.about-facts dd{margin:0;font-size:16px;line-height:1.38;color:var(--paper)}
+.about-reveal{display:inline-flex;align-items:center;gap:10px;min-height:44px;margin:20px 0 0 2.4em;padding:8px 14px;border:0;font:inherit;font-size:18px;background:var(--paper);color:var(--ink);transform:rotate(-3deg);transform-origin:0 0;cursor:pointer}
+.about-reveal:hover{background:var(--rose)}
+.about-reveal:focus-visible{outline:3px solid var(--ink);outline-offset:3px;box-shadow:0 0 0 3px var(--paper)}
+.about-reveal svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5}
+.about-scene:not(.is-carousel) .about-reveal{display:none}
+.is-carousel .about-slide.is-active .about-id{animation:about-id-in .7s cubic-bezier(.16,1,.3,1) both}
+@keyframes about-id-in{from{opacity:0;translate:0 40px;rotate:-4deg}to{opacity:1;translate:0 0;rotate:3deg}}
 
 .about-copy{position:absolute;z-index:4;bottom:12svh;width:max-content;max-width:min(60vw,860px);display:flex;flex-direction:column;align-items:flex-start}
 .about-slide[data-art=perfil] .about-copy{left:43vw}
@@ -70,13 +95,22 @@
 .is-carousel .about-slide.is-active .about-phrase span:nth-child(1){animation-delay:.08s}
 .is-carousel .about-slide.is-active .about-phrase span:nth-child(2){animation-delay:.14s}
 .is-carousel .about-slide.is-active .about-phrase span:nth-child(3){animation-delay:.20s}
-.is-carousel .about-slide.is-active :is(.about-note,.about-links,.constellation){animation:about-line-in .28s .26s cubic-bezier(.16,1,.3,1) both}
+.is-carousel .about-slide.is-active :is(.about-note,.about-links,.constellation,.about-facts,.about-reveal){animation:about-line-in .28s .26s cubic-bezier(.16,1,.3,1) both}
 @keyframes about-paint{from{-webkit-mask-size:6% 30%;mask-size:6% 30%;filter:blur(8px) saturate(.4)}to{-webkit-mask-size:520% 300%;mask-size:520% 300%;filter:none}}
 @keyframes about-breathe{from{transform:scale(1.08)}to{transform:scale(1)}}
 @keyframes about-plate{from{translate:0 0;opacity:1}85%{opacity:1}to{translate:calc(var(--d)*900%) 0;opacity:0}}
 @keyframes about-line-in{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 -3% 0 0)}}
 
 @media(min-width:701px){.about-phrase span{white-space:nowrap}}
+/* Telas médias: a ficha encolhe e os fatos viram uma coluna (rótulo sobre o texto). */
+@media(max-width:1300px) and (min-width:901px){
+.about-id{width:21vw;right:4vw}
+.about-slide[data-art=foto] .about-copy{left:34vw;max-width:calc(100vw - 34vw - 4vw - 21vw - 48px)}
+.about-slide[data-art=foto] .about-phrase span{font-size:clamp(26px,3.2vw,40px)}
+.about-facts{gap:7px;margin-top:16px}
+.about-facts div{grid-template-columns:1fr;gap:1px}
+.about-facts dd{font-size:14px}
+}
 @media(max-width:1100px) and (min-width:901px){
 .about-scene .about-title{left:36vw;font-size:min(8.6vw,170px)}
 .about-dossier{left:36vw}
@@ -106,9 +140,17 @@
 .about-btn{width:44px}
 .about-count{margin:0 0 0 6px;font-size:22px;white-space:nowrap}
 .about-progress{position:absolute;left:0;right:0;top:-10px;width:auto}
+.about-id{top:6px;left:5vw;right:auto;width:min(44vw,230px);padding:7px 7px 0}
+.about-id figcaption{font-size:12px;padding:6px 0 8px}
+.about-slide[data-art=foto] .about-phrase{display:none}
+.about-slide[data-art=foto] .about-copy{left:5vw;right:5vw;max-width:none}
+.about-facts{margin:0;transform:none;gap:7px;padding:10px 12px}
+.about-facts div{grid-template-columns:1fr;gap:1px}
+.about-facts dd{font-size:14px}
+.about-reveal{margin:12px 0 0;transform:none;font-size:16px}
 }
 @media(prefers-reduced-motion:reduce){
-.is-carousel .about-slide :is(.about-art,.about-art img,.about-phrase span,.about-note,.about-links,.constellation),.is-carousel .about-slide.is-leaving,.is-carousel .about-slide.is-active::after{animation:none}
+.is-carousel .about-slide.is-active[data-art=foto],.is-carousel .about-slide :is(.about-art,.about-art img,.about-id,.about-phrase span,.about-note,.about-links,.constellation,.about-facts,.about-reveal),.is-carousel .about-slide.is-leaving,.is-carousel .about-slide.is-active::after{animation:none}
 .is-carousel .about-slide.is-active::after{display:none}
 .is-carousel .about-slide.is-leaving{visibility:hidden}
 }

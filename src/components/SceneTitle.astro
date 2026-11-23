@@ -1,0 +1,7 @@
+---
+// Título monumental das cenas: o leitor de tela ouve `label`; na tela, cada letra de `text` é um span
+// animado (--i) e data-text alimenta o registro desalinhado da impressão.
+interface Props{text:string;label:string;id:string;class?:string}
+const {text,label,id,class:className}=Astro.props;
+---
+<h1 class:list={['scene-title',className]} id={id}><span class="sr-only">{label}</span><span class="scene-word" data-text={text} aria-hidden="true">{[...text].map((l,i)=><span class="scene-letter" style={`--i:${i}`}>{l===' '?' ':l}</span>)}</span></h1>

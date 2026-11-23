@@ -1,0 +1,15 @@
+---
+// Grau de uma tecnologia: cinco estrelas de quatro pontas (o brilho de bússola das pinturas), cheias até o grau,
+// com o numeral e o nome do grau. `compact` mostra só o numeral (constelação do Sobre).
+import {GRADES,ROMAN} from '../data/tech';
+interface Props{level:1|2|3|4|5;name:string;compact?:boolean}
+const {level,name,compact=false}=Astro.props;
+const label=`${name}: grau ${ROMAN[level-1]} de V, ${GRADES[level-1]}`;
+const star='M5 0 6.3 3.7 10 5 6.3 6.3 5 10 3.7 6.3 0 5 3.7 3.7Z';
+---
+{compact
+ ?<b class="grade-numeral" role="img" aria-label={label} title={GRADES[level-1]}>{ROMAN[level-1]}</b>
+ :<span class="grade" role="img" aria-label={label}>
+  <span class="grade-stars" aria-hidden="true">{[1,2,3,4,5].map(i=><svg viewBox="0 0 10 10" class:list={{on:i<=level,'is-now':i===level}} style={`--i:${i}`}><path d={star}/></svg>)}</span>
+  <span class="grade-label" aria-hidden="true"><b>{ROMAN[level-1]}</b>{GRADES[level-1]}</span>
+ </span>}

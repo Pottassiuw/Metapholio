@@ -12,9 +12,5 @@ const section=sections.find(s=>s.id===(project?.category??id))!;
 const title=project?.name??section.title;
 ---
 <Portfolio title={`${title} — Thiago Nascimento`} active={section.id} routeKey={id} immersive={id==='sobre'} scene={id!=='sobre'} description={project?.lead??section.copy}>
-{project ? <>
-<ProjectStory project={project} section={section}/>
-</> : <>
-{id==='sobre'?<AboutScene/>:<SectionScene section={section}/>}
-</>}
+{project?<ProjectStory project={project} section={section}/>:id==='sobre'?<AboutScene/>:<SectionScene section={section}/>}
 </Portfolio>

@@ -1,34 +1,53 @@
 ---
-// Seção Sobre como cena: o fundo é a arte do painel de personagem e um carrossel alterna as fotos
-// de Thiago com frases curtas. Sem JavaScript, os slides aparecem empilhados.
-import {asset,route} from '../data/portfolio';
-import {constellation} from '../data/tech';
+// Seção Sobre como cena. O primeiro slide é a apresentação com a foto profissional (nome completo, formação,
+// objetivos); os seguintes trocam a foto pelas pinturas de Thiago como personagem, com frases curtas.
+// Sem JavaScript, os slides aparecem empilhados.
+import {route} from '../data/portfolio';
+import {constellation,GRADES,ROMAN as GRADE_ROMAN} from '../data/tech';
 import TechMark from './TechMark.astro';
+import Picture from './Picture.astro';
+import SceneTitle from './SceneTitle.astro';
+import Icon from './Icon.astro';
 // Três pinturas de Thiago como personagem, uma por slide, em tela cheia (1672×941).
 const art={
  perfil:{alt:'Pintura de Thiago Nascimento de perfil, olhando para o alto, entre nuvens, anéis de bússola e uma pincelada vermelha.'},
- biblioteca:{alt:'Pintura de Thiago Nascimento de casaco branco, sentado numa poltrona azul com um livro aberto, numa biblioteca gótica com vitral, esfera armilar e um gato à esquerda.'},
+ biblioteca:{alt:'Pintura de Thiago Nascimento de casaco branco e luvas pretas, recostado numa poltrona azul com a mão na têmpora, numa biblioteca gótica com vitral, lâmpadas verdes, esfera armilar e um gato à esquerda, cortada por pinceladas vermelhas.'},
  cidade:{alt:'Pintura do perfil de Thiago Nascimento contendo uma cidade suspensa nas nuvens; abaixo, ele de casaco branco sobre ruínas.'},
 } as const;
+// Apresentação pessoal (roteiro do portfólio DSM, item 2.1).
+const facts=[
+ ['Nome','Thiago Batista Félix do Nascimento'],
+ ['Formação','Desenvolvimento de Software Multiplataforma, 2º semestre · FATEC São José dos Campos'],
+ ['Objetivo acadêmico','Concluir o DSM e seguir para uma pós-graduação ou um mestrado em inteligência artificial e machine learning.'],
+ ['Objetivo profissional','Trabalhar com dados e IA. Hoje estou entre duas trilhas, engenharia de dados e engenharia de IA, e estudo as duas.'],
+ ['Áreas de interesse','Arquitetura de sistemas, segurança da informação, dados e agentes de IA.'],
+];
 const slides=[
- {art:'perfil',tag:'Identidade',lines:['Entre aprender','e construir.'],note:'Sou Thiago Nascimento e estudo Desenvolvimento de Software Multiplataforma na FATEC São José dos Campos.'},
+ {art:'foto',tag:'Apresentação',lines:['Prazer,','eu sou','o Thiago.']},
+ {art:'perfil',tag:'Identidade',lines:['Entre aprender','e construir.'],note:'Antes do código vem a curiosidade: eu gosto de entender como as coisas funcionam por dentro.'},
  {art:'biblioteca',tag:'Arquitetura',lines:['Gosto de entender','como as partes','se conectam.'],note:'Me interessam arquitetura de sistemas e segurança da informação.',stars:true,links:[['Meus interesses','interesses']]},
  {art:'cidade',tag:'Trajetória',lines:['Do TCC na ETEC','ao estágio','na EDP.'],note:'Alguns projetos do caminho:',links:[['Weeat','weeat'],['ReObserve','reobserve'],['Helios','edp-helios'],['API Altave','api-altave']]},
 ] as const;
-const ROMAN=['I','II','III'];
+const ROMAN=['I','II','III','IV'];
 ---
 <section class="about-scene" id="conteudo" aria-labelledby="about-title">
 <div class="room-flood" aria-hidden="true"></div>
-<h1 class="about-title scene-title" id="about-title"><span class="sr-only">Sobre mim</span><span class="scene-word" data-text="SOBRE MIM" aria-hidden="true">{[...'SOBRE MIM'].map((l,i)=><span class="scene-letter" style={`--i:${i}`}>{l===' '?'\u00a0':l}</span>)}</span></h1>
+<SceneTitle class="about-title" id="about-title" text="SOBRE MIM" label="Sobre mim"/>
 <div class="about-dossier" aria-label="Perfil rápido"><span>DSM · FATEC SJC</span><span>Estágio · EDP</span><span>São José dos Campos · SP</span></div>
 <div class="about-slides" aria-roledescription="carrossel" aria-label="Quem é Thiago Nascimento">
 {slides.map((s,i)=><article class:list={['about-slide',{'is-active':i===0}]} data-art={s.art} aria-roledescription="slide" aria-label={`${i+1} de ${slides.length}`}>
-<picture class="about-art"><source type="image/avif" srcset={asset(`images/thiago/pintura-${s.art}.avif`)}/><img src={asset(`images/thiago/pintura-${s.art}.webp`)} width="1672" height="941" alt={art[s.art].alt} loading={i===0?'eager':'lazy'}/></picture>
+{s.art==='foto'
+ ?<figure class="about-id"><Picture src="thiago/foto-frontal" width={900} height={900} alt="Foto de Thiago Nascimento, de frente, de óculos e camisa preta, sobre fundo escuro." loading="eager"/><figcaption>Thiago Batista Félix do Nascimento</figcaption></figure>
+ :<Picture class="about-art" src={`thiago/pintura-${s.art}`} width={1672} height={941} alt={art[s.art].alt} loading="eager" fetchpriority={i===1?'auto':'low'} decoding="async"/>}
 <div class="about-copy">
 <p class="about-phrase">{s.lines.map(l=><span>{l}</span>)}</p>
-{s.note&&<p class="about-note">{s.note}</p>}
-{'stars' in s&&<section class="constellation" aria-label="Tecnologias">{constellation.map(g=><div class="stars"><h3>{g.group}</h3><ul>{g.items.map((n,k)=><li style={`--k:${k}`}><TechMark name={n} size={24}/></li>)}</ul></div>)}</section>}
-{'links' in s&&<ul class="about-links">{s.links.map(([label,id])=><li><a href={route(id)}>{label}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a></li>)}</ul>}
+{s.art==='foto'&&<>
+<dl class="about-facts">{facts.map(([k,v])=><div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+<button class="about-reveal" type="button" data-step="1">Ver o retrato pintado<Icon name="arrow"/></button>
+</>}
+{'note' in s&&<p class="about-note">{s.note}</p>}
+{'stars' in s&&<section class="constellation" aria-label="Tecnologias">{constellation.map(g=><div class="stars"><h3>{g.group}</h3><ul>{g.items.map((n,k)=><li style={`--k:${k}`}><TechMark name={n} size={24} grade="numeral"/></li>)}</ul></div>)}<p class="grade-legend"><span>Grau</span>{GRADES.map((g,i)=><span><b>{GRADE_ROMAN[i]}</b> {g}</span>)}</p></section>}
+{'links' in s&&<ul class="about-links">{s.links.map(([label,id])=><li><a href={route(id)}>{label}<Icon name="arrow"/></a></li>)}</ul>}
 </div>
 </article>)}
 </div>
@@ -55,7 +74,7 @@ function initAbout(){
  const pills=[...scene.querySelectorAll<HTMLButtonElement>('[data-jump]')];
  const count=scene.querySelector('.about-count b')!;
  const bar=scene.querySelector<HTMLElement>('.about-progress span')!;
- scene.classList.add('is-carousel');controls.hidden=false;
+ scene.classList.add('is-carousel');controls.hidden=false;scene.dataset.index='0';
  let index=0;
  function show(next:number,dir:1|-1){
   const prev=index;index=(next+slides.length)%slides.length;

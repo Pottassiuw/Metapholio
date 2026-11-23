@@ -4,6 +4,7 @@
 // infraestrutura plantada em casa em vez de comprada pronta. Sem JS ou sem WebGL, ficam as duas renderizações
 // estáticas do mesmo modelo, fechada e aberta, lado a lado.
 import {asset,route} from '../data/portfolio';
+import Icon from './Icon.astro';
 import '../styles/raspberry.css';
 
 // Ramo de framboesa desenhado aqui mesmo: cada fruto é um cacho de drupéolas (círculos com brilho) e cada
@@ -37,7 +38,7 @@ const spec=[
 ---
 <div class="pi" id="conteudo">
 <header class="pi-top">
-<a class="pi-back" href={route('interesses')}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg><span>Meus interesses</span></a>
+<a class="pi-back" href={route('interesses')}><Icon name="back"/><span>Meus interesses</span></a>
 <a class="pi-owner" href={route()}>Thiago Nascimento</a>
 </header>
 
@@ -86,7 +87,7 @@ const spec=[
 <div class="pi-harvest">
 <h3>Já brotou</h3>
 <p>Um dos meus agentes do Hermes roda nele, de olho no sistema e desenvolvendo 24 horas por dia.</p>
-<a href={route('interesses/hermes-agent')}>Conhecer o Hermes Agent<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a>
+<a href={route('interesses/hermes-agent')}>Conhecer o Hermes Agent<Icon name="arrow"/></a>
 </div>
 <dl class="pi-spec" aria-label="Ficha da variedade">
 {spec.map(([k,v])=><div><dt>{k}</dt><dd>{v}</dd></div>)}
@@ -98,8 +99,8 @@ const spec=[
 <text class="pi-stamp-mid" x="100" y="108" text-anchor="middle">em casa</text>
 </svg>
 <nav class="pi-next" aria-label="Continuar">
-<a href={route('interesses')}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg>Meus interesses</a>
-<a href={route('interesses/hermes-agent')}>Hermes Agent<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a>
+<a href={route('interesses')}><Icon name="back"/>Meus interesses</a>
+<a href={route('interesses/hermes-agent')}>Hermes Agent<Icon name="arrow"/></a>
 </nav>
 </section>
 </article>

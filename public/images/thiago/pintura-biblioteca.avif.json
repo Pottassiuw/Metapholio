@@ -1,4 +1,4 @@
 {
-  "prompt": "SOURCE: Painted portrait illustration of Thiago Nascimento supplied directly by him on 2026-11-16 as a session attachment to replace the second Sobre slide (kept locally as assets/source/thiago/pintura-biblioteca-v2.png, 1672x941: white coat, blue armchair, open book, cat on the left, stained glass behind). Re-encoded only with ffmpeg (webp q76 / AVIF libaom crf30), no retouching; user-provided artwork, not generated in this project. The 'mao' and 'esfera' crops in this folder still come from the previous biblioteca painting.",
-  "createdAt": "2026-11-16T23:09:00.000Z"
+  "prompt": "SOURCE: Painted portrait illustration of Thiago Nascimento supplied directly by him on 2026-11-22 as a session attachment to replace the second Sobre slide (1672x941: white coat, black gloves, hand at temple, low-angle view in a blue armchair, cat and armillary sphere on the left, stained glass behind, red brush strokes and compass rings). Re-encoded only (WebP via ffmpeg libwebp q76, AVIF via avifenc -q 50), no retouching; user-provided artwork, not generated in this project. The 'mao' and 'esfera' crops in this folder still come from the earlier biblioteca painting.",
+  "createdAt": "2026-11-22T20:37:00.000Z"
 }

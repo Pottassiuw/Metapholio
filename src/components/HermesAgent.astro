@@ -2,14 +2,10 @@
 // Hermes Agent: uma procissão noturna em cinco atos, em tela cheia sobre preto. Cada ato é uma arte oficial
 // do Hermes Agent repintada (scripts/create-interests-art.ts) e um arranjo próprio de texto. Sem o menu do
 // portfólio: a navegação é a régua de atos à direita e o retorno no alto. Sem JS, tudo aparece em sequência.
-import {asset,route} from '../data/portfolio';
+import {route} from '../data/portfolio';
+import Icon from './Icon.astro';
+import Picture from './Picture.astro';
 import '../styles/hermes.css';
-const pic=(name:string,small:number,big:number)=>({
- avif:`${asset(`images/hermes/${name}-${small}.avif`)} ${small}w, ${asset(`images/hermes/${name}.avif`)} ${big}w`,
- webp:`${asset(`images/hermes/${name}-${small}.webp`)} ${small}w, ${asset(`images/hermes/${name}.webp`)} ${big}w`,
- src:asset(`images/hermes/${name}.webp`),
-});
-const busto=pic('busto',720,1080),ignicao=pic('ignicao',900,1488),fios=pic('fios',640,950),lembranca=pic('lembranca',900,1600),escada=pic('escada',800,1416);
 const acts=[
  {id:'descoberta',label:'Descoberta'},
  {id:'harness',label:'Harness'},
@@ -27,7 +23,7 @@ const party=[
 ---
 <div class="hermes" id="conteudo">
 <header class="hm-top">
-<a class="hm-back" href={route('interesses')}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg><span>Meus interesses</span></a>
+<a class="hm-back" href={route('interesses')}><Icon name="back"/><span>Meus interesses</span></a>
 <a class="hm-owner" href={route()}>Thiago Nascimento</a>
 </header>
 
@@ -37,7 +33,7 @@ const party=[
 
 <div class="hm-main">
 <section class="hm-act hm-open" id="descoberta" aria-labelledby="hm-title">
-<picture class="hm-art"><source type="image/avif" srcset={busto.avif} sizes="(max-width:700px) 100vw, 60vw"/><img src={busto.src} srcset={busto.webp} sizes="(max-width:700px) 100vw, 60vw" width="1080" height="1080" alt="Busto de Hermes com o capacete alado, entre janelas de interface: arte oficial do Hermes Agent em rosa e azul sobre preto." fetchpriority="high"/></picture>
+<Picture class="hm-art" src="hermes/busto" small={720} sizes="(max-width:700px) 100vw, 60vw" width={1080} height={1080} alt="Busto de Hermes com o capacete alado, entre janelas de interface: arte oficial do Hermes Agent em rosa e azul sobre preto." fetchpriority="high"/>
 <div class="hm-open-text">
 <h1 class="hm-title" id="hm-title"><span>Hermes</span><span>Agent</span></h1>
 <p class="hm-hook">Eu queria um agente que não se esquecesse de mim no dia seguinte.</p>
@@ -46,7 +42,7 @@ const party=[
 </section>
 
 <section class="hm-act hm-harness" id="harness" aria-labelledby="hm-harness-title">
-<picture class="hm-art"><source type="image/avif" srcset={ignicao.avif} sizes="(max-width:700px) 100vw, 58vw"/><img src={ignicao.src} srcset={ignicao.webp} sizes="(max-width:700px) 100vw, 58vw" width="1488" height="1304" alt="Gravura de duas mãos, uma humana e uma de madeira articulada, se tocando numa faísca, sobre a palavra HERMES: arte oficial do Hermes Agent." loading="lazy" decoding="async"/></picture>
+<Picture class="hm-art" src="hermes/ignicao" small={900} sizes="(max-width:700px) 100vw, 58vw" width={1488} height={1304} alt="Gravura de duas mãos, uma humana e uma de madeira articulada, se tocando numa faísca, sobre a palavra HERMES: arte oficial do Hermes Agent." loading="lazy" decoding="async"/>
 <div class="hm-copy">
 <h2 class="hm-h" id="hm-harness-title">O que fica em volta do modelo</h2>
 <p>Faz tempo que o que mais me prende em IA não é só o modelo, é o <em>harness</em>: o laço que deixa um agente usar ferramentas, guardar memória, conferir o próprio trabalho e seguir sem alguém segurando a mão dele a cada passo.</p>
@@ -57,7 +53,7 @@ const party=[
 <section class="hm-act hm-grupo" id="grupo" aria-labelledby="hm-grupo-title">
 <h2 class="hm-h hm-grupo-title" id="hm-grupo-title">Hoje eu tenho um pequeno grupo deles</h2>
 <div class="hm-loom">
-<picture class="hm-art"><source type="image/avif" srcset={fios.avif} sizes="(max-width:700px) 100vw, 46vw"/><img src={fios.src} srcset={fios.webp} sizes="(max-width:700px) 100vw, 46vw" width="950" height="1024" alt="Figura de muitos braços segurando feixes de fios que se abrem em todas as direções: arte oficial do Hermes Agent." loading="lazy" decoding="async"/></picture>
+<Picture class="hm-art" src="hermes/fios" small={640} sizes="(max-width:700px) 100vw, 46vw" width={950} height={1024} alt="Figura de muitos braços segurando feixes de fios que se abrem em todas as direções: arte oficial do Hermes Agent." loading="lazy" decoding="async"/>
 <span class="hm-spot" aria-hidden="true"></span>
 <ul class="hm-party">
 {party.map(m=><li class:list={['hm-agent',{'is-lead':m.lead}]} style={`--x:${m.x}%;--y:${m.y}%`}><b>{m.name}</b><span>{m.line}</span></li>)}
@@ -67,7 +63,7 @@ const party=[
 </section>
 
 <section class="hm-act hm-memoria" id="memoria" aria-labelledby="hm-memoria-title">
-<picture class="hm-art"><source type="image/avif" srcset={lembranca.avif} sizes="100vw"/><img src={lembranca.src} srcset={lembranca.webp} sizes="100vw" width="1600" height="1411" alt="Rosto pontilhado que olha para uma esfera de luz entre as mãos: arte oficial do Hermes Agent." loading="lazy" decoding="async"/></picture>
+<Picture class="hm-art" src="hermes/lembranca" small={900} sizes="100vw" width={1600} height={1411} alt="Rosto pontilhado que olha para uma esfera de luz entre as mãos: arte oficial do Hermes Agent." loading="lazy" decoding="async"/>
 <div class="hm-copy">
 <h2 class="hm-h" id="hm-memoria-title">A memória fica do lado de fora</h2>
 <p>Uso o Hindsight como memória externa.</p>
@@ -76,14 +72,14 @@ const party=[
 </section>
 
 <section class="hm-act hm-uso" id="uso" aria-labelledby="hm-uso-title">
-<picture class="hm-art"><source type="image/avif" srcset={escada.avif} sizes="(max-width:700px) 100vw, 40vw"/><img src={escada.src} srcset={escada.webp} sizes="(max-width:700px) 100vw, 40vw" width="1416" height="1800" alt="Figura que sobe uma escada entre montanhas, rumo a um sol: arte oficial do Hermes Agent." loading="lazy" decoding="async"/></picture>
+<Picture class="hm-art" src="hermes/escada" small={800} sizes="(max-width:700px) 100vw, 40vw" width={1416} height={1800} alt="Figura que sobe uma escada entre montanhas, rumo a um sol: arte oficial do Hermes Agent." loading="lazy" decoding="async"/>
 <div class="hm-copy">
 <h2 class="hm-h" id="hm-uso-title">Ele não fica mais esperto sozinho</h2>
 <p>O modelo por trás continua o mesmo; ninguém retreina nada. O que melhora é o que ele carrega: lembra das minhas preferências e dos projetos, e transforma o que deu certo em <em>skills</em> que reaproveita da próxima vez.</p>
 <p class="hm-coda">Quanto mais eu uso, menos eu preciso explicar.</p>
 <nav class="hm-next" aria-label="Continuar">
-<a href={route('interesses/raspberry-pi')}><span>Raspberry Pi</span><small>onde um deles mora</small><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a>
-<a href={route('interesses')}><span>Meus interesses</span><small>voltar ao índice</small><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></a>
+<a href={route('interesses/raspberry-pi')}><span>Raspberry Pi</span><small>onde um deles mora</small><Icon name="arrow"/></a>
+<a href={route('interesses')}><span>Meus interesses</span><small>voltar ao índice</small><Icon name="back"/></a>
 </nav>
 </div>
 </section>
